@@ -141,16 +141,21 @@ namespace SimpleRTTR
         }
     };
 
+
     template <typename ClassType>
     class TypeHelper : public TypeHelperBase, TypeHelper1
     {
     public:
-        TypeHelper()
-            :
-            TypeHelperBase(typeid(this), sizeof(ClassType), &ParseQualifiedName)
-        {
-        }
+        TypeHelper() : TypeHelperBase(typeid(this), sizeof(ClassType), &ParseQualifiedName) {}
     };
+
+    template <>
+    class TypeHelper<void> : public TypeHelperBase, TypeHelper1
+    {
+    public:
+        TypeHelper<void>() : TypeHelperBase(typeid(this), -1, &ParseQualifiedName) {}
+    };
+
 
     template <template <typename... > class Tmpl, typename ...Args>
     class TypeHelper<Tmpl<Args...>> : public TypeHelperBase, TypeHelper1

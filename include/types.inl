@@ -108,6 +108,23 @@ namespace SimpleRTTR
         return _TypeData.TemplateParams;
     }
 
+    template<typename ClassType, typename Alloc>
+    ClassType* Type::CreateInstance() const
+    {
+        SIMPLERTTR_ASSERT(FullyQualifiedName() == TypeHelper<ClassType>().QualifiedName());   //TODO: check inheritance!
+        Alloc alloc; ClassType* pointer = alloc.allocate(1);
+        return new (pointer) ClassType();   //TODO: use a user defined constructor(one that takes parameters)
+    }
+
+    template<typename ClassType, typename Alloc>
+    void Type::DestroyInstance(ClassType* ptr) const
+    {
+        SIMPLERTTR_ASSERT(FullyQualifiedName() == TypeHelper<ClassType>().QualifiedName());   //TODO: check inheritance!
+        Alloc alloc; ptr->~ClassType();
+        alloc.deallocate(ptr, 1);
+    }
+
+
     //--
     //Type Storage
     const TypeData& TypeStorage::InvalidTypeData()

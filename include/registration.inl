@@ -3,6 +3,7 @@ namespace SimpleRTTR
     inline void RegisterFundamentalCppTypes(RegistrationManager& mgr)
     {
         //register a few of the basic fundamental types
+        mgr.Type<void>();
         mgr.Type<char>();
         mgr.Type<short>();
         mgr.Type<int>();

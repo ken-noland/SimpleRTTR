@@ -39,21 +39,16 @@ namespace SimpleRTTR
         inline const NamespaceList& Namespaces() const;
         inline const TemplateTypeList& TemplateParams() const;
 
-        //
-        //TODO
-        //  CreateInstance
-        // 
-        // SetProperty(void* Instance, const string& propertyName, void* pvalue, std::size_t size)
-        // 
-        // template<typename PropType>
-        // SetProperty(void* Instance, const string& propertyName, const PropType& value)
-        // 
-        // template<typename ClassType>
-        // SetProperty(ClassType& Instance, const string& propertyName, void* pvalue, std::size_t size)
-        // 
-        // template<typename ClassType, typename PropType>
-        // SetProperty(ClassType& Instance, const string& propertyName, const PropType& value)
-        // 
+        template<typename ClassType, typename Alloc = stdrttr::custom_allocator<ClassType>>
+        ClassType* CreateInstance() const;
+
+        template<typename ClassType, typename Alloc = stdrttr::custom_allocator<ClassType>>
+        void DestroyInstance(ClassType* ptr) const;
+
+        template<typename ClassType, typename PropType>
+        bool SetProperty(ClassType* Instance, const stdrttr::string& propertyName, const PropType& value) const;
+
+
 
     protected:
         const TypeData& _TypeData;
