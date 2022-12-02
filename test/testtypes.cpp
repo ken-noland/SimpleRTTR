@@ -138,3 +138,27 @@ TEST(RTTRType, TestTemplateWithinNamespace)
     ASSERT_EQ(validType.Namespaces().size(), 1);
     EXPECT_EQ(validType.Namespaces()[0], "SimpleRTTRTest");
 }
+
+TEST(RTTRType, TestBasicTypes)
+{
+    EXPECT_EQ(Types().GetType<void>().Name(), "void");
+    EXPECT_EQ(Types().GetType<void>().Size(), 0);
+
+    EXPECT_EQ(Types().GetType<char>().Name(), "char");
+    EXPECT_EQ(Types().GetType<char>().Size(), sizeof(char));
+
+    EXPECT_EQ(Types().GetType<short>().Name(), "short");
+    EXPECT_EQ(Types().GetType<short>().Size(), sizeof(short));
+
+    EXPECT_EQ(Types().GetType<int>().Name(), "int");
+    EXPECT_EQ(Types().GetType<int>().Size(), sizeof(int));
+
+    EXPECT_EQ(Types().GetType<long>().Name(), "long");
+    EXPECT_EQ(Types().GetType<long>().Size(), sizeof(long));
+
+    EXPECT_EQ(Types().GetType<float>().Name(), "float");
+    EXPECT_EQ(Types().GetType<float>().Size(), sizeof(float));
+
+    EXPECT_EQ(Types().GetType<double>().Name(), "double");
+    EXPECT_EQ(Types().GetType<double>().Size(), sizeof(float));
+}
