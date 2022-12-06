@@ -15,5 +15,5 @@ target_link_libraries(SimpleRTTRTest
   SimpleRTTR
   GTest::gtest_main
 )
-
+target_link_options(SimpleRTTRTest PUBLIC /PROFILE)
 add_test(SimpleRTTRGTest SimpleRTTRTest)
