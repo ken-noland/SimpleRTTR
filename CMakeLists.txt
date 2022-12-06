@@ -7,7 +7,7 @@ option(SIMPLERTTR_BUILD_TESTS "Build the tests" true)
 
 set(SIMPLERTTR_SRC		src/types.cpp)
 
-set(SIMPLERTTR_HEADERS	include/assert.h
+set(SIMPLERTTR_HEADERS	include/simplerttrassert.h
 						include/method.h
 						include/method.inl
 						include/property.h

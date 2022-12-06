@@ -19,9 +19,9 @@ namespace SimpleRTTR
 }
 
 //definitions
+#include "simplerttrassert.h"
 #include "stdtypes.h"
 #include "helpers.h"
-#include "assert.h"
 #include "property.h"
 #include "method.h"
 #include "variant.h"
