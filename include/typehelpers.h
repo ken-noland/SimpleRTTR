@@ -10,7 +10,7 @@ namespace SimpleRTTR
     class TypeHelperBase
     {
     public:
-        typedef stdrttr::string(*QualifiedNameParseFunc)(const stdrttr::string& name);
+        typedef void(*QualifiedNameParseFunc)(char* name);
 
         using NamespaceList = TypeData::NamespaceList;
 
@@ -61,18 +61,23 @@ namespace SimpleRTTR
             return retString;
         }
 
-        inline void ParseName(const std::type_info& typeInfo, QualifiedNameParseFunc parseQualifiedName)
+        inline stdrttr::string ParseFullyQualifiedName(const char* typeName, QualifiedNameParseFunc parseQualifiedName)
         {
-            //if we used the wrapper function below, then we need to parse out the erroneous bits
+            std::size_t slen = strlen(typeName);
+            char* charQualifiedName = static_cast<char*>(alloca(slen + 1));
+            memcpy(charQualifiedName, typeName, slen + 1);
+
             if (parseQualifiedName != nullptr)
             {
-                _QualifiedName = parseQualifiedName(typeInfo.name());
+                parseQualifiedName(charQualifiedName);
             }
-            else
-            {
-                _QualifiedName = typeInfo.name();
-            }
-            _QualifiedName = trim(_QualifiedName);
+
+            return stdrttr::string(charQualifiedName);
+        }
+
+        inline void ParseName(const std::type_info& typeInfo, QualifiedNameParseFunc parseQualifiedName)
+        {
+            _QualifiedName = trim(ParseFullyQualifiedName(typeInfo.name(), parseQualifiedName));
 
             stdrttr::string name;
 
@@ -124,7 +129,7 @@ namespace SimpleRTTR
     class TypeHelper1
     {
     protected:
-        static stdrttr::string ParseQualifiedName(const stdrttr::string& name)
+        static void ParseQualifiedName(char* name)
         {
 #       if defined(__clang__)
 #       elif defined(__GNUC__) || defined(__GNUG__)
@@ -136,8 +141,9 @@ namespace SimpleRTTR
             const int trailing = 11;
 #       else
 #       endif
-            std::size_t length = name.length() - (leading + trailing);
-            return name.substr(leading, length);
+            std::size_t len = strlen(name);
+            memcpy(name, name + leading, len - leading);
+            name[len - (leading + trailing)] = 0;
         }
     };
 
