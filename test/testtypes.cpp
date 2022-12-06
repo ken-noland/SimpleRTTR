@@ -160,5 +160,5 @@ TEST(RTTRType, TestBasicTypes)
     EXPECT_EQ(Types().GetType<float>().Size(), sizeof(float));
 
     EXPECT_EQ(Types().GetType<double>().Name(), "double");
-    EXPECT_EQ(Types().GetType<double>().Size(), sizeof(float));
+    EXPECT_EQ(Types().GetType<double>().Size(), sizeof(double));
 }
