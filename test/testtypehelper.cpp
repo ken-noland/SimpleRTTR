@@ -42,7 +42,7 @@ TEST(RTTRTypeHelper, TestSTDMap)
 
     std::chrono::nanoseconds totalTime = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
     printf("Allocations   : %zu\n", afterAllocs - beforeAllocs);
-    printf("Deallocations : %zu\n", afterAllocs - beforeAllocs);
+    printf("Deallocations : %zu\n", afterDeallocs - beforeDeallocs);
     printf("Time          : %zu\n", totalTime.count());
 
     EXPECT_EQ(typeHelper.Name(), "unordered_map");
