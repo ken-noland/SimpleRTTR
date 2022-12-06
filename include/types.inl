@@ -1,8 +1,6 @@
 
 namespace SimpleRTTR
 {
-
-
     Type::Type(const TypeData& data)
         :
         _TypeData(data)
@@ -108,12 +106,24 @@ namespace SimpleRTTR
         return _TypeData.TemplateParams;
     }
 
-    template<typename ClassType, typename Alloc>
-    ClassType* Type::CreateInstance() const
+    template<typename ClassType, typename Alloc, typename... Params>
+    ClassType* Type::CreateInstance(Params... params) const
     {
         SIMPLERTTR_ASSERT(FullyQualifiedName() == TypeHelper<ClassType>().QualifiedName());   //TODO: check inheritance!
         Alloc alloc; ClassType* pointer = alloc.allocate(1);
-        return new (pointer) ClassType();   //TODO: use a user defined constructor(one that takes parameters)
+        //TODO: store the function pointer for the constructor/destructor and use that. It will help in cases
+        //  where we don't have the headers to compile/link against.
+        return new (pointer) ClassType(std::forward<Params>(params)...);   //TODO: use a user defined constructor(one that takes parameters)
+    }
+
+    template<typename... Params>
+    void* Type::CreateInstance(Params...) const
+    {
+        //SIMPLERTTR_ASSERT(FullyQualifiedName() == TypeHelper<ClassType>().QualifiedName());   //TODO: check inheritance!
+        //Alloc alloc; void* pointer = alloc.allocate(1);
+        ////TODO: we really need to call the constructor here!
+        //return pointer;   //TODO: use a user defined constructor(one that takes parameters)
+        return nullptr;
     }
 
     template<typename ClassType, typename Alloc>
@@ -122,6 +132,11 @@ namespace SimpleRTTR
         SIMPLERTTR_ASSERT(FullyQualifiedName() == TypeHelper<ClassType>().QualifiedName());   //TODO: check inheritance!
         Alloc alloc; ptr->~ClassType();
         alloc.deallocate(ptr, 1);
+    }
+
+    void Type::DestroyInstance(void* ptr) const
+    {
+        SIMPLERTTR_ASSERT(!"Not yet implemented");   //TODO: check inheritance!
     }
 
 

@@ -39,21 +39,23 @@ namespace SimpleRTTR
         inline const NamespaceList& Namespaces() const;
         inline const TemplateTypeList& TemplateParams() const;
 
-        template<typename ClassType, typename Alloc = stdrttr::custom_allocator<ClassType>>
-        ClassType* CreateInstance() const;
+        template<typename ClassType, typename Alloc = stdrttr::custom_allocator<ClassType>, typename... Params>
+        inline ClassType* CreateInstance(Params...) const;
+
+        template<typename... Params>
+        inline void* CreateInstance(Params...) const;
 
         template<typename ClassType, typename Alloc = stdrttr::custom_allocator<ClassType>>
-        void DestroyInstance(ClassType* ptr) const;
+        inline void DestroyInstance(ClassType* ptr) const;
+
+        inline void DestroyInstance(void* ptr) const;
 
         template<typename ClassType, typename PropType>
-        bool SetProperty(ClassType* Instance, const stdrttr::string& propertyName, const PropType& value) const;
-
-
+        inline bool SetProperty(ClassType* Instance, const stdrttr::string& propertyName, const PropType& value) const;
 
     protected:
         const TypeData& _TypeData;
     };
-
 
     class TypeStorage
     {
