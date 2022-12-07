@@ -33,12 +33,12 @@ TEST(RTTRTypeHelper, TestSTDMap)
     high_resolution_clock clock;
     time_point start = clock.now();
     std::size_t beforeAllocs = CustomAllocatorStats::TotalAllocations;
-    std::size_t beforeDeallocs = CustomAllocatorStats::TotalAllocations;
+    std::size_t beforeDeallocs = CustomAllocatorStats::TotalDeallocations;
 
     TypeHelper<std::unordered_map<std::string, int>> typeHelper;
     time_point end = clock.now();
     std::size_t afterAllocs = CustomAllocatorStats::TotalAllocations;
-    std::size_t afterDeallocs = CustomAllocatorStats::TotalAllocations;
+    std::size_t afterDeallocs = CustomAllocatorStats::TotalDeallocations;
 
     std::chrono::nanoseconds totalTime = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
     printf("Allocations   : %zu\n", afterAllocs - beforeAllocs);
