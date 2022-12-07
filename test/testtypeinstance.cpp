@@ -79,17 +79,17 @@ TEST(RTTRTypeInstance, TestTypeCreateInstance)
 
 TEST(RTTRTypeInstance, TestConstructorWithParameters)
 {
-    //EXPECT_EQ(Point::constructorCalled, false);
-    //EXPECT_EQ(Point::destructorCalled, false);
+    EXPECT_EQ(Point::constructorCalled, false);
+    EXPECT_EQ(Point::destructorCalled, false);
 
-    //const Type& type = Types().GetType<Point>();
-    //Point* instance = type.CreateInstance<Point>(1.f, 2.f);
+    const Type& type = Types().GetType<Point>();
+    Point* instance = type.CreateInstance<Point>(1.f, 2.f);
 
-    //ASSERT_NE(instance, nullptr);
-    //EXPECT_EQ(Point::constructorCalled, true);
+    ASSERT_NE(instance, nullptr);
+    EXPECT_EQ(Point::constructorCalled, true);
 
-    //type.DestroyInstance(instance);
-    //EXPECT_EQ(Point::destructorCalled, true);
+    type.DestroyInstance(instance);
+    EXPECT_EQ(Point::destructorCalled, true);
 }
 
 TEST(RTTRTypeInstance, TestCreateUnknownType)
