@@ -106,6 +106,9 @@ namespace SimpleRTTR
         template<class ClassType>
         inline const Type& GetOrCreateType();
 
+        using TypeFunction = std::add_pointer<void(const Type&)>::type;
+        inline void ForEach(TypeFunction eval) const;
+
     protected:
         friend class TypeBindingBase;
         friend class RegistrationManager;
@@ -123,6 +126,7 @@ namespace SimpleRTTR
 
         TypeList _Types;
 
+    //TEMP
     public:
         using iterator = TypeList::const_iterator;
 

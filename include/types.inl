@@ -348,4 +348,15 @@ namespace SimpleRTTR
             _Types.push_back(std::make_unique<Type>(data));
         }
     }
+
+    void TypeManager::ForEach(TypeManager::TypeFunction eval) const
+    {
+        TypeList::const_iterator iter = _Types.begin();
+        while (iter != _Types.end())
+        {
+            eval(*(*iter).get());
+            ++iter;
+        }
+    }
+
 }
