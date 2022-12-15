@@ -32,15 +32,15 @@ namespace SimpleRTTR
         inline std::size_t Size() const;
 
         inline const PropertyList& Properties() const;
-        typedef void(*PropertyFunction)(const class Property&);
+        using PropertyFunction = std::function<void(const class Property&)>;
         inline void ForEach(PropertyFunction function) const;
 
         inline const MethodList& Methods() const;
-        typedef void(*MethodFunction)(const class Method&);
+        using MethodFunction = std::function<void(const class Method&)>;
         inline void ForEach(MethodFunction function) const;
 
         inline const MetaList& Meta() const;
-        typedef void(*MetaFunction)(const class Meta&);
+        using MetaFunction = std::function<void(const class Meta&)>;
         inline void ForEach(MetaFunction function) const;
 
         inline const NamespaceList& Namespaces() const;
