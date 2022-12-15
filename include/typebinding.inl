@@ -94,7 +94,18 @@ namespace SimpleRTTR
         PropertyData propData(name, type, offset, flags);
         class Property prop(propData);
 
-        _TypeData.Properties.push_back(prop);
+        //check to see if property exists
+        if (std::find_if(_TypeData.Properties.begin(), _TypeData.Properties.end(), [&prop](const class Property& existing)
+            { 
+                if (existing.Offset() == prop.Offset() && 
+                    existing.Name() == prop.Name() && 
+                    existing.Type() == prop.Type()) { return true; } 
+                return false; 
+            }) == _TypeData.Properties.end()) {
+            //add it to the list if it doesn't exist already
+            _TypeData.Properties.push_back(prop);
+        }
+
 
         return PropertyBinding<ClassType>(_TypeData.Properties.back(), _TypeData);;
     }
