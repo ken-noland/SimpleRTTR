@@ -115,7 +115,7 @@ namespace SimpleRTTR
         template<class ClassType>
         inline const Type& GetOrCreateType();
 
-        typedef void(*TypeFunction)(const Type&);
+        using TypeFunction = std::function<void(const class Type&)>;
         inline void ForEach(TypeFunction eval) const;
 
     protected:
