@@ -83,16 +83,18 @@ namespace SimpleRTTR
         {
             _QualifiedName = trim(ParseFullyQualifiedName(typeInfo.name(), parseQualifiedName));
 
-            stdrttr::string name;
+            stdrttr::string name = _QualifiedName;
 
             //remove the preceding "class " bit
-            if (_QualifiedName.find("class ", 0) == 0)
+            if (name.find("class ", 0) == 0)
             {
                 name = _QualifiedName.substr(6);
             }
-            else
+
+            //remove the preceding "struct " bit
+            if (name.find("struct ", 0) == 0)
             {
-                name = _QualifiedName;
+                name = name.substr(7);
             }
 
             name = RemoveTemplateArguments(name);
