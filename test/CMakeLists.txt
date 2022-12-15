@@ -5,7 +5,8 @@ set(SIMPLERTTR_TEST_SRC		testallocator.cpp
 							testsimplerttr.cpp
 							testtypehelper.cpp
 							testtypeinstance.cpp
-							testtypes.cpp)
+							testtypes.cpp
+							testvarianttostring.cpp)
 
 set(SIMPLERTTR_TEST_HEADERS testallocator.h
 							testallocator.inl)

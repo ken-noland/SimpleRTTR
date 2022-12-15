@@ -8,6 +8,8 @@
 #include <utility>
 #include <any>
 #include <locale>
+#include <string>
+#include <sstream>
 
 //predeclarations
 namespace SimpleRTTR
@@ -36,6 +38,7 @@ namespace SimpleRTTR
 #include "property.inl"
 #include "method.inl"
 #include "variant.inl"
+#include "variant_tostring.inl"
 #include "meta.inl"
 #include "types.inl"
 #include "typedata.inl"

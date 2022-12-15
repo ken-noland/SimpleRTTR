@@ -24,6 +24,12 @@ namespace SimpleRTTR
         _Value = meta._Value;
     }
 
+    const std::any& Variant::Value() const
+    {
+        return _Value;
+    }
+
+
     template<typename VariantType>
     VariantType Variant::GetAs() const
     {
@@ -33,5 +39,12 @@ namespace SimpleRTTR
     inline const class Type& Variant::Type() const
     {
         return Types().GetType(_Value.type());
+    }
+
+    inline stdrttr::string Variant::ToString() const
+    {
+        const class Type& type = Type();
+        SIMPLERTTR_ASSERT(type != Type::InvalidType());
+        return type.ToString(*this);
     }
 }

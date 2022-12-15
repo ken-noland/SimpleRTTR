@@ -16,6 +16,7 @@ namespace SimpleRTTR
         //  and report allocation usage to better get a handle on how many allocations have been made and optimize it efficiently.
         //  Any data types that have an allocator should be defined here!
         using string = std::basic_string<char, std::char_traits<char>, custom_allocator<char>>;
+        using stringstream = std::basic_stringstream<char, std::char_traits<char>, custom_allocator<char>>;
 
         template <typename ClassType>
         using vector = std::vector<ClassType, custom_allocator<ClassType>>;

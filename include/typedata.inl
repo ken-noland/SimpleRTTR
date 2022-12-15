@@ -17,7 +17,8 @@ namespace SimpleRTTR
         Properties(typeData.Properties),
         Methods(typeData.Methods),
         Namespaces(typeData.Namespaces),
-        TemplateParams(typeData.TemplateParams)
+        TemplateParams(typeData.TemplateParams),
+        ToString(typeData.ToString)
     {
     }
 
@@ -29,7 +30,8 @@ namespace SimpleRTTR
         Properties(std::move(typeData.Properties)),
         Methods(std::move(typeData.Methods)),
         Namespaces(std::move(typeData.Namespaces)),
-        TemplateParams(std::move(typeData.TemplateParams))
+        TemplateParams(std::move(typeData.TemplateParams)),
+        ToString(std::move(typeData.ToString))
     {
         typeData.Size = -1;
     }
@@ -43,6 +45,7 @@ namespace SimpleRTTR
         Methods = typeData.Methods;
         Namespaces = typeData.Namespaces;
         TemplateParams = typeData.TemplateParams;
+        ToString = typeData.ToString;
         return *this;
     }
 

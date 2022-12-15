@@ -32,9 +32,16 @@ namespace SimpleRTTR
         inline std::size_t Size() const;
 
         inline const PropertyList& Properties() const;
+        typedef void(*PropertyFunction)(const class Property&);
+        inline void ForEach(PropertyFunction function) const;
+
         inline const MethodList& Methods() const;
+        typedef void(*MethodFunction)(const class Method&);
+        inline void ForEach(MethodFunction function) const;
 
         inline const MetaList& Meta() const;
+        typedef void(*MetaFunction)(const class Meta&);
+        inline void ForEach(MetaFunction function) const;
 
         inline const NamespaceList& Namespaces() const;
         inline const TemplateTypeList& TemplateParams() const;
@@ -52,6 +59,8 @@ namespace SimpleRTTR
 
         template<typename ClassType, typename PropType>
         inline bool SetProperty(ClassType* Instance, const stdrttr::string& propertyName, const PropType& value) const;
+
+        inline stdrttr::string ToString(const Variant& var) const;
 
     protected:
         const TypeData& _TypeData;
@@ -106,7 +115,7 @@ namespace SimpleRTTR
         template<class ClassType>
         inline const Type& GetOrCreateType();
 
-        using TypeFunction = std::add_pointer<void(const Type&)>::type;
+        typedef void(*TypeFunction)(const Type&);
         inline void ForEach(TypeFunction eval) const;
 
     protected:

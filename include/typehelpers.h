@@ -18,9 +18,12 @@ namespace SimpleRTTR
         using TemplateTypePtr = const Type*;
         using TemplateTypeList = stdrttr::vector<TemplateTypePtr>;
 
-        TypeHelperBase(const std::type_info& typeInfo, std::size_t size, QualifiedNameParseFunc parseQualifiedName = nullptr)
+        typedef stdrttr::string (*ToStringFunction)(const Variant&);
+
+        TypeHelperBase(const std::type_info& typeInfo, std::size_t size, ToStringFunction toStringFunc, QualifiedNameParseFunc parseQualifiedName = nullptr)
             :
-            _Size(size)
+            _Size(size),
+            _ToStringFunc(toStringFunc)
         {
             ParseName(typeInfo, parseQualifiedName);
         }
@@ -29,6 +32,7 @@ namespace SimpleRTTR
         inline const stdrttr::string& QualifiedName() const { return _QualifiedName; }
         inline const NamespaceList& Namespaces() const { return _Namespaces; }
         inline const TemplateTypeList& TemplateParams() const { return _TemplateParams; }
+        inline const ToStringFunction& ToStringFunc() const { return _ToStringFunc; }
 
         inline std::size_t Size() const { return _Size; }
     protected:
@@ -117,6 +121,9 @@ namespace SimpleRTTR
         NamespaceList    _Namespaces;
         TemplateTypeList _TemplateParams;
         std::size_t      _Size;
+
+        ToStringFunction _ToStringFunc;
+
     };
 
     template<typename ClassType>
@@ -152,7 +159,7 @@ namespace SimpleRTTR
     class TypeHelper : public TypeHelperBase, TypeHelper1
     {
     public:
-        TypeHelper() : TypeHelperBase(typeid(this), sizeof(ClassType), &ParseQualifiedName) 
+        TypeHelper() : TypeHelperBase(typeid(this), sizeof(ClassType), (ToStringFunction)&VariantToString<ClassType>, &ParseQualifiedName)
         {
             static_assert(sizeof(ClassType) > 0, "Classes must be fully declared before extracting the type information");
         }
@@ -162,7 +169,7 @@ namespace SimpleRTTR
     class TypeHelper<void> : public TypeHelperBase, TypeHelper1
     {
     public:
-        TypeHelper<void>() : TypeHelperBase(typeid(this), 0, &ParseQualifiedName) {}
+        TypeHelper<void>() : TypeHelperBase(typeid(this), 0, (ToStringFunction)&VariantToString<void>, &ParseQualifiedName) {}
     };
 
     template <template <typename... > class Tmpl, typename ...Args>
@@ -171,7 +178,7 @@ namespace SimpleRTTR
     public:
         TypeHelper()
             :
-            TypeHelperBase(typeid(this), sizeof(Tmpl<Args...>), ParseQualifiedName)
+            TypeHelperBase(typeid(this), sizeof(Tmpl<Args...>), (ToStringFunction)&VariantToString<Tmpl, Args...>, ParseQualifiedName)
         {
             TemplateParameterHelper<Args...>(_TemplateParams);
         }

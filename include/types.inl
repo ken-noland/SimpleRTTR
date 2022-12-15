@@ -56,7 +56,7 @@ namespace SimpleRTTR
     bool Type::Equals(const std::type_info& typeData) const
     {
         //TODO: maybe not use a heavy constructor like TypeHelperBase(which is littered with allocations) to just test if a type if equal
-        TypeHelperBase typeHelper(typeData, -1);    
+        TypeHelperBase typeHelper(typeData, -1, nullptr);    
         return FullyQualifiedName() == typeHelper.QualifiedName();
     }
 
@@ -86,14 +86,44 @@ namespace SimpleRTTR
         return _TypeData.Properties;
     }
 
+    void Type::ForEach(Type::PropertyFunction function) const
+    {
+        Type::PropertyList::const_iterator iter = Properties().begin();
+        while (iter != Properties().end())
+        {
+            function(*iter);
+            ++iter;
+        }
+    }
+
     const Type::MethodList& Type::Methods() const
     {
         return _TypeData.Methods;
     }
 
+    void Type::ForEach(Type::MethodFunction function) const
+    {
+        Type::MethodList::const_iterator iter = Methods().begin();
+        while (iter != Methods().end())
+        {
+            function(*iter);
+            ++iter;
+        }
+    }
+
     const Type::MetaList& Type::Meta() const
     {
         return _TypeData.Meta;
+    }
+
+    void Type::ForEach(Type::MetaFunction function) const
+    {
+        Type::MetaList::const_iterator iter = Meta().begin();
+        while (iter != Meta().end())
+        {
+            function(*iter);
+            ++iter;
+        }
     }
 
     const Type::NamespaceList& Type::Namespaces() const
@@ -139,6 +169,10 @@ namespace SimpleRTTR
         SIMPLERTTR_ASSERT(!"Not yet implemented");   //TODO: check inheritance!
     }
 
+    stdrttr::string Type::ToString(const Variant& var) const
+    {
+        return _TypeData.ToString(var);
+    }
 
     //--
     //Type Storage
@@ -221,6 +255,7 @@ namespace SimpleRTTR
         data.Name = typeHelper.Name();
         data.Size = typeHelper.Size();
         data.Namespaces = typeHelper.Namespaces();
+        data.ToString = typeHelper.ToStringFunc();
 
         data.TemplateParams.reserve(typeHelper.TemplateParams().size());
         TypeHelperBase::TemplateTypeList::const_iterator iter = typeHelper.TemplateParams().begin();
@@ -297,7 +332,7 @@ namespace SimpleRTTR
 
     const Type& TypeManager::GetType(const std::type_info& typeInfo) const
     {
-        TypeHelperBase helper(typeInfo, -1);
+        TypeHelperBase helper(typeInfo, -1, nullptr);
         return GetType(helper);
     }
 
