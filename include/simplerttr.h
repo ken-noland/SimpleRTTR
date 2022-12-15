@@ -10,6 +10,7 @@
 #include <locale>
 #include <string>
 #include <sstream>
+#include <functional>
 
 //predeclarations
 namespace SimpleRTTR
