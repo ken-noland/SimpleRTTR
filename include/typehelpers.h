@@ -97,7 +97,7 @@ namespace SimpleRTTR
             _QualifiedName = trim(qualifiedName);
 
             stdrttr::string name = _QualifiedName;
-
+#       if defined(_MSC_VER)
             //remove the preceding "class " bit
             if (name.find("class ", 0) == 0)
             {
@@ -109,7 +109,7 @@ namespace SimpleRTTR
             {
                 name = name.substr(7);
             }
-
+#       endif
             name = RemoveTemplateArguments(name);
 
 #       if defined(_MSC_VER)
@@ -126,6 +126,11 @@ namespace SimpleRTTR
                 _Namespaces.push_back(name.substr(0, index));
                 name = name.substr(index + 2);
             }
+
+#       if defined(_MSC_VER)
+            //TODO: remove the space between the type and the "*" for MSVC compiler
+#       endif
+
             _Name = trim(name);
         }
 

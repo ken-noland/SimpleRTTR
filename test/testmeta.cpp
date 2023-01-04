@@ -44,11 +44,11 @@ TEST(RTTRMeta, TestMetaStringKeyStringValue)
     std::string stringValue;
 
     const Meta& meta = type.Meta()[0];
-    EXPECT_EQ(meta.Key().Type().Name(), "char const *");
+    EXPECT_EQ(meta.Key().Type().Name(), "char const*");
     EXPECT_EQ(meta.Key().Type(), Types().GetType<char const *>());
     ASSERT_NO_THROW(stringKey = meta.Key().GetAs<const char*>());
 
-    EXPECT_EQ(meta.Value().Type().Name(), "char const *");
+    EXPECT_EQ(meta.Value().Type().Name(), "char const*");
     EXPECT_EQ(meta.Value().Type(), Types().GetType<char const*>());
     ASSERT_NO_THROW(stringValue = meta.Value().GetAs<const char*>());
 
@@ -69,7 +69,7 @@ TEST(RTTRMeta, TestMetaIntKeyStringValue)
     EXPECT_EQ(meta.Key().Type(), Types().GetType<int>());
     ASSERT_NO_THROW(intKey = meta.Key().GetAs<int>());
 
-    EXPECT_EQ(meta.Value().Type().Name(), "char const *");
+    EXPECT_EQ(meta.Value().Type().Name(), "char const*");
     EXPECT_EQ(meta.Value().Type(), Types().GetType<char const*>());
     ASSERT_NO_THROW(stringValue = meta.Value().GetAs<const char*>());
 
@@ -86,7 +86,7 @@ TEST(RTTRMeta, TestMetaStringKeyIntValue)
 
     const Meta& meta = type.Meta()[2];
 
-    EXPECT_EQ(meta.Key().Type().Name(), "char const *");
+    EXPECT_EQ(meta.Key().Type().Name(), "char const*");
     EXPECT_EQ(meta.Key().Type(), Types().GetType<char const*>());
     ASSERT_NO_THROW(stringKey = meta.Key().GetAs<const char*>());
 
@@ -107,7 +107,7 @@ TEST(RTTRMeta, TestMetaStringKeyListValue)
     const Meta& meta = type.Meta()[3];
     const std::vector<int>& vectorValue = meta.Value().GetAs<const std::vector<int>&>();
 
-    EXPECT_EQ(meta.Key().Type().Name(), "char const *");
+    EXPECT_EQ(meta.Key().Type().Name(), "char const*");
     EXPECT_EQ(meta.Key().Type(), Types().GetType<char const*>());
     ASSERT_NO_THROW(stringKey = meta.Key().GetAs<const char*>());
 
