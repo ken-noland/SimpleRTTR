@@ -30,6 +30,7 @@ namespace SimpleRTTR
     {
         _Key = meta._Key;
         _Value = meta._Value;
+        return *this;
     }
 
     const Variant& Meta::Key() const {

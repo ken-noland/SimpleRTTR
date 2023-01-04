@@ -19,7 +19,7 @@ namespace SimpleRTTR
         inline PropertyData(const PropertyData& data);
 
         inline const stdrttr::string& Name() const;
-        inline const Type& Type() const;
+        inline const class Type& Type() const;
         inline const std::size_t Offset() const;
 
         inline const PropertyFlagsBits& Flags() const;

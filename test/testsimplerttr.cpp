@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <SimpleRTTR.h>
+#include <simplerttr.h>
 
 class SimpleRTTRTestClass1
 {

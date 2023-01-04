@@ -113,7 +113,7 @@ namespace SimpleRTTR
 
     const Type::MetaList& Type::Meta() const
     {
-        return _TypeData.Meta;
+        return _TypeData.Metadata;
     }
 
     void Type::ForEach(Type::MetaFunction function) const

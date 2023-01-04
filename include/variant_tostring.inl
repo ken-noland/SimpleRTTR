@@ -1,6 +1,6 @@
 namespace SimpleRTTR
 {
-    template<typename VariantType> inline stdrttr::string VariantToString<>(const Variant& var)
+    template<typename VariantType> inline stdrttr::string VariantToString(const Variant& var)
     {
         SIMPLERTTR_ASSERT(!"Not yet implemented");
         return stdrttr::string();

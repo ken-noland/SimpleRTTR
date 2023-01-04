@@ -1,6 +1,11 @@
 #pragma once
 
+#if defined (__GNUC__) || defined (__GNUG__)
+#include <cstddef>
+#include <cstdlib>
+#elif defined(_MSC_VER)
 #include <xmemory>
+#endif //_MSC_VER
 
 class CustomAllocatorStats
 {
