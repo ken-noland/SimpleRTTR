@@ -86,28 +86,38 @@ namespace SimpleRTTR
         const Type& type = PropertyHelper<ClassType>(memberPtr);
         std::size_t offset = OffsetHelper<ClassType>(memberPtr);
 
-        constexpr bool isConst = std::is_const<MemberType>();
-        constexpr bool isPointer = std::is_pointer<MemberType>();
+        //constexpr bool isConst = std::is_const<MemberType>();
+        //constexpr bool isPointer = std::is_pointer<MemberType>();
 
-        PropertyData::PropertyFlagsBits flags;
+        //PropertyData::PropertyFlagsBits flags;
 
-        PropertyData propData(name, type, offset, flags);
+        PropertyData propData(name, type, offset);
         class Property prop(propData);
 
         //check to see if property exists
-        if (std::find_if(_TypeData.Properties.begin(), _TypeData.Properties.end(), [&prop](const class Property& existing)
-            { 
-                if (existing.Offset() == prop.Offset() && 
-                    existing.Name() == prop.Name() && 
-                    existing.Type() == prop.Type()) { return true; } 
-                return false; 
-            }) == _TypeData.Properties.end()) {
+        TypeData::PropertyList::iterator iter = std::find_if(_TypeData.Properties.begin(), _TypeData.Properties.end(), [&prop](const class Property& existing)
+            {
+                if (existing.Offset() == prop.Offset() &&
+                    existing.Name() == prop.Name() &&
+                    existing.Type() == prop.Type()) {
+                    return true;
+                }
+                return false;
+            });
+        
+        if (iter == _TypeData.Properties.end()) 
+        {
             //add it to the list if it doesn't exist already
             _TypeData.Properties.push_back(prop);
+            return PropertyBinding<ClassType>(_TypeData.Properties.back(), _TypeData);
+        }
+        else
+        {
+            return PropertyBinding<ClassType>(*iter, _TypeData);
         }
 
 
-        return PropertyBinding<ClassType>(_TypeData.Properties.back(), _TypeData);;
+        
     }
 
     template<typename ClassType>
@@ -137,18 +147,28 @@ namespace SimpleRTTR
     }
 
     template<typename ClassType>
-    PropertyBinding<ClassType>::PropertyBinding(class Property& _property, TypeData& typeData)
+    template <typename EnumType>
+    inline ValueBinding<ClassType> TypeBinding<ClassType>::Value(EnumType value, const stdrttr::string& name)
+    {
+        class Value valueData;
+        return ValueBinding<ClassType>(valueData, _TypeData);
+    }
+
+
+    template<typename ClassType>
+    PropertyBinding<ClassType>::PropertyBinding(class Property& property, TypeData& typeData)
         :
         TypeBinding(typeData),
-        _Property(_property)
+        _PropertyData(_InternalGetPropertyDataRef(property))
     {
-
     }
 
     template<typename ClassType>
-    template<typename... MetaType>
-    inline PropertyBinding<ClassType>& PropertyBinding<ClassType>::Meta(MetaType...)
+    template <typename MetaKey, typename MetaValue>
+    inline PropertyBinding<ClassType>& PropertyBinding<ClassType>::Meta(MetaKey key, MetaValue value)
     {
+        class Meta meta(key, value);
+        _PropertyData.Meta.push_back(meta);
         return *this;
     }
 
@@ -156,6 +176,9 @@ namespace SimpleRTTR
     template<typename MetaKey, typename MetaValue>
     inline PropertyBinding<ClassType>& PropertyBinding<ClassType>::Meta(MetaKey key, const std::initializer_list<MetaValue>& value)
     {
+        //need to copy the contents of value to vector since initializer_list only stores stack pointers
+        class Meta meta(key, stdrttr::vector<MetaValue>(value));
+        _PropertyData.Meta.push_back(meta);
         return *this;
     }
 
@@ -166,4 +189,28 @@ namespace SimpleRTTR
         _Method(method)
     {
     }
+
+    template<typename ClassType>
+    ValueBinding<ClassType>::ValueBinding(class Value& value, TypeData& typeData)
+        :
+        TypeBinding(typeData),
+        _Value(value)
+    {
+
+    }
+
+    template<typename ClassType>
+    template <typename... MetaType>
+    inline ValueBinding<ClassType>& ValueBinding<ClassType>::Meta(MetaType...)
+    {
+        return *this;
+    }
+
+    template<typename ClassType>
+    template <typename MetaKey, typename MetaValue>
+    inline ValueBinding<ClassType>& ValueBinding<ClassType>::Meta(MetaKey key, const std::initializer_list<MetaValue>& value)
+    {
+        return *this;
+    }
+
 }

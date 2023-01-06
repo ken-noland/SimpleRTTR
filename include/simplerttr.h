@@ -11,6 +11,7 @@
 #include <string>
 #include <sstream>
 #include <functional>
+#include <algorithm>
 
 //predeclarations
 namespace SimpleRTTR
@@ -25,10 +26,11 @@ namespace SimpleRTTR
 #include "simplerttrassert.h"
 #include "stdtypes.h"
 #include "helpers.h"
-#include "property.h"
-#include "method.h"
 #include "variant.h"
 #include "meta.h"
+#include "property.h"
+#include "method.h"
+#include "value.h"
 #include "typedata.h"
 #include "typehelpers.h"
 #include "types.h"

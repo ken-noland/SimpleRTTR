@@ -13,27 +13,25 @@ namespace SimpleRTTR
     {
     public:
         using PropertyFlagsBits = std::bitset<(uint16_t)PropertyFlags::PropertyFlagsMax>;
+        using MetaList = stdrttr::vector<Meta>;
 
-        inline PropertyData(stdrttr::string Name, const class Type& type, std::size_t offset, PropertyFlagsBits flags);
+        inline PropertyData(stdrttr::string Name, const class Type& type, std::size_t offset);
         inline PropertyData(PropertyData&& data);
         inline PropertyData(const PropertyData& data);
 
-        inline const stdrttr::string& Name() const;
-        inline const Type& Type() const;
-        inline const std::size_t Offset() const;
+        stdrttr::string Name;
+        const class Type& Type;
+        std::size_t Offset;
+        PropertyFlagsBits Flags;
 
-        inline const PropertyFlagsBits& Flags() const;
-
-    protected:
-        stdrttr::string _Name;
-        const class Type& _Type;
-        std::size_t _Offset;
-        PropertyFlagsBits _Flags;
+        MetaList Meta;
     };
 
     class Property
     {
     public:
+        using MetaList = PropertyData::MetaList;
+
         inline Property(Property&& data);
         inline Property(const Property& data);
         inline Property(const PropertyData& data);
@@ -42,11 +40,17 @@ namespace SimpleRTTR
         inline const stdrttr::string& Name() const;
         inline const class Type& Type() const;
         inline const std::size_t Offset() const;
+        inline const MetaList& Meta() const;
+
+        using MetaFunction = std::function<void(const class Meta&)>;
+        inline void ForEach(MetaFunction eval) const;
+
 
         inline bool IsConst();
         inline bool IsPointer();
 
     protected:
+        friend PropertyData& _InternalGetPropertyDataRef(Property& prop);
         PropertyData _PropData;
     };
 }

@@ -1,7 +1,9 @@
 #GoogleTest
 set(SIMPLERTTR_TEST_SRC		testallocator.cpp
+							testenum.cpp
 							testmeta.cpp
 							testmethod.cpp
+							testproperties.cpp
 							testsimplerttr.cpp
 							testtypehelper.cpp
 							testtypeinstance.cpp

@@ -17,6 +17,9 @@ namespace SimpleRTTR
     class MethodBinding;
 
     template<typename ClassType>
+    class ValueBinding;
+
+    template<typename ClassType>
     class TypeBinding : public TypeBindingBase
     {
     public:
@@ -38,6 +41,9 @@ namespace SimpleRTTR
         template <typename MethodType>
         inline MethodBinding<ClassType> Method(MethodType methodPtr, const stdrttr::string& name, const std::initializer_list<stdrttr::string>& paramNames);
 
+        template <typename EnumType>
+        inline ValueBinding<ClassType> Value(EnumType value, const stdrttr::string& name);
+
     protected:
         inline TypeBinding();
 
@@ -48,16 +54,16 @@ namespace SimpleRTTR
     class PropertyBinding : public TypeBinding<ClassType>
     {
     public:
-        inline PropertyBinding(class Property& method, TypeData& typeData);
+        inline PropertyBinding(class Property& property, TypeData& typeData);
 
-        template <typename... MetaType>
-        inline PropertyBinding& Meta(MetaType...);
+        template <typename MetaKey, typename MetaValue>
+        inline PropertyBinding& Meta(MetaKey key, MetaValue value);
 
         template <typename MetaKey, typename MetaValue>
         inline PropertyBinding& Meta(MetaKey key, const std::initializer_list<MetaValue>& value);
 
     protected:
-        class Property& _Property;
+        class PropertyData& _PropertyData;
     };
 
     template<typename ClassType>
@@ -74,5 +80,21 @@ namespace SimpleRTTR
 
     protected:
         class Method& _Method;
+    };
+
+    template<typename ClassType>
+    class ValueBinding : public TypeBinding<ClassType>
+    {
+    public:
+        inline ValueBinding(class Value& value, TypeData& typeData);
+
+        template <typename... MetaType>
+        inline ValueBinding& Meta(MetaType...);
+
+        template <typename MetaKey, typename MetaValue>
+        inline ValueBinding& Meta(MetaKey key, const std::initializer_list<MetaValue>& value);
+
+    protected:
+        class Value& _Value;
     };
 }

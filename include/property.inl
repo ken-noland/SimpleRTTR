@@ -1,53 +1,36 @@
 namespace SimpleRTTR
 {
-    PropertyData::PropertyData(stdrttr::string name, const class Type& type, std::size_t offset, PropertyFlagsBits flags)
+    inline PropertyData& _InternalGetPropertyDataRef(Property& prop);
+
+    PropertyData::PropertyData(stdrttr::string name, const class Type& type, std::size_t offset)
         :
-        _Name(name),
-        _Type(type),
-        _Offset(offset),
-        _Flags(flags)
+        Name(name),
+        Type(type),
+        Offset(offset)
     {
     }
 
     PropertyData::PropertyData(PropertyData&& data)
         :
-        _Name(std::move(data._Name)),
-        _Type(data._Type),
-        _Offset(data._Offset),
-        _Flags(data._Flags)
+        Name(std::move(data.Name)),
+        Type(data.Type),
+        Offset(data.Offset),
+        Flags(data.Flags),
+        Meta(std::move(data.Meta))
     {
     }
 
     PropertyData::PropertyData(const PropertyData& data)
         :
-        _Name(data._Name),
-        _Type(data._Type),
-        _Offset(data._Offset),
-        _Flags(data._Flags)
+        Name(data.Name),
+        Type(data.Type),
+        Offset(data.Offset),
+        Flags(data.Flags),
+        Meta(data.Meta)
     {
 
     }
 
-    const stdrttr::string& PropertyData::Name() const
-    {
-        return _Name;
-    }
-
-    const Type& PropertyData::Type() const
-    {
-        return _Type;
-    }
-
-    const std::size_t PropertyData::Offset() const
-    {
-        return _Offset;
-    }
-
-
-    const PropertyData::PropertyFlagsBits& PropertyData::Flags() const
-    {
-        return _Flags;
-    }
 
     Property::Property(Property&& prop)
         :
@@ -79,17 +62,27 @@ namespace SimpleRTTR
 
     const stdrttr::string& Property::Name() const
     {
-        return _PropData.Name();
+        return _PropData.Name;
     }
 
     const std::size_t Property::Offset() const
     {
-        return _PropData.Offset();
+        return _PropData.Offset;
     }
 
     const class Type& Property::Type() const
     {
-        return _PropData.Type();
+        return _PropData.Type;
+    }
+
+    const Property::MetaList& Property::Meta() const
+    {
+        return _PropData.Meta;
+    }
+
+    void Property::ForEach(Property::MetaFunction eval) const
+    {
+        std::for_each(Meta().begin(), Meta().end(), eval);
     }
 
     bool Property::IsConst()
@@ -102,6 +95,11 @@ namespace SimpleRTTR
     {
         //TODO
         return false;
+    }
+
+    inline PropertyData& _InternalGetPropertyDataRef(Property& prop)
+    {
+        return prop._PropData;
     }
 
 }

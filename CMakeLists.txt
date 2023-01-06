@@ -7,7 +7,9 @@ option(SIMPLERTTR_BUILD_TESTS "Build the tests" true)
 
 set(SIMPLERTTR_SRC		src/types.cpp)
 
-set(SIMPLERTTR_HEADERS	include/simplerttrassert.h
+set(SIMPLERTTR_HEADERS	include/helpers.h
+						include/meta.h
+						include/meta.inl
 						include/method.h
 						include/method.inl
 						include/property.h
@@ -16,13 +18,19 @@ set(SIMPLERTTR_HEADERS	include/simplerttrassert.h
 						include/registration.inl
 						include/simplerttr.h
 						include/simplerttr.inl
+						include/simplerttrassert.h
+						include/stdtypes.h
 						include/typebinding.h
 						include/typebinding.inl
 						include/typedata.h
+						include/typedata.inl
+						include/typehelpers.h
 						include/types.h
 						include/types.inl
+						include/value.h
 						include/variant.h
 						include/variant.inl
+						include/variant_tostring.inl
 )
 
 add_library(SimpleRTTR STATIC ${SIMPLERTTR_SRC} ${SIMPLERTTR_HEADERS})
