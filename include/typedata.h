@@ -26,7 +26,7 @@ namespace SimpleRTTR
         PropertyList Properties;
         MethodList Methods;
 
-        MetaList Meta;
+        MetaList Metadata;
 
         NamespaceList Namespaces;
         TemplateTypeList TemplateParams;

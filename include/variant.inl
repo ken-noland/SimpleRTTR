@@ -22,6 +22,7 @@ namespace SimpleRTTR
     Variant& Variant::operator=(const Variant& meta)
     {
         _Value = meta._Value;
+        return *this;
     }
 
     const std::any& Variant::Value() const

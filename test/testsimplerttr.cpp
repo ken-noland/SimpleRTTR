@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <SimpleRTTR.h>
+#include <simplerttr.h>
 
 class SimpleRTTRTestClass1
 {
@@ -157,7 +157,7 @@ TEST(RTTRRegistration, TestVoidPointerMember)
     Property voidpointerMember = test.Properties()[8];
     EXPECT_EQ(voidpointerMember.Name(), "voidpointerMember");
     EXPECT_EQ(voidpointerMember.Offset(), offsetof(SimpleRTTRTestClass1, voidpointerMember));
-    EXPECT_EQ(voidpointerMember.Type().Name(), "void *");
+    EXPECT_EQ(voidpointerMember.Type().Name(), "void*");
     EXPECT_EQ(voidpointerMember.Type().Size(), sizeof(void*));
 }
 

@@ -9,9 +9,14 @@
 #include <any>
 #include <locale>
 #include <string>
+#include <cstring>
 #include <sstream>
 #include <functional>
 #include <algorithm>
+
+#if defined(__GNUC__) || defined(__GNUG__)
+#include <cxxabi.h>
+#endif //__GNUC__
 
 //predeclarations
 namespace SimpleRTTR
@@ -20,6 +25,9 @@ namespace SimpleRTTR
     class Type;
     class TypeData;
     class TypeHelperBase;
+    class TypeManager;
+
+    inline TypeManager& Types();
 }
 
 //definitions
@@ -32,8 +40,8 @@ namespace SimpleRTTR
 #include "method.h"
 #include "value.h"
 #include "typedata.h"
-#include "typehelpers.h"
 #include "types.h"
+#include "typehelpers.h"
 #include "typebinding.h"
 #include "registration.h"
 

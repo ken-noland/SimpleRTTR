@@ -64,7 +64,7 @@ namespace SimpleRTTR
     TypeBinding<ClassType>& TypeBinding<ClassType>::Meta(MetaKey key, MetaValue value)
     {
         class Meta meta(key, value);
-        _TypeData.Meta.push_back(meta);
+        _TypeData.Metadata.push_back(meta);
         return *this;
     }
 
@@ -74,7 +74,7 @@ namespace SimpleRTTR
     {
         //need to copy the contents of value to vector since initializer_list only stores stack pointers
         class Meta meta(key, stdrttr::vector<MetaValue>(value));
-        _TypeData.Meta.push_back(meta);
+        _TypeData.Metadata.push_back(meta);
         return *this;
     }
 
@@ -158,8 +158,8 @@ namespace SimpleRTTR
     template<typename ClassType>
     PropertyBinding<ClassType>::PropertyBinding(class Property& property, TypeData& typeData)
         :
-        TypeBinding(typeData),
-        _PropertyData(_InternalGetPropertyDataRef(property))
+        TypeBinding<ClassType>(typeData),
+        _Property(_property)
     {
     }
 
@@ -185,7 +185,7 @@ namespace SimpleRTTR
     template<typename ClassType>
     MethodBinding<ClassType>::MethodBinding(class Method& method, TypeData& typeData)
         :
-        TypeBinding(typeData),
+        TypeBinding<ClassType>(typeData),
         _Method(method)
     {
     }

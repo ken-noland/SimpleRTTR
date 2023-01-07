@@ -67,9 +67,21 @@ namespace SimpleRTTR
 
         inline stdrttr::string ParseFullyQualifiedName(const char* typeName, QualifiedNameParseFunc parseQualifiedName)
         {
-            std::size_t slen = strlen(typeName);
+#           if defined(__GNUC__) || defined(__GNUG__)
+            int status = -1;
+            std::unique_ptr<char, void(*)(void*)> res {
+                abi::__cxa_demangle(typeName, NULL, NULL, &status),
+                std::free
+            };
+
+            const char* realTypeName = (status == 0) ? res.get() : typeName;
+#           else
+            const char* realTypeName = typeName;
+#           endif
+
+            std::size_t slen = strlen(realTypeName);
             char* charQualifiedName = static_cast<char*>(alloca(slen + 1));
-            memcpy(charQualifiedName, typeName, slen + 1);
+            memcpy(charQualifiedName, realTypeName, slen + 1);
 
             if (parseQualifiedName != nullptr)
             {
@@ -81,10 +93,11 @@ namespace SimpleRTTR
 
         inline void ParseName(const std::type_info& typeInfo, QualifiedNameParseFunc parseQualifiedName)
         {
-            _QualifiedName = trim(ParseFullyQualifiedName(typeInfo.name(), parseQualifiedName));
+            stdrttr::string qualifiedName = ParseFullyQualifiedName(typeInfo.name(), parseQualifiedName);
+            _QualifiedName = trim(qualifiedName);
 
             stdrttr::string name = _QualifiedName;
-
+#       if defined(_MSC_VER)
             //remove the preceding "class " bit
             if (name.find("class ", 0) == 0)
             {
@@ -96,7 +109,7 @@ namespace SimpleRTTR
             {
                 name = name.substr(7);
             }
-
+#       endif
             name = RemoveTemplateArguments(name);
 
 #       if defined(_MSC_VER)
@@ -113,6 +126,11 @@ namespace SimpleRTTR
                 _Namespaces.push_back(name.substr(0, index));
                 name = name.substr(index + 2);
             }
+
+#       if defined(_MSC_VER)
+            //TODO: remove the space between the type and the "*" for MSVC compiler
+#       endif
+
             _Name = trim(name);
         }
 
@@ -142,6 +160,12 @@ namespace SimpleRTTR
         {
 #       if defined(__clang__)
 #       elif defined(__GNUC__) || defined(__GNUG__)
+            // For GCC compilers, after the name is demangled, the typeid looks
+            // like this
+            // "SimpleRTTR::TypeHelper<void>*"
+            // ^ leading              ^    ^^ trailing
+            const int leading = 23;
+            const int trailing = 2;
 #       elif defined(_MSC_VER)
             // For MSVC Compilers, typeid(this).name() returns the following
             // "class SimpleRTTR::TypeHelper<class Test> * __ptr64"

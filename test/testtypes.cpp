@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 
 //need to include the allocator before the SimpleRTTR header file
-#include "testallocator.h"
-#define SIMPLERTTR_CUSTOM_ALLOCATOR CustomAllocator
+//#include "testallocator.h"
+//#define SIMPLERTTR_CUSTOM_ALLOCATOR CustomAllocator
 
-#include <SimpleRTTR.h>
+#include <simplerttr.h>
 
 using namespace SimpleRTTR;
 
