@@ -159,7 +159,7 @@ namespace SimpleRTTR
     PropertyBinding<ClassType>::PropertyBinding(class Property& property, TypeData& typeData)
         :
         TypeBinding<ClassType>(typeData),
-        _Property(_property)
+        _PropertyData(_InternalPropertyGetPropertyDataRef(property))
     {
     }
 
@@ -168,7 +168,8 @@ namespace SimpleRTTR
     inline PropertyBinding<ClassType>& PropertyBinding<ClassType>::Meta(MetaKey key, MetaValue value)
     {
         class Meta meta(key, value);
-        _PropertyData.Meta.push_back(meta);
+        PropertyData::MetaList& propertyDataMetaList = _InternalPropertyDataGetMetaListRef(_PropertyData);
+        propertyDataMetaList.push_back(meta);
         return *this;
     }
 
@@ -178,7 +179,8 @@ namespace SimpleRTTR
     {
         //need to copy the contents of value to vector since initializer_list only stores stack pointers
         class Meta meta(key, stdrttr::vector<MetaValue>(value));
-        _PropertyData.Meta.push_back(meta);
+        PropertyData::MetaList& propertyDataMetaList = _InternalPropertyDataGetMetaListRef(_PropertyData);
+        propertyDataMetaList.push_back(meta);
         return *this;
     }
 

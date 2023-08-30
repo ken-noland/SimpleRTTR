@@ -77,16 +77,16 @@ TEST(RTTRProperties, TestPropertiesMeta)
         {
             EXPECT_EQ(meta[0].Key().Type(), Types().GetType<const char*>());
             EXPECT_EQ(meta[0].Key().ToString(), "description");
-            EXPECT_EQ(meta[0].Key().GetAs<const char*>(), "description");
+            EXPECT_EQ(meta[0].Key().GetAs<const char*>(), std::string("description"));
             EXPECT_EQ(meta[0].Value().Type(), Types().GetType<const char*>());
             EXPECT_EQ(meta[0].Value().ToString(), "a simple 1 byte type");
-            EXPECT_EQ(meta[0].Value().GetAs<const char*>(), "a simple 1 byte type");
+            EXPECT_EQ(meta[0].Value().GetAs<const char*>(), std::string("a simple 1 byte type"));
         }
 
         {
             EXPECT_EQ(meta[1].Key().Type(), Types().GetType<const char*>());
             EXPECT_EQ(meta[1].Key().ToString(), "numbers");
-            EXPECT_EQ(meta[1].Key().GetAs<const char*>(), "numbers");
+            EXPECT_EQ(meta[1].Key().GetAs<const char*>(), std::string("numbers"));
             EXPECT_EQ(meta[1].Value().Type(), Types().GetType<std::vector<int>>());
             std::vector<int> values = meta[1].Value().GetAs<std::vector<int>>();
             ASSERT_EQ(values.size(), 5);

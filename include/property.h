@@ -22,8 +22,17 @@ namespace SimpleRTTR
         inline const stdrttr::string& Name() const;
         inline const class Type& Type() const;
         inline const std::size_t Offset() const;
+        inline const MetaList& Meta() const;
 
-        MetaList Meta;
+    protected:
+        stdrttr::string _Name;
+        const class Type& _Type;
+        std::size_t _Offset;
+        PropertyFlagsBits _Flags;
+
+
+        friend MetaList& _InternalPropertyDataGetMetaListRef(PropertyData& prop);
+        MetaList _Meta;
     };
 
     class Property
@@ -49,7 +58,7 @@ namespace SimpleRTTR
         inline bool IsPointer();
 
     protected:
-        friend PropertyData& _InternalGetPropertyDataRef(Property& prop);
+        friend PropertyData& _InternalPropertyGetPropertyDataRef(Property& prop);
         PropertyData _PropData;
     };
 }

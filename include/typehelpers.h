@@ -109,6 +109,12 @@ namespace SimpleRTTR
             {
                 name = name.substr(7);
             }
+
+            //remove the preceding "enum " bit
+            if (name.find("enum ", 0) == 0)
+            {
+                name = name.substr(5);
+            }
 #       endif
             name = RemoveTemplateArguments(name);
 
