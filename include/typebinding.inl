@@ -91,7 +91,7 @@ namespace SimpleRTTR
 
         //PropertyData::PropertyFlagsBits flags;
 
-        PropertyData propData(name, type.GetFullyQualifiedName(), offset);
+        PropertyData propData(name, type, offset);
         class Property prop(propData);
 
         //check to see if property exists

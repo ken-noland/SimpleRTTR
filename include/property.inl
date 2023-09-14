@@ -2,7 +2,7 @@ namespace SimpleRTTR
 {
     inline PropertyData& _InternalPropertyGetPropertyDataRef(Property& prop);
 
-    PropertyData::PropertyData(const stdrttr::string& name, const stdrttr::string& type, std::size_t offset)
+    PropertyData::PropertyData(const stdrttr::string& name, const TypeReference& type, std::size_t offset)
         :
         _Name(name),
         _Type(type),
@@ -36,9 +36,9 @@ namespace SimpleRTTR
         return _Name;
     }
 
-    const Type PropertyData::Type() const
+    Type PropertyData::Type() const
     {
-        return Types().GetType(_Type);
+        return _Type.Type();
     }
 
     const std::size_t PropertyData::Offset() const
