@@ -13,10 +13,7 @@ namespace SimpleRTTR
         typedef void(*QualifiedNameParseFunc)(char* name);
 
         using NamespaceList = TypeData::NamespaceList;
-
-        //we need to store the types as pointers initially, which we then convert to references later.
-        using TemplateTypePtr = const Type*;
-        using TemplateTypeList = stdrttr::vector<TemplateTypePtr>;
+        using TemplateTypeList = stdrttr::vector<TypeReference>;
 
         typedef stdrttr::string (*ToStringFunction)(const Variant&);
 
@@ -222,7 +219,7 @@ namespace SimpleRTTR
     {
         //it's worth noting that this creates a pointer from a reference to a unique_ptr buried in 
         //  the TypeStorage vector... not something that should EVER be done under normal circumstances
-        outParams.push_back(&Types().GetOrCreateType<ClassType>());
+        outParams.push_back(TypeReference(Types().GetOrCreateType<ClassType>()));
     };
 
     template<typename ClassType, typename... TemplateArgs >
@@ -236,7 +233,7 @@ namespace SimpleRTTR
     template<typename ParameterType>
     void ParameterHelper(stdrttr::vector<Parameter>& outTypes)
     {
-        Parameter param("", Types().GetOrCreateType<ParameterType>().GetFullyQualifiedName());
+        Parameter param("", Types().GetOrCreateType<ParameterType>());
         outTypes.push_back(param);
     }
 
@@ -255,7 +252,7 @@ namespace SimpleRTTR
         stdrttr::vector<Parameter> params;
         ParameterHelper<ParameterTypes...>(params);
 
-        return Method(name, returnType.GetFullyQualifiedName(), params);
+        return Method(name, returnType, params);
     }
 
     template<typename RetType, typename ClassType>
@@ -263,6 +260,6 @@ namespace SimpleRTTR
     {
         Type returnType = Types().GetOrCreateType<RetType>();
         stdrttr::vector<Parameter> params;
-        return Method(name, returnType.GetFullyQualifiedName(), params);
+        return Method(name, returnType, params);
     }
 }

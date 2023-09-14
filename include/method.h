@@ -7,7 +7,7 @@ namespace SimpleRTTR
     class Parameter
     {
     public:
-        inline Parameter(const stdrttr::string& name, const stdrttr::string& type);
+        inline Parameter(const stdrttr::string& name, const TypeReference& type);
         inline Parameter(Parameter&& param);
         inline Parameter(const Parameter& param);
         inline Parameter& operator=(const Parameter& param);
@@ -17,7 +17,7 @@ namespace SimpleRTTR
 
     protected:
         stdrttr::string _Name;
-        stdrttr::string _Type;
+        TypeReference _Type;
     };
 
     class Method
@@ -25,7 +25,7 @@ namespace SimpleRTTR
     public:
         using ParamList = stdrttr::vector<Parameter>;
 
-        inline Method(const stdrttr::string& name, const stdrttr::string& retType, const ParamList& params);
+        inline Method(const stdrttr::string& name, const TypeReference& retType, const ParamList& params);
         inline Method(Method&& method);
         inline Method(const Method& method);
         inline Method& operator=(const Method& method);
@@ -36,7 +36,7 @@ namespace SimpleRTTR
 
     protected:
         stdrttr::string _Name;
-        stdrttr::string _RetType;
+        TypeReference _RetType;
         ParamList   _Params;
     };
 

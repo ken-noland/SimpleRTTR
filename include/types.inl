@@ -223,13 +223,13 @@ namespace SimpleRTTR
     }
 
     template<typename ClassType>
-    TypeData& TypeStorage::GetTypeData() const
+    const TypeData& TypeStorage::GetTypeData() const
     {
         TypeHelper<ClassType> typeHelper;
         return GetTypeData(typeHelper);
     }
 
-    TypeData& TypeStorage::GetTypeData(const stdrttr::string& name, std::size_t size) const
+    const TypeData& TypeStorage::GetTypeData(const stdrttr::string& name, std::size_t size) const
     {
         TypeList::const_iterator found = _Data.end();
         if (size != InvalidTypeSize())
@@ -244,15 +244,17 @@ namespace SimpleRTTR
                 return name.compare(typeData->GetFullyQualifiedName()) == 0 || name.compare(typeData->Name) == 0;
                 });
         }
-        if(found == _Data.end()) { throw std::invalid_argument("attempting to get a type that hasn't been registered"); }
+        if(found == _Data.end()) { return InvalidTypeData(); }
         return *(*found).get();
     }
 
-    TypeData& TypeStorage::GetTypeData(const TypeHelperBase& typeHelper) const
+    const TypeData& TypeStorage::GetTypeData(const TypeHelperBase& typeHelper) const
     {
-        return *(*std::find_if(_Data.begin(), _Data.end(), [&](const std::unique_ptr<TypeData>& typeData) {
+        TypeList::const_iterator found = std::find_if(_Data.begin(), _Data.end(), [&](const std::unique_ptr<TypeData>& typeData) {
             return typeHelper.QualifiedName() == typeData->FullyQualifiedName;
-            })).get();
+            });
+        if (found == _Data.end()) { return InvalidTypeData(); }
+        return *(*found).get();
     }
 
     TypeData& TypeStorage::GetOrUpdateTypeData(const TypeHelperBase& typeHelper, bool addedByUser)
@@ -302,7 +304,7 @@ namespace SimpleRTTR
         int index = 0;
         while (iter != typeHelper.TemplateParams().end())
         {
-            data.TemplateParams.push_back(*(*iter));
+            data.TemplateParams.push_back((*iter));
             ++iter;
         }
 

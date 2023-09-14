@@ -1,6 +1,6 @@
 namespace SimpleRTTR
 {
-    Parameter::Parameter(const stdrttr::string& name, const stdrttr::string& type)
+    Parameter::Parameter(const stdrttr::string& name, const TypeReference& type)
         :
         _Name(name),
         _Type(type)
@@ -39,10 +39,10 @@ namespace SimpleRTTR
 
     const Type Parameter::Type() const
     {
-        return Types().GetType(_Type);
+        return _Type.Type();
     }
 
-    Method::Method(const stdrttr::string& name, const stdrttr::string& retType, const Method::ParamList& params)
+    Method::Method(const stdrttr::string& name, const TypeReference& retType, const Method::ParamList& params)
         :
         _Name(name),
         _RetType(retType),
@@ -81,7 +81,7 @@ namespace SimpleRTTR
 
     const Type Method::ReturnType() const
     {
-        return Types().GetType(_RetType);
+        return _RetType.Type();
     }
 
     const Method::ParamList& Method::Parameters() const

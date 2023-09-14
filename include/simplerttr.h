@@ -24,6 +24,7 @@ namespace SimpleRTTR
 {
     class RegistrationManager;
     class Type;
+    class TypeReference;
     class TypeData;
     class TypeHelperBase;
     class TypeManager;
@@ -34,6 +35,7 @@ namespace SimpleRTTR
 //definitions
 #include "simplerttrassert.h"
 #include "stdtypes.h"
+#include "typereference.h"
 #include "helpers.h"
 #include "variant.h"
 #include "meta.h"
@@ -47,6 +49,7 @@ namespace SimpleRTTR
 #include "registration.h"
 
 //implementations
+#include "typereference.inl"
 #include "property.inl"
 #include "method.inl"
 #include "variant.inl"

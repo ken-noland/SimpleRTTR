@@ -9,8 +9,7 @@ namespace SimpleRTTR
         using MethodList = stdrttr::vector<Method>;
         using MetaList = stdrttr::vector<Meta>;
         using NamespaceList = stdrttr::vector<stdrttr::string>;
-        using TemplateTypeRef = std::reference_wrapper<const Type>;
-        using TemplateTypeList = stdrttr::vector<TemplateTypeRef>;
+        using TemplateTypeList = stdrttr::vector<TypeReference>;
         using ToStringFunction = std::add_pointer<stdrttr::string(const Variant&)>::type;
 
         inline TypeData(const TypeData& typeData);

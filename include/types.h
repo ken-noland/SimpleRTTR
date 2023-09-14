@@ -9,7 +9,6 @@ namespace SimpleRTTR
         using MethodList = TypeData::MethodList;
         using MetaList = TypeData::MetaList;
         using NamespaceList = TypeData::NamespaceList;
-        using TemplateTypeRef = TypeData::TemplateTypeRef;
         using TemplateTypeList = TypeData::TemplateTypeList;
 
         inline Type(const TypeData& data);
@@ -83,9 +82,9 @@ namespace SimpleRTTR
         inline bool HasTypeData(const TypeHelperBase& typeHelper) const;
 
         template<typename ClassType>
-        inline TypeData& GetTypeData() const;
-        inline TypeData& GetTypeData(const stdrttr::string& name, std::size_t size) const;
-        inline TypeData& GetTypeData(const TypeHelperBase& typeHelper) const;
+        inline const TypeData& GetTypeData() const;
+        inline const TypeData& GetTypeData(const stdrttr::string& name, std::size_t size) const;
+        inline const TypeData& GetTypeData(const TypeHelperBase& typeHelper) const;
 
         template<typename ClassType>
         inline TypeData& GetOrCreateType(bool _addedByUser);

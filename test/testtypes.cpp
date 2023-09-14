@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <gtest/gtest-spi.h>
 
 //need to include the allocator before the SimpleRTTR header file
 //#include "testallocator.h"
@@ -67,7 +68,7 @@ TEST(RTTRType, TestHasType)
 
 TEST(RTTRType, TestGetType)
 {
-    const Type& invalidType = Types().GetType<SimpleRTTRTestType>();
+    Type invalidType = Types().GetType<SimpleRTTRTestType>();
     EXPECT_EQ(invalidType, Type::InvalidType());
 
     Registration().Type<SimpleRTTRTestType>();
@@ -89,25 +90,25 @@ TEST(RTTRType, TestNamespaceType)
 
 TEST(RTTRType, TestSTLVector)
 {
-    const Type& validType = Types().GetOrCreateType<std::vector<int>>();
+    Type validType = Types().GetOrCreateType<std::vector<int>>();
     EXPECT_EQ(validType.Name(), "vector");
     ASSERT_EQ(validType.TemplateParams().size(), 2);
 
-    const Type& param1 = validType.TemplateParams()[0];
-    const Type& param2 = validType.TemplateParams()[1];
+    Type param1 = validType.TemplateParams()[0].Type();
+    Type param2 = validType.TemplateParams()[1].Type();
 
     EXPECT_EQ(param1.Name(), "int");
     EXPECT_EQ(param2.Name(), "allocator");
 
     ASSERT_EQ(param2.TemplateParams().size(), 1);
-    const Type& allocParam = param2.TemplateParams()[0];
+    Type allocParam = param2.TemplateParams()[0].Type();
     EXPECT_EQ(allocParam.Name(), "int");
 }
 
 
 TEST(RTTRType, TestTemplateTypeComaredToTypeInfo)
 {
-    const Type& vectorType1 = Types().GetOrCreateType<std::vector<int>>();
+    Type vectorType1 = Types().GetOrCreateType<std::vector<int>>();
 
 
     ////--------------------------------
@@ -122,8 +123,8 @@ TEST(RTTRType, TestTemplateTypeComaredToTypeInfo)
     //    ++iter;
     //}
 
-    const Type& vectorType2 = Types().GetType(typeid(std::vector<int>));
-    const Type& invalidType = Types().GetType<int>();
+    Type vectorType2 = Types().GetType(typeid(std::vector<int>));
+    Type invalidType = Types().GetType<int>();
 
     EXPECT_EQ(vectorType1, vectorType2);
     EXPECT_NE(vectorType1, invalidType);
@@ -133,7 +134,7 @@ TEST(RTTRType, TestTemplateWithinNamespace)
 {
     Registration().Type<SimpleRTTRTest::SimpleRTTRTestNamespaceWithTemplate<int>>();
 
-    const Type& validType = Types().GetType<SimpleRTTRTest::SimpleRTTRTestNamespaceWithTemplate<int>>();
+    Type validType = Types().GetType<SimpleRTTRTest::SimpleRTTRTestNamespaceWithTemplate<int>>();
     EXPECT_EQ(validType.Name(), "SimpleRTTRTestNamespaceWithTemplate");
     ASSERT_EQ(validType.Namespaces().size(), 1);
     EXPECT_EQ(validType.Namespaces()[0], "SimpleRTTRTest");

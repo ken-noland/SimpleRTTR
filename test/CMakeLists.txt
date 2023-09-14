@@ -11,7 +11,6 @@ set(SIMPLERTTR_TEST_SRC		testallocator.cpp
 							testtypes.cpp
 							testvarianttostring.cpp)
 
-#set(SIMPLERTTR_TEST_SRC		testproperties.cpp)
 
 set(SIMPLERTTR_TEST_HEADERS testallocator.h
 							testallocator.inl)

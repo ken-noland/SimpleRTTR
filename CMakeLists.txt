@@ -25,6 +25,8 @@ set(SIMPLERTTR_HEADERS	include/helpers.h
 						include/typedata.h
 						include/typedata.inl
 						include/typehelpers.h
+						include/typereference.h
+						include/typereference.inl
 						include/types.h
 						include/types.inl
 						include/value.h
