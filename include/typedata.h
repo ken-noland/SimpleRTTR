@@ -19,9 +19,12 @@ namespace SimpleRTTR
 
         inline bool Equals(const TypeData& typeData) const;
 
+        inline const stdrttr::string& GetFullyQualifiedName() const;
+
         stdrttr::string FullyQualifiedName;
         stdrttr::string Name;
         std::size_t Size;
+        bool RegisteredByUser;
 
         PropertyList Properties;
         MethodList Methods;
@@ -33,6 +36,7 @@ namespace SimpleRTTR
 
         ToStringFunction ToString;
 
+    //TODO: move the members to protected store to keep the API clean, and put in a few internal functions to get to the data we need
     protected:
         friend class TypeStorage;
         inline TypeData(); //do not allow creation of TypeData outside of the TypeStorage

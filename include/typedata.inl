@@ -55,4 +55,9 @@ namespace SimpleRTTR
             Size == typeData.Size &&
             FullyQualifiedName.compare(typeData.FullyQualifiedName) == 0);
     }
+
+    const stdrttr::string& TypeData::GetFullyQualifiedName() const
+    {
+        return FullyQualifiedName;
+    }
 }

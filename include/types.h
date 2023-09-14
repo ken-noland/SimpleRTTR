@@ -62,6 +62,8 @@ namespace SimpleRTTR
 
         inline stdrttr::string ToString(const Variant& var) const;
 
+        inline const stdrttr::string& GetFullyQualifiedName() const;
+
     protected:
         const TypeData& _TypeData;
     };
@@ -69,26 +71,36 @@ namespace SimpleRTTR
     class TypeStorage
     {
     public:
+        using TypePointer = std::unique_ptr<TypeData>;
+        using TypeList = stdrttr::vector<TypePointer>;
+
         static inline const TypeData& InvalidTypeData();
+        static inline constexpr std::size_t InvalidTypeSize();
 
         template<typename ClassType>
-        inline bool HasTypeData();
-        inline bool HasTypeData(const stdrttr::string& name, std::size_t size);
+        inline bool HasTypeData() const;
+        inline bool HasTypeData(const stdrttr::string& name, std::size_t size) const;
+        inline bool HasTypeData(const TypeHelperBase& typeHelper) const;
 
         template<typename ClassType>
-        inline TypeData& GetTypeData();
-        inline TypeData& GetTypeData(const stdrttr::string& name, std::size_t size);
+        inline TypeData& GetTypeData() const;
+        inline TypeData& GetTypeData(const stdrttr::string& name, std::size_t size) const;
+        inline TypeData& GetTypeData(const TypeHelperBase& typeHelper) const;
 
         template<typename ClassType>
-        inline TypeData& GetOrCreateType();
+        inline TypeData& GetOrCreateType(bool _addedByUser);
+
+        using TypeDataFunction = std::function<void(const class TypeData&)>;
+        inline void ForEach(TypeDataFunction eval) const;
 
     protected:
-        inline bool HasTypeData(const TypeHelperBase& typeHelper) const;
-        inline TypeData& GetTypeData(const TypeHelperBase& typeHelper);
+        friend class TypeManager;
 
-        inline TypeData& RegisterType(const TypeHelperBase& typeHelper);
+        inline TypeData& GetOrUpdateTypeData(const TypeHelperBase& typeHelper, bool addedByUser);
+        inline TypeData& RegisterType(const TypeHelperBase& typeHelper, bool addedByUser);
+        inline TypeData& RegisterType(const TypeData& typeData);
 
-        stdrttr::vector<std::unique_ptr<TypeData>> _Data;
+        TypeList _Data;
     };
 
     class TypeManager;
@@ -105,15 +117,15 @@ namespace SimpleRTTR
         template<class ClassType>
         inline bool HasType() const;
         inline bool HasType(const std::type_info& typeInfo) const;
-        inline bool HasType(const stdrttr::string& name, std::size_t size = -1) const;
+        inline bool HasType(const stdrttr::string& name, std::size_t size = TypeStorage::InvalidTypeSize()) const;
 
         template<class ClassType>
-        inline const Type& GetType() const;
-        inline const Type& GetType(const std::type_info& typeInfo) const;
-        inline const Type& GetType(const stdrttr::string& name, std::size_t size = -1) const;
+        inline const Type GetType() const;
+        inline const Type GetType(const std::type_info& typeInfo) const;
+        inline const Type GetType(const stdrttr::string& name, std::size_t size = TypeStorage::InvalidTypeSize()) const;
 
         template<class ClassType>
-        inline const Type& GetOrCreateType();
+        inline const Type GetOrCreateType();
 
         using TypeFunction = std::function<void(const class Type&)>;
         inline void ForEach(TypeFunction eval) const;
@@ -123,23 +135,12 @@ namespace SimpleRTTR
         friend class RegistrationManager;
 
         inline TypeStorage& GetStorage();  //only accessible from TypeBinding
+        inline const TypeStorage& GetStorage() const;  //only accessible from TypeBinding
         TypeStorage _TypeDataStorage;
 
         inline bool HasType(const TypeHelperBase& typeHelper) const;
-        inline const Type& GetType(const TypeHelperBase& typeHelper) const;
+        inline const Type GetType(const TypeHelperBase& typeHelper) const;
 
         inline void RegisterType(const TypeData& data);
-
-        using TypePointer = std::unique_ptr<Type>;
-        using TypeList = stdrttr::vector<TypePointer>;
-
-        TypeList _Types;
-
-    //TEMP
-    public:
-        using iterator = TypeList::const_iterator;
-
-        iterator begin() { return _Types.begin(); }
-        iterator end() { return _Types.end(); }
     };
 }

@@ -5,6 +5,7 @@
 #include <bitset>
 #include <stdexcept>
 #include <type_traits>
+#include <typeindex>
 #include <utility>
 #include <any>
 #include <locale>
@@ -60,8 +61,12 @@ namespace SimpleRTTR
                         class AutoRegister                          \
                         {                                           \
                         public:                                     \
-                            AutoRegister();                         \
+                            AutoRegister()                          \
+                            {                                       \
+                                Register();                         \
+                            }                                       \
+                            void Register();                        \
                         };                                          \
                         static const AutoRegister AutoReg;          \
                     }                                               \
-                    AutoRegister::AutoRegister()
+                    void AutoRegister::Register()

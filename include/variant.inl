@@ -37,7 +37,7 @@ namespace SimpleRTTR
         return std::any_cast<VariantType>(_Value);
     }
 
-    inline const class Type& Variant::Type() const
+    inline const class Type Variant::Type() const
     {
         return Types().GetType(_Value.type());
     }

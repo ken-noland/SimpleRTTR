@@ -35,6 +35,7 @@ namespace SimpleRTTR
         inline const ToStringFunction& ToStringFunc() const { return _ToStringFunc; }
 
         inline std::size_t Size() const { return _Size; }
+
     protected:
         inline stdrttr::string RemoveTemplateArguments(const stdrttr::string str, std::size_t offset = 0)
         {
@@ -235,7 +236,7 @@ namespace SimpleRTTR
     template<typename ParameterType>
     void ParameterHelper(stdrttr::vector<Parameter>& outTypes)
     {
-        Parameter param(Types().GetOrCreateType<ParameterType>());
+        Parameter param("", Types().GetOrCreateType<ParameterType>().GetFullyQualifiedName());
         outTypes.push_back(param);
     }
 
@@ -250,18 +251,18 @@ namespace SimpleRTTR
     template<typename RetType, typename ClassType, class... ParameterTypes>
     Method MethodHelper(RetType(ClassType::*)(ParameterTypes...), const stdrttr::string& name)
     {
-        const Type& returnType = Types().GetOrCreateType<RetType>();
+        Type returnType = Types().GetOrCreateType<RetType>();
         stdrttr::vector<Parameter> params;
         ParameterHelper<ParameterTypes...>(params);
 
-        return Method(name, returnType, params);
+        return Method(name, returnType.GetFullyQualifiedName(), params);
     }
 
     template<typename RetType, typename ClassType>
     Method MethodHelper(RetType(ClassType::*)(void), const stdrttr::string& name)
     {
-        const Type& returnType = Types().GetOrCreateType<RetType>();
+        Type returnType = Types().GetOrCreateType<RetType>();
         stdrttr::vector<Parameter> params;
-        return Method(name, returnType, params);
+        return Method(name, returnType.GetFullyQualifiedName(), params);
     }
 }

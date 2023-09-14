@@ -1,7 +1,8 @@
 namespace SimpleRTTR
 {
-    Parameter::Parameter(const class Type& type)
+    Parameter::Parameter(const stdrttr::string& name, const stdrttr::string& type)
         :
+        _Name(name),
         _Type(type)
     {
 
@@ -9,6 +10,7 @@ namespace SimpleRTTR
 
     Parameter::Parameter(Parameter&& param)
         :
+        _Name(param._Name),
         _Type(param._Type)
     {
 
@@ -16,6 +18,7 @@ namespace SimpleRTTR
 
     Parameter::Parameter(const Parameter& param)
         :
+        _Name(param._Name),
         _Type(param._Type)
     {
 
@@ -23,7 +26,8 @@ namespace SimpleRTTR
 
     Parameter& Parameter::operator=(const Parameter& param)
     {
-//        _Type = param._Type;
+        _Name = param._Name;
+        _Type = param._Type;
         return *this;
     }
 
@@ -33,12 +37,12 @@ namespace SimpleRTTR
         return _Name;
     }
 
-    const Type& Parameter::Type() const
+    const Type Parameter::Type() const
     {
-        return _Type;
+        return Types().GetType(_Type);
     }
 
-    Method::Method(const stdrttr::string& name, const Type& retType, const Method::ParamList& params)
+    Method::Method(const stdrttr::string& name, const stdrttr::string& retType, const Method::ParamList& params)
         :
         _Name(name),
         _RetType(retType),
@@ -75,9 +79,9 @@ namespace SimpleRTTR
         return _Name;
     }
 
-    const Type& Method::ReturnType() const
+    const Type Method::ReturnType() const
     {
-        return _RetType;
+        return Types().GetType(_RetType);
     }
 
     const Method::ParamList& Method::Parameters() const

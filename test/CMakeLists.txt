@@ -3,12 +3,15 @@ set(SIMPLERTTR_TEST_SRC		testallocator.cpp
 							testenum.cpp
 							testmeta.cpp
 							testmethod.cpp
+							testpreprocessor.cpp
 							testproperties.cpp
 							testsimplerttr.cpp
 							testtypehelper.cpp
 							testtypeinstance.cpp
 							testtypes.cpp
 							testvarianttostring.cpp)
+
+#set(SIMPLERTTR_TEST_SRC		testproperties.cpp)
 
 set(SIMPLERTTR_TEST_HEADERS testallocator.h
 							testallocator.inl)

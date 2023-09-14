@@ -16,7 +16,7 @@ namespace SimpleRTTR
         template<typename VariantType>
         inline VariantType GetAs() const;
 
-        inline const class Type& Type() const;
+        inline const class Type Type() const;
 
         inline stdrttr::string ToString() const;
 

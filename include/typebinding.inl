@@ -28,7 +28,7 @@ namespace SimpleRTTR
 
     void TypeBindingBase::RegisterType(const TypeData& typeData)
     {
-        TypeManager::GetInstance().RegisterType(typeData);
+//        TypeManager::GetInstance().RegisterType(typeData);
     }
 
     template<typename ClassType>
@@ -53,7 +53,7 @@ namespace SimpleRTTR
     }
 
     template<typename ClassType, typename MemberType>
-    typename std::enable_if<std::is_class<ClassType>::value == true, const Type&>::type
+    typename std::enable_if<std::is_class<ClassType>::value == true, const Type>::type
         PropertyHelper(MemberType ClassType::* memberPtr)
     {
         return Types().GetOrCreateType<MemberType>();
@@ -91,7 +91,7 @@ namespace SimpleRTTR
 
         //PropertyData::PropertyFlagsBits flags;
 
-        PropertyData propData(name, type, offset);
+        PropertyData propData(name, type.GetFullyQualifiedName(), offset);
         class Property prop(propData);
 
         //check to see if property exists
