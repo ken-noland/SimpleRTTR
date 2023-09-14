@@ -67,7 +67,7 @@ TEST(RTTRTypeInstance, TestTypeCreateInstance)
     EXPECT_EQ(SimpleRTTRTestCreateInstanceSimple::constructorCalled, false);
     EXPECT_EQ(SimpleRTTRTestCreateInstanceSimple::destructorCalled, false);
 
-    const Type& type = Types().GetType<SimpleRTTRTestCreateInstanceSimple>();
+    Type type = Types().GetType<SimpleRTTRTestCreateInstanceSimple>();
     SimpleRTTRTestCreateInstanceSimple* instance = type.CreateInstance<SimpleRTTRTestCreateInstanceSimple>();
 
     ASSERT_NE(instance, nullptr);
@@ -82,7 +82,7 @@ TEST(RTTRTypeInstance, TestConstructorWithParameters)
     EXPECT_EQ(Point::constructorCalled, false);
     EXPECT_EQ(Point::destructorCalled, false);
 
-    const Type& type = Types().GetType<Point>();
+    Type type = Types().GetType<Point>();
     Point* instance = type.CreateInstance<Point>(1.f, 2.f);
 
     ASSERT_NE(instance, nullptr);

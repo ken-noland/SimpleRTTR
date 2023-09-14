@@ -32,13 +32,13 @@ SIMPLERTTR
 
 TEST(RTTRMeta, TestTypeHasMeta)
 {
-    const Type& type = Types().GetType<SimpleRTTRTestMeta>();
+    Type type = Types().GetType<SimpleRTTRTestMeta>();
     ASSERT_EQ(type.Meta().size(), 4);
 }
 
 TEST(RTTRMeta, TestMetaStringKeyStringValue)
 {
-    const Type& type = Types().GetType<SimpleRTTRTestMeta>();
+    Type type = Types().GetType<SimpleRTTRTestMeta>();
 
     std::string stringKey;
     std::string stringValue;
@@ -58,7 +58,7 @@ TEST(RTTRMeta, TestMetaStringKeyStringValue)
 
 TEST(RTTRMeta, TestMetaIntKeyStringValue)
 {
-    const Type& type = Types().GetType<SimpleRTTRTestMeta>();
+    Type type = Types().GetType<SimpleRTTRTestMeta>();
 
     int intKey;
     std::string stringValue;
@@ -79,7 +79,7 @@ TEST(RTTRMeta, TestMetaIntKeyStringValue)
 
 TEST(RTTRMeta, TestMetaStringKeyIntValue)
 {
-    const Type& type = Types().GetType<SimpleRTTRTestMeta>();
+    Type type = Types().GetType<SimpleRTTRTestMeta>();
 
     std::string stringKey;
     int intValue;
@@ -100,7 +100,7 @@ TEST(RTTRMeta, TestMetaStringKeyIntValue)
 
 TEST(RTTRMeta, TestMetaStringKeyListValue)
 {
-    const Type& type = Types().GetType<SimpleRTTRTestMeta>();
+    Type type = Types().GetType<SimpleRTTRTestMeta>();
 
     std::string stringKey;
 
@@ -120,4 +120,9 @@ TEST(RTTRMeta, TestMetaStringKeyListValue)
     EXPECT_EQ(vectorValue[1], 2);
     EXPECT_EQ(vectorValue[2], 3);
     EXPECT_EQ(vectorValue[3], 4);
+}
+
+TEST(RTTRMeta, TestMetaOnFundamentalTypes)
+{
+
 }

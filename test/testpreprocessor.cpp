@@ -21,7 +21,7 @@ SIMPLERTTR
 
 TEST(RTTRPreprocessor, TestPreprocessorWorks)
 {
-    const Type& type = Types().GetType<SimpleRTTRTestPreprocessor>();
+    Type type = Types().GetType<SimpleRTTRTestPreprocessor>();
     Type::MetaList::const_iterator cppFileIter = std::find_if(type.Meta().begin(), type.Meta().end(), [&](const Meta& meta) {
         printf(meta.Key().Type().Name().c_str()); printf("\n");
         return false;

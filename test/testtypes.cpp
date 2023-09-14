@@ -73,7 +73,7 @@ TEST(RTTRType, TestGetType)
 
     Registration().Type<SimpleRTTRTestType>();
 
-    const Type& validType = Types().GetType<SimpleRTTRTestType>();
+    Type validType = Types().GetType<SimpleRTTRTestType>();
     EXPECT_EQ(validType.Name(), "SimpleRTTRTestType");
 }
 
@@ -82,7 +82,7 @@ TEST(RTTRType, TestNamespaceType)
 {
     Registration().Type<SimpleRTTRTest::SimpleRTTRTestNamespaceType>();
 
-    const Type& validType = Types().GetType<SimpleRTTRTest::SimpleRTTRTestNamespaceType>();
+    Type validType = Types().GetType<SimpleRTTRTest::SimpleRTTRTestNamespaceType>();
     EXPECT_EQ(validType.Name(), "SimpleRTTRTestNamespaceType");
     ASSERT_EQ(validType.Namespaces().size(), 1);
     EXPECT_EQ(validType.Namespaces()[0], "SimpleRTTRTest");
@@ -109,19 +109,6 @@ TEST(RTTRType, TestSTLVector)
 TEST(RTTRType, TestTemplateTypeComaredToTypeInfo)
 {
     Type vectorType1 = Types().GetOrCreateType<std::vector<int>>();
-
-
-    ////--------------------------------
-    //// print all types (temp)
-    ////--------------------------------
-    //TypeManager::iterator iter = Types().begin();
-    //while (iter != Types().end())
-    //{
-    //    const Type& t = *(*iter).get();
-    //    printf("%s - %s\n", t.Name().c_str(), t.FullyQualifiedName().c_str());
-
-    //    ++iter;
-    //}
 
     Type vectorType2 = Types().GetType(typeid(std::vector<int>));
     Type invalidType = Types().GetType<int>();

@@ -83,7 +83,7 @@ namespace SimpleRTTR
     template<typename MemberType>
     PropertyBinding<ClassType> TypeBinding<ClassType>::Property(MemberType memberPtr, const stdrttr::string& name)
     {
-        const Type& type = PropertyHelper<ClassType>(memberPtr);
+        Type type = PropertyHelper<ClassType>(memberPtr);
         std::size_t offset = OffsetHelper<ClassType>(memberPtr);
 
         //constexpr bool isConst = std::is_const<MemberType>();

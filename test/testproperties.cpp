@@ -33,7 +33,7 @@ SIMPLERTTR
 
 TEST(RTTRProperties, TestPropertiesList)
 {
-    const Type& type = Types().GetType<SimpleRTTRTestProperties1>();
+    Type type = Types().GetType<SimpleRTTRTestProperties1>();
     ASSERT_NE(type, Type::InvalidType());
 
     const Type::PropertyList& properties = type.Properties();
@@ -63,7 +63,7 @@ TEST(RTTRProperties, TestPropertiesList)
 
 TEST(RTTRProperties, TestPropertiesMeta)
 {
-    const Type& type = Types().GetType<SimpleRTTRTestProperties1>();
+    Type type = Types().GetType<SimpleRTTRTestProperties1>();
     ASSERT_NE(type, Type::InvalidType());
 
     const Type::PropertyList& properties = type.Properties();

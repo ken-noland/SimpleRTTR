@@ -54,18 +54,18 @@ SIMPLERTTR
 
 TEST(RTTRRegistration, TestBasicRegistration) 
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
     EXPECT_EQ(test.Name(), "SimpleRTTRTestClass1");
 }
 TEST(RTTRRegistration, TestBasicProperties)
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
     EXPECT_EQ(test.Properties().size(), 11);
 }
 
 TEST(RTTRRegistration, TestCharMember)
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
 
     Property charMember = test.Properties()[0];
     EXPECT_EQ(charMember.Name(), "charMember");
@@ -75,7 +75,7 @@ TEST(RTTRRegistration, TestCharMember)
 }
 TEST(RTTRRegistration, TestShortMember)
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
 
     Property shortMember = test.Properties()[1];
     EXPECT_EQ(shortMember.Name(), "shortMember");
@@ -86,7 +86,7 @@ TEST(RTTRRegistration, TestShortMember)
 
 TEST(RTTRRegistration, TestIntMember)
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
 
     Property intMember = test.Properties()[2];
     EXPECT_EQ(intMember.Name(), "intMember");
@@ -97,7 +97,7 @@ TEST(RTTRRegistration, TestIntMember)
 
 TEST(RTTRRegistration, TestLongMember)
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
 
     Property longMember = test.Properties()[3];
     EXPECT_EQ(longMember.Name(), "longMember");
@@ -108,7 +108,7 @@ TEST(RTTRRegistration, TestLongMember)
 
 TEST(RTTRRegistration, TestUCharMember)
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
 
     Property ucharMember = test.Properties()[4];
     EXPECT_EQ(ucharMember.Name(), "ucharMember");
@@ -119,7 +119,7 @@ TEST(RTTRRegistration, TestUCharMember)
 
 TEST(RTTRRegistration, TestUShortMember)
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
 
     Property ushortMember = test.Properties()[5];
     EXPECT_EQ(ushortMember.Name(), "ushortMember");
@@ -130,7 +130,7 @@ TEST(RTTRRegistration, TestUShortMember)
 
 TEST(RTTRRegistration, TestUIntMember)
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
 
     Property uintMember = test.Properties()[6];
     EXPECT_EQ(uintMember.Name(), "uintMember");
@@ -141,7 +141,7 @@ TEST(RTTRRegistration, TestUIntMember)
 
 TEST(RTTRRegistration, TestULongMember)
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
 
     Property ulongMember = test.Properties()[7];
     EXPECT_EQ(ulongMember.Name(), "ulongMember");
@@ -152,7 +152,7 @@ TEST(RTTRRegistration, TestULongMember)
 
 TEST(RTTRRegistration, TestVoidPointerMember)
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
 
     Property voidpointerMember = test.Properties()[8];
     EXPECT_EQ(voidpointerMember.Name(), "voidpointerMember");
@@ -163,7 +163,7 @@ TEST(RTTRRegistration, TestVoidPointerMember)
 
 TEST(RTTRRegistration, TestFloatMember)
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
 
     Property floatMember = test.Properties()[9];
     EXPECT_EQ(floatMember.Name(), "floatMember");
@@ -174,7 +174,7 @@ TEST(RTTRRegistration, TestFloatMember)
 
 TEST(RTTRRegistration, TestDoubleMember)
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
 
     Property doubleMember = test.Properties()[10];
     EXPECT_EQ(doubleMember.Name(), "doubleMember");
@@ -185,13 +185,13 @@ TEST(RTTRRegistration, TestDoubleMember)
 
 TEST(RTTRRegistration, TestBasicMethods)
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
     EXPECT_EQ(test.Methods().size(), 3);
 }
 
 TEST(RTTRRegistration, TestAddTwoPlusTwoMethod)
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
 
     const Method& method = test.Methods()[0];
     EXPECT_EQ(method.Name(), "AddTwoPlusTwo");
@@ -201,7 +201,7 @@ TEST(RTTRRegistration, TestAddTwoPlusTwoMethod)
 
 TEST(RTTRRegistration, TestAddTwoPlusXMethod)
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
 
     const Method& method = test.Methods()[1];
     EXPECT_EQ(method.Name(), "AddTwoPlusX");
@@ -214,7 +214,7 @@ TEST(RTTRRegistration, TestAddTwoPlusXMethod)
 
 TEST(RTTRRegistration, TestAddXPlusYMethod)
 {
-    const Type& test = Types().GetType<SimpleRTTRTestClass1>();
+    Type test = Types().GetType<SimpleRTTRTestClass1>();
 
     const Method& method = test.Methods()[2];
     EXPECT_EQ(method.Name(), "AddXPlusY");

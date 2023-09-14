@@ -36,7 +36,7 @@ SIMPLERTTR
 
 TEST(RTTREnum, TestBasicEnum)
 {
-    const Type& enumType = Types().GetType<Color>();
+    Type enumType = Types().GetType<Color>();
 
     EXPECT_EQ(enumType.Name(), "Color");
 }
