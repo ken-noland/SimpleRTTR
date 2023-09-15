@@ -95,11 +95,17 @@ namespace SimpleRTTR
     protected:
         friend class TypeManager;
 
+        //only the TypeManager can create a TypeStorage
+        inline TypeStorage(std::function<void(class TypeData&)> OnRegisterTypeCallback);
+
         inline TypeData& GetOrUpdateTypeData(const TypeHelperBase& typeHelper, bool addedByUser);
         inline TypeData& RegisterType(const TypeHelperBase& typeHelper, bool addedByUser);
         inline TypeData& RegisterType(const TypeData& typeData);
 
+
         TypeList _Data;
+
+        std::function<void(class TypeData&)> _OnRegisterTypeCallback;
     };
 
     class TypeManager;
@@ -133,13 +139,23 @@ namespace SimpleRTTR
         friend class TypeBindingBase;
         friend class RegistrationManager;
 
+        inline void BeginRegistration(const char* filename);
+        inline void EndRegistration();
+
         inline TypeStorage& GetStorage();  //only accessible from TypeBinding
         inline const TypeStorage& GetStorage() const;  //only accessible from TypeBinding
-        TypeStorage _TypeDataStorage;
 
         inline bool HasType(const TypeHelperBase& typeHelper) const;
         inline const Type GetType(const TypeHelperBase& typeHelper) const;
 
         inline void RegisterType(const TypeData& data);
+
+        //called once the type has been registered
+        inline void OnTypeRegistered(TypeData& data);
+
+    private:
+        TypeStorage _TypeDataStorage;
+
+        std::vector<Meta> _UserTypeMetadata;
     };
 }

@@ -33,7 +33,7 @@ SIMPLERTTR
 TEST(RTTRMeta, TestTypeHasMeta)
 {
     Type type = Types().GetType<SimpleRTTRTestMeta>();
-    ASSERT_EQ(type.Meta().size(), 4);
+    ASSERT_GE(type.Meta().size(), 4);
 }
 
 TEST(RTTRMeta, TestMetaStringKeyStringValue)

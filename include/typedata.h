@@ -34,7 +34,7 @@ namespace SimpleRTTR
 
         inline Property& GetOrCreateProperty(const stdrttr::string& name, const TypeReference& type, std::size_t offset);
         inline Method& GetOrCreateMethod(Method& method);
-        inline Meta& GetOrCreateMetadata(Meta& meta);
+        inline Meta& AddMetadata(const Meta& meta);
 
 
     protected:

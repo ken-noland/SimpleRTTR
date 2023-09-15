@@ -181,6 +181,14 @@ namespace SimpleRTTR
 
     //--
     //Type Storage
+    TypeStorage::TypeStorage(std::function<void(class TypeData&)> onRegisterTypeCallback)
+        :
+        _OnRegisterTypeCallback(onRegisterTypeCallback)
+    {
+
+    }
+
+
     const TypeData& TypeStorage::InvalidTypeData()
     {
         static TypeData invalidTypeData("<invalid>","<invalid>",-1);
@@ -309,7 +317,13 @@ namespace SimpleRTTR
     TypeData& TypeStorage::RegisterType(const TypeData& typeData)
     {
         _Data.push_back(std::make_unique<TypeData>(typeData));
-        return (*_Data.back().get());
+
+        TypeData& newTypeData = (*_Data.back().get());
+        if (_OnRegisterTypeCallback)
+        {
+            _OnRegisterTypeCallback(newTypeData);
+        }
+        return newTypeData;
     }
 
     void TypeStorage::ForEach(TypeDataFunction eval) const
@@ -325,6 +339,8 @@ namespace SimpleRTTR
     }
 
     TypeManager::TypeManager()
+        :
+        _TypeDataStorage([this](TypeData& typeData) { OnTypeRegistered(typeData); })
     {
 
     }
@@ -397,6 +413,16 @@ namespace SimpleRTTR
         }
     }
 
+    void TypeManager::BeginRegistration(const char* filename)
+    {
+        Meta source_filename("source_filename", filename);
+        _UserTypeMetadata.push_back(source_filename);
+    }
+
+    void TypeManager::EndRegistration()
+    {
+        _UserTypeMetadata.clear();
+    }
 
     TypeStorage& TypeManager::GetStorage()
     {
@@ -413,6 +439,19 @@ namespace SimpleRTTR
         GetStorage().RegisterType(data);
     }
 
+    void TypeManager::OnTypeRegistered(TypeData& data)
+    {
+        if (data.IsRegisteredByUser())
+        {
+            printf("Adding metadata to type %s\n", data.GetName().c_str());
+            //copy over the metadata in the user type meta section
+            for (const Meta& meta : _UserTypeMetadata)
+            {
+                data.AddMetadata(meta);
+            }
+        }
+    }
+
     void TypeManager::ForEach(TypeManager::TypeFunction eval) const
     {
         GetStorage().ForEach([&](const TypeData& typeData) {
@@ -420,5 +459,7 @@ namespace SimpleRTTR
             eval(type);
             });
     }
+
+
 
 }

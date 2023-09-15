@@ -15,6 +15,17 @@ namespace SimpleRTTR
         static inline RegistrationManager& GetInstance();
 
     protected:
+        friend void _InternalBeginRegistration(const char* filename);
+        friend void _InternalEndRegistration();
+
+        inline void BeginRegistration(const char* filename);
+        inline void EndRegistration();
+
         inline RegistrationManager();  //should only be used by the root registration manager
     };
+
+    //---
+    // internal functions
+    inline void _InternalBeginRegistration(const char* filename);
+    inline void _InternalEndRegistration();
 }

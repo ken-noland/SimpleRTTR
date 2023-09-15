@@ -233,8 +233,7 @@ namespace SimpleRTTR
     template<typename ParameterType>
     void ParameterHelper(stdrttr::vector<Parameter>& outTypes, std::initializer_list<stdrttr::string>::const_iterator nameIter, std::initializer_list<stdrttr::string>::const_iterator endIter)
     {
-        // Not enough names specified in the method declaration. You must have a name for each function parameter passed through.
-        SIMPLERTTR_ASSERT(nameIter != endIter);
+        SIMPLERTTR_ASSERT_MSG(nameIter != endIter, "Not enough names specified in the method declaration. You must have a name for each function parameter.");
 
         Parameter param(*nameIter, Types().GetOrCreateType<ParameterType>());
         outTypes.push_back(param);
@@ -265,8 +264,7 @@ namespace SimpleRTTR
     template<typename RetType, typename ClassType>
     Method MethodHelper(RetType(ClassType::*)(void), const stdrttr::string& name, const std::initializer_list<stdrttr::string>& paramNames)
     {
-        // No need to specify parameters names on method that have 0 parameters
-        SIMPLERTTR_ASSERT(paramNames.size() == 0);
+        SIMPLERTTR_ASSERT_MSG(paramNames.size() == 0, "No need to specify parameters names on method that have 0 parameters");
 
         Type returnType = Types().GetOrCreateType<RetType>();
         stdrttr::vector<Parameter> params;

@@ -37,4 +37,25 @@ namespace SimpleRTTR
         static RegistrationManager mgr;
         return mgr;
     }
+
+    void RegistrationManager::BeginRegistration(const char* filename)
+    {
+        Types().BeginRegistration(filename);
+    }
+
+    void RegistrationManager::EndRegistration()
+    {
+        Types().EndRegistration();
+    }
+
+
+    void _InternalBeginRegistration(const char* filename)
+    {
+        Registration().BeginRegistration(filename);
+    }
+
+    void _InternalEndRegistration()
+    {
+        Registration().EndRegistration();
+    }
 }

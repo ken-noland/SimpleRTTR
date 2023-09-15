@@ -66,7 +66,11 @@ namespace SimpleRTTR
                         public:                                     \
                             AutoRegister()                          \
                             {                                       \
+                                _InternalBeginRegistration(         \
+                                    __FILE__                        \
+                                );                                  \
                                 Register();                         \
+                                _InternalEndRegistration();         \
                             }                                       \
                             void Register();                        \
                         };                                          \

@@ -64,7 +64,7 @@ namespace SimpleRTTR
     TypeBinding<ClassType>& TypeBinding<ClassType>::Meta(MetaKey key, MetaValue value)
     {
         class Meta meta(key, value);
-        _TypeData.GetOrCreateMetadata(meta);
+        _TypeData.AddMetadata(meta);
         return *this;
     }
 
@@ -74,7 +74,7 @@ namespace SimpleRTTR
     {
         //need to copy the contents of value to vector since initializer_list only stores stack pointers
         class Meta meta(key, stdrttr::vector<MetaValue>(value));
-        _TypeData.GetOrCreateMetadata(meta);
+        _TypeData.AddMetadata(meta);
         return *this;
     }
 

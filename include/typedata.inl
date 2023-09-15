@@ -170,7 +170,7 @@ namespace SimpleRTTR
         return _Methods.back();
     }
 
-    Meta& TypeData::GetOrCreateMetadata(Meta& meta)
+    Meta& TypeData::AddMetadata(const Meta& meta)
     {
         //TODO: Check if the meta exists already
         _Metadata.push_back(meta);

@@ -18,4 +18,14 @@ namespace SimpleRTTR
         Variant _Key;
         Variant _Value;
     };
+
+    //follow std library conventions?
+    class MetaContainer
+    {
+    public:
+        template<typename MetaKey>
+        const Meta& Get(MetaKey key);
+    private:
+
+    };
 }

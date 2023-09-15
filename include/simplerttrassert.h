@@ -20,4 +20,15 @@
                     "    Statement: " #exp "\n";                    \
                 SIMPLERTTR_ERROR(message.c_str());                  \
             }
+#define SIMPLERTTR_ASSERT_MSG(exp, msg)                             \
+            if(!(exp))                                              \
+            {                                                       \
+                std::string message =                               \
+                    "Assertion Failed \n"                           \
+                    "    File: " __FILE__ "\n"                      \
+                    "    Line: " SIMPLERTTR_TOSTR(__LINE__) "\n"    \
+                    "    Statement: " #exp "\n";                    \
+                    "    Message: " msg "\n";                       \
+                SIMPLERTTR_ERROR(message.c_str());                  \
+            }
 #endif
