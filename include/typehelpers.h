@@ -231,33 +231,43 @@ namespace SimpleRTTR
     };
 
     template<typename ParameterType>
-    void ParameterHelper(stdrttr::vector<Parameter>& outTypes)
+    void ParameterHelper(stdrttr::vector<Parameter>& outTypes, std::initializer_list<stdrttr::string>::const_iterator nameIter, std::initializer_list<stdrttr::string>::const_iterator endIter)
     {
-        Parameter param("", Types().GetOrCreateType<ParameterType>());
+        // Not enough names specified in the method declaration. You must have a name for each function parameter passed through.
+        SIMPLERTTR_ASSERT(nameIter != endIter);
+
+        Parameter param(*nameIter, Types().GetOrCreateType<ParameterType>());
         outTypes.push_back(param);
     }
 
     template<typename ClassType, typename... Parameters>
     typename std::enable_if<sizeof...(Parameters) != 0, void>::type
-        ParameterHelper(stdrttr::vector<Parameter>& outTypes)
+        ParameterHelper(stdrttr::vector<Parameter>& outTypes, std::initializer_list<stdrttr::string>::const_iterator nameIter, std::initializer_list<stdrttr::string>::const_iterator endIter)
     {
-        ParameterHelper<ClassType>(outTypes);
-        ParameterHelper<Parameters...>(outTypes);
+        ParameterHelper<ClassType>(outTypes, nameIter, endIter);
+        ParameterHelper<Parameters...>(outTypes, ++nameIter, endIter);
     }
 
     template<typename RetType, typename ClassType, class... ParameterTypes>
-    Method MethodHelper(RetType(ClassType::*)(ParameterTypes...), const stdrttr::string& name)
+    Method MethodHelper(RetType(ClassType::*)(ParameterTypes...), const stdrttr::string& name, const std::initializer_list<stdrttr::string>& paramNames)
     {
+        using NameIter = std::initializer_list<stdrttr::string>::const_iterator;
+        NameIter paramNameIter = paramNames.begin();
+        NameIter paramNameEnd = paramNames.end();
+
         Type returnType = Types().GetOrCreateType<RetType>();
         stdrttr::vector<Parameter> params;
-        ParameterHelper<ParameterTypes...>(params);
+        ParameterHelper<ParameterTypes...>(params, paramNameIter, paramNameEnd);
 
         return Method(name, returnType, params);
     }
 
     template<typename RetType, typename ClassType>
-    Method MethodHelper(RetType(ClassType::*)(void), const stdrttr::string& name)
+    Method MethodHelper(RetType(ClassType::*)(void), const stdrttr::string& name, const std::initializer_list<stdrttr::string>& paramNames)
     {
+        // No need to specify parameters names on method that have 0 parameters
+        SIMPLERTTR_ASSERT(paramNames.size() == 0);
+
         Type returnType = Types().GetOrCreateType<RetType>();
         stdrttr::vector<Parameter> params;
         return Method(name, returnType, params);

@@ -94,7 +94,7 @@ namespace SimpleRTTR
     template<typename MethodType>
     MethodBinding<ClassType> TypeBinding<ClassType>::Method(MethodType methodPtr, const stdrttr::string& name)
     {
-        class Method methodData = MethodHelper(methodPtr, name);
+        class Method methodData = MethodHelper(methodPtr, name, {});
 
         //if you catch this error, then that means you should be specifying the parameter names(see the function below)
         SIMPLERTTR_ASSERT(methodData.Parameters().size() == 0);
@@ -107,7 +107,7 @@ namespace SimpleRTTR
     template<typename MethodType>
     MethodBinding<ClassType> TypeBinding<ClassType>::Method(MethodType methodPtr, const stdrttr::string& name, const std::initializer_list<stdrttr::string>& paramNames)
     {
-        class Method methodData = MethodHelper(methodPtr, name);
+        class Method methodData = MethodHelper(methodPtr, name, paramNames);
 
         //if you catch this error, then that means you need an equal number of names to parameters
         SIMPLERTTR_ASSERT(methodData.Parameters().size() == paramNames.size());
