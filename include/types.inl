@@ -68,22 +68,22 @@ namespace SimpleRTTR
 
     const stdrttr::string& Type::Name() const
     {
-        return _TypeData.Name;
+        return _TypeData.GetName();
     }
 
     const stdrttr::string& Type::FullyQualifiedName() const
     {
-        return _TypeData.FullyQualifiedName;
+        return _TypeData.GetFullyQualifiedName();
     }
 
     std::size_t Type::Size() const
     {
-        return _TypeData.Size;
+        return _TypeData.GetSize();
     }
 
     const Type::PropertyList& Type::Properties() const
     {
-        return _TypeData.Properties;
+        return _TypeData.GetPropertyList();
     }
 
     void Type::ForEach(Type::PropertyFunction function) const
@@ -98,7 +98,7 @@ namespace SimpleRTTR
 
     const Type::MethodList& Type::Methods() const
     {
-        return _TypeData.Methods;
+        return _TypeData.GetMethodList();
     }
 
     void Type::ForEach(Type::MethodFunction function) const
@@ -113,7 +113,7 @@ namespace SimpleRTTR
 
     const Type::MetaList& Type::Meta() const
     {
-        return _TypeData.Metadata;
+        return _TypeData.GetMetadata();
     }
 
     void Type::ForEach(Type::MetaFunction function) const
@@ -128,12 +128,12 @@ namespace SimpleRTTR
 
     const Type::NamespaceList& Type::Namespaces() const
     {
-        return _TypeData.Namespaces;
+        return _TypeData.GetNamespaces();
     }
 
     const Type::TemplateTypeList& Type::TemplateParams() const
     {
-        return _TypeData.TemplateParams;
+        return _TypeData.GetTemplateParams();
     }
 
     template<typename ClassType, typename Alloc, typename... Params>
@@ -171,7 +171,7 @@ namespace SimpleRTTR
 
     stdrttr::string Type::ToString(const Variant& var) const
     {
-        return _TypeData.ToString(var);
+        return _TypeData.GetToStringFunction()(var);
     }
 
     const stdrttr::string& Type::GetFullyQualifiedName() const
@@ -183,7 +183,7 @@ namespace SimpleRTTR
     //Type Storage
     const TypeData& TypeStorage::InvalidTypeData()
     {
-        static TypeData invalidTypeData;
+        static TypeData invalidTypeData("<invalid>","<invalid>",-1);
         return invalidTypeData;
     }
 
@@ -204,13 +204,13 @@ namespace SimpleRTTR
         if (size != InvalidTypeSize())
         {
             return std::find_if(_Data.begin(), _Data.end(), [&](const TypePointer& typeData) {
-                return size == typeData->Size && name == typeData->Name;
+                return size == typeData->GetSize() && name == typeData->GetName();
                 }) != _Data.end();
         }
         else
         {
             return std::find_if(_Data.begin(), _Data.end(), [&](const TypePointer& typeData) {
-                return name == typeData->Name;
+                return name == typeData->GetName();
                 }) != _Data.end();
         }
     }
@@ -218,7 +218,7 @@ namespace SimpleRTTR
     inline bool TypeStorage::HasTypeData(const TypeHelperBase& typeHelper) const
     {
         return std::find_if(_Data.begin(), _Data.end(), [&](const TypePointer& typeData) {
-            return typeHelper.Size() == typeData->Size && typeHelper.QualifiedName() == typeData->FullyQualifiedName;
+            return typeHelper.Size() == typeData->GetSize() && typeHelper.QualifiedName() == typeData->GetFullyQualifiedName();
             }) != _Data.end();
     }
 
@@ -235,13 +235,13 @@ namespace SimpleRTTR
         if (size != InvalidTypeSize())
         {
             found = std::find_if(_Data.begin(), _Data.end(), [&](const TypePointer& typeData) {
-                return size == typeData->Size && (name.compare(typeData->GetFullyQualifiedName()) == 0 || name.compare(typeData->Name)) == 0;
+                return size == typeData->GetSize() && (name.compare(typeData->GetFullyQualifiedName()) == 0 || name.compare(typeData->GetName()) == 0);
                 });
         }
         else
         {
             found = std::find_if(_Data.begin(), _Data.end(), [&](const TypePointer& typeData) {
-                return name.compare(typeData->GetFullyQualifiedName()) == 0 || name.compare(typeData->Name) == 0;
+                return name.compare(typeData->GetFullyQualifiedName()) == 0 || name.compare(typeData->GetName()) == 0;
                 });
         }
         if(found == _Data.end()) { return InvalidTypeData(); }
@@ -251,7 +251,7 @@ namespace SimpleRTTR
     const TypeData& TypeStorage::GetTypeData(const TypeHelperBase& typeHelper) const
     {
         TypeList::const_iterator found = std::find_if(_Data.begin(), _Data.end(), [&](const std::unique_ptr<TypeData>& typeData) {
-            return typeHelper.QualifiedName() == typeData->FullyQualifiedName;
+            return typeHelper.QualifiedName() == typeData->GetFullyQualifiedName();
             });
         if (found == _Data.end()) { return InvalidTypeData(); }
         return *(*found).get();
@@ -260,11 +260,11 @@ namespace SimpleRTTR
     TypeData& TypeStorage::GetOrUpdateTypeData(const TypeHelperBase& typeHelper, bool addedByUser)
     {
         TypeList::iterator typeIter = std::find_if(_Data.begin(), _Data.end(), [&](const std::unique_ptr<TypeData>& typeData) {
-            return typeHelper.QualifiedName() == typeData->FullyQualifiedName;
+            return typeHelper.QualifiedName() == typeData->GetFullyQualifiedName();
             });
 
         TypeData* type = (*typeIter).get();
-        if (!type->RegisteredByUser && addedByUser)
+        if (!type->IsRegisteredByUser() && addedByUser)
         {
             //well, we have a type that was auto-registered before, but now is being added by the user. Easiest way to 
             // deal with it is to remove the entry and simply re-register it. 
@@ -291,22 +291,17 @@ namespace SimpleRTTR
 
     TypeData& TypeStorage::RegisterType(const TypeHelperBase& typeHelper, bool addedByUser)
     {
-        TypeData data;
-        data.FullyQualifiedName = typeHelper.QualifiedName();
-        data.Name = typeHelper.Name();
-        data.Size = typeHelper.Size();
-        data.Namespaces = typeHelper.Namespaces();
-        data.ToString = typeHelper.ToStringFunc();
-        data.RegisteredByUser = addedByUser;
-
-        data.TemplateParams.reserve(typeHelper.TemplateParams().size());
-        TypeHelperBase::TemplateTypeList::const_iterator iter = typeHelper.TemplateParams().begin();
-        int index = 0;
-        while (iter != typeHelper.TemplateParams().end())
-        {
-            data.TemplateParams.push_back((*iter));
-            ++iter;
-        }
+        TypeData data(
+            typeHelper.Name(),
+            typeHelper.QualifiedName(),
+            typeHelper.Size(),
+            addedByUser,
+            {},
+            {},
+            {},
+            typeHelper.Namespaces(),
+            typeHelper.TemplateParams(),
+            typeHelper.ToStringFunc());
 
         return RegisterType(data);
     }

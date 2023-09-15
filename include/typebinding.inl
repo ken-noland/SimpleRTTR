@@ -64,7 +64,7 @@ namespace SimpleRTTR
     TypeBinding<ClassType>& TypeBinding<ClassType>::Meta(MetaKey key, MetaValue value)
     {
         class Meta meta(key, value);
-        _TypeData.Metadata.push_back(meta);
+        _TypeData.GetOrCreateMetadata(meta);
         return *this;
     }
 
@@ -74,7 +74,7 @@ namespace SimpleRTTR
     {
         //need to copy the contents of value to vector since initializer_list only stores stack pointers
         class Meta meta(key, stdrttr::vector<MetaValue>(value));
-        _TypeData.Metadata.push_back(meta);
+        _TypeData.GetOrCreateMetadata(meta);
         return *this;
     }
 
@@ -86,64 +86,34 @@ namespace SimpleRTTR
         Type type = PropertyHelper<ClassType>(memberPtr);
         std::size_t offset = OffsetHelper<ClassType>(memberPtr);
 
-        //constexpr bool isConst = std::is_const<MemberType>();
-        //constexpr bool isPointer = std::is_pointer<MemberType>();
-
-        //PropertyData::PropertyFlagsBits flags;
-
-        PropertyData propData(name, type, offset);
-        class Property prop(propData);
-
-        //check to see if property exists
-        TypeData::PropertyList::iterator iter = std::find_if(_TypeData.Properties.begin(), _TypeData.Properties.end(), [&prop](const class Property& existing)
-            {
-                if (existing.Offset() == prop.Offset() &&
-                    existing.Name() == prop.Name() &&
-                    existing.Type() == prop.Type()) {
-                    return true;
-                }
-                return false;
-            });
-        
-        if (iter == _TypeData.Properties.end()) 
-        {
-            //add it to the list if it doesn't exist already
-            _TypeData.Properties.push_back(prop);
-            return PropertyBinding<ClassType>(_TypeData.Properties.back(), _TypeData);
-        }
-        else
-        {
-            return PropertyBinding<ClassType>(*iter, _TypeData);
-        }
-
-
-        
+        class Property& prop = _TypeData.GetOrCreateProperty(name, type, offset);
+        return PropertyBinding<ClassType>(prop, _TypeData);
     }
 
     template<typename ClassType>
     template<typename MethodType>
     MethodBinding<ClassType> TypeBinding<ClassType>::Method(MethodType methodPtr, const stdrttr::string& name)
     {
-        class Method method = MethodHelper(methodPtr, name);
+        class Method methodData = MethodHelper(methodPtr, name);
 
         //if you catch this error, then that means you should be specifying the parameter names(see the function below)
-        SIMPLERTTR_ASSERT(method.Parameters().size() == 0);
+        SIMPLERTTR_ASSERT(methodData.Parameters().size() == 0);
 
-        _TypeData.Methods.push_back(method);
-        return MethodBinding<ClassType>(_TypeData.Methods.back(), _TypeData);
+        class Method& method = _TypeData.GetOrCreateMethod(methodData);
+        return MethodBinding<ClassType>(method, _TypeData);
     }
 
     template<typename ClassType>
     template<typename MethodType>
     MethodBinding<ClassType> TypeBinding<ClassType>::Method(MethodType methodPtr, const stdrttr::string& name, const std::initializer_list<stdrttr::string>& paramNames)
     {
-        class Method method = MethodHelper(methodPtr, name);
+        class Method methodData = MethodHelper(methodPtr, name);
 
         //if you catch this error, then that means you need an equal number of names to parameters
-        SIMPLERTTR_ASSERT(method.Parameters().size() == paramNames.size());
+        SIMPLERTTR_ASSERT(methodData.Parameters().size() == paramNames.size());
 
-        _TypeData.Methods.push_back(method);
-        return MethodBinding<ClassType>(_TypeData.Methods.back(), _TypeData);
+        class Method& method = _TypeData.GetOrCreateMethod(methodData);
+        return MethodBinding<ClassType>(method, _TypeData);
     }
 
     template<typename ClassType>

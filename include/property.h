@@ -15,6 +15,11 @@ namespace SimpleRTTR
         using PropertyFlagsBits = std::bitset<(uint16_t)PropertyFlags::PropertyFlagsMax>;
         using MetaList = stdrttr::vector<Meta>;
 
+        inline bool operator==(const PropertyData& data) const;
+
+        inline bool Equals(const PropertyData& data) const;
+
+
         inline PropertyData(const stdrttr::string& name, const TypeReference& type, std::size_t offset);
         inline PropertyData(PropertyData&& data);
         inline PropertyData(const PropertyData& data);
@@ -44,6 +49,10 @@ namespace SimpleRTTR
         inline Property(const Property& data);
         inline Property(const PropertyData& data);
         inline Property& operator=(const Property& prop);
+
+        inline bool operator==(const Property& data) const;
+
+        inline bool Equals(const Property& data) const;
 
         inline const stdrttr::string& Name() const;
         inline const class Type Type() const;

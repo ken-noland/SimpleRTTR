@@ -124,5 +124,16 @@ TEST(RTTRMeta, TestMetaStringKeyListValue)
 
 TEST(RTTRMeta, TestMetaOnFundamentalTypes)
 {
+    {
+        //verify that we haven't touched the meta on the "char" type
+        Type type = Types().GetType<char>();
+        EXPECT_EQ(type.Meta().size(), 0);
+    }
 
+    //register our own metadata on the char type
+    Registration().Type<char>()
+        .Meta("type", "fundamental");
+
+    Type type = Types().GetType<char>();
+    EXPECT_EQ(type.Meta().size(), 1);
 }

@@ -31,6 +31,16 @@ namespace SimpleRTTR
 
     }
 
+    bool PropertyData::operator==(const PropertyData& data) const
+    {
+        return Equals(data);
+    }
+
+    bool PropertyData::Equals(const PropertyData& data) const
+    {
+        return (_Name.compare(data._Name) == 0) && _Offset == data._Offset;
+    }
+
     const stdrttr::string& PropertyData::Name() const
     {
         return _Name;
@@ -82,6 +92,16 @@ namespace SimpleRTTR
     {
         std::memcpy(&_PropData, &prop._PropData, sizeof(PropertyData));
         return *this;
+    }
+
+    bool Property::operator==(const Property& data) const
+    {
+        return Equals(data);
+    }
+
+    bool Property::Equals(const Property& data) const
+    {
+        return _PropData.Equals(data._PropData);
     }
 
     const stdrttr::string& Property::Name() const

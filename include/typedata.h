@@ -18,26 +18,54 @@ namespace SimpleRTTR
 
         inline bool Equals(const TypeData& typeData) const;
 
+        inline const stdrttr::string& GetName() const;
         inline const stdrttr::string& GetFullyQualifiedName() const;
+        inline std::size_t GetSize() const;
+        inline bool IsRegisteredByUser() const;
 
-        stdrttr::string FullyQualifiedName;
-        stdrttr::string Name;
-        std::size_t Size;
-        bool RegisteredByUser;
+        inline const PropertyList& GetPropertyList() const;
+        inline const MethodList& GetMethodList() const;
+        inline const NamespaceList& GetNamespaces() const;
+        inline const TemplateTypeList& GetTemplateParams() const;
 
-        PropertyList Properties;
-        MethodList Methods;
+        inline const MetaList& GetMetadata() const;
 
-        MetaList Metadata;
+        inline const ToStringFunction GetToStringFunction() const;
 
-        NamespaceList Namespaces;
-        TemplateTypeList TemplateParams;
+        inline Property& GetOrCreateProperty(const stdrttr::string& name, const TypeReference& type, std::size_t offset);
+        inline Method& GetOrCreateMethod(Method& method);
+        inline Meta& GetOrCreateMetadata(Meta& meta);
 
-        ToStringFunction ToString;
 
-    //TODO: move the members to protected store to keep the API clean, and put in a few internal functions to get to the data we need
     protected:
+        stdrttr::string _Name;
+        stdrttr::string _FullyQualifiedName;
+        std::size_t _Size;
+        bool _RegisteredByUser;
+
+        PropertyList _Properties;
+        MethodList _Methods;
+        NamespaceList _Namespaces;
+        TemplateTypeList _TemplateParams;
+
+        MetaList _Metadata;
+
+        ToStringFunction _ToStringFunc;
+
         friend class TypeStorage;
-        inline TypeData(); //do not allow creation of TypeData outside of the TypeStorage
+        inline TypeData(const stdrttr::string& name,
+            const stdrttr::string& fullyQualifiedName,
+            std::size_t size,
+            bool registeredByUser,
+            PropertyList properties,
+            MethodList methods,
+            MetaList metadata,
+            NamespaceList namespaces,
+            TemplateTypeList templateParams,
+            ToStringFunction toStringFunc);
+
+        inline TypeData(const stdrttr::string& name,
+            const stdrttr::string& fqn,
+            std::size_t size);
     };
 }
