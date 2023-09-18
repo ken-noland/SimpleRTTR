@@ -12,12 +12,16 @@ namespace SimpleRTTR
         VariantType var1 = std::any_cast<VariantType>(lhs);
         VariantType var2 = std::any_cast<VariantType>(rhs);
 
-        if constexpr(std::is_integral<VariantType>::value)
+        if constexpr (
+            std::is_integral<VariantType>::value ||
+            std::is_pointer_v<VariantType> ||
+            std::is_member_function_pointer_v<VariantType>
+            )
         {
             return var1 == var2;
         }
 
-        SIMPLERTTR_ASSERT_MSG(false, "Unable to determine eqaulity for non-intergral types")
+        SIMPLERTTR_ASSERT_MSG(false, "Unable to determine equality for non-integral types")
     }
 
     template<>
@@ -45,13 +49,15 @@ namespace SimpleRTTR
 
     Variant::Variant(const Variant& var)
         :
-        _Value(var._Value)
+        _Value(var._Value),
+        _Comparator(var._Comparator)
     {
     }
 
     Variant::Variant(Variant&& var)
         :
-        _Value(std::move(var._Value))
+        _Value(std::move(var._Value)),
+        _Comparator(std::move(var._Comparator))
     {
     }
 
@@ -78,7 +84,8 @@ namespace SimpleRTTR
     template<typename ObjectType>
     bool Variant::operator==(const ObjectType& var) const
     {
-        SIMPLERTTR_ASSERT_MSG(false, "variant compare not yet implemented");
+        Variant varType(var);
+        return operator==(varType);
     }
 
     const std::any& Variant::Value() const

@@ -9,6 +9,8 @@ public:
     char property1;
     char property2;
     char property3;
+
+    void someFunc(int p1, int p2) { };
 };
 
 using namespace SimpleRTTR;
@@ -20,6 +22,7 @@ SIMPLERTTR
         .Meta(42, "here is an int as a key")
         .Meta("here is an int as a value", 32)
         .Meta("this should resolve to std::vector<int>", { 1, 2, 3, 4 })
+        .Meta("and here's a function pointer", &SimpleRTTRTestMeta::someFunc)
 
         .Property(&SimpleRTTRTestMeta::property1, "property1")
             .Meta("This is a key", "and this is the value")
@@ -127,6 +130,16 @@ TEST(RTTRMeta, TestMetaStringKeyListValue)
     EXPECT_EQ(vectorValue[2], 3);
     EXPECT_EQ(vectorValue[3], 4);
 }
+
+TEST(RTTRMeta, TestMetaStringKeyFuncPointerValue)
+{
+    Type type = Types().GetType<SimpleRTTRTestMeta>();
+    const Meta& meta = type.Meta().Get("and here's a function pointer");
+    ASSERT_NE(meta, Meta::InvalidMeta());
+
+    EXPECT_EQ(meta.Value(), &SimpleRTTRTestMeta::someFunc);
+}
+
 
 TEST(RTTRMeta, TestMetaOnFundamentalTypes)
 {
