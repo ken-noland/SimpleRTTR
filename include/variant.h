@@ -7,9 +7,16 @@ namespace SimpleRTTR
     public:
         template<typename VariantType>
         inline Variant(VariantType value);
+
         inline Variant(const Variant& var);
         inline Variant(Variant&& var);
         inline Variant& operator=(const Variant& meta);
+
+        inline bool operator==(const Variant& var) const;
+        inline bool operator!=(const Variant& var) const;
+
+        template<typename ObjectType>
+        inline bool operator==(const ObjectType& var) const;
 
         inline const std::any& Value() const;
 
@@ -22,6 +29,9 @@ namespace SimpleRTTR
 
     protected:
         std::any _Value;
+
+        using CompareFunc = std::add_pointer<bool(const std::any&, const std::any&)>::type;
+        CompareFunc _Comparator;
     };
 
     template<typename VariantType>

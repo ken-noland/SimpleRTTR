@@ -6,9 +6,6 @@ namespace SimpleRTTR
         const stdrttr::string& fullyQualifiedName,
         std::size_t size,
         bool registeredByUser,
-        PropertyList properties,
-        MethodList methods,
-        MetaList metadata,
         NamespaceList namespaces,
         TemplateTypeList templateParams,
         ToStringFunction toStringFunc)
@@ -17,9 +14,6 @@ namespace SimpleRTTR
         _FullyQualifiedName(fullyQualifiedName),
         _Size(size),
         _RegisteredByUser(registeredByUser),
-        _Properties(properties),
-        _Methods(methods),
-        _Metadata(metadata),
         _Namespaces(namespaces),
         _TemplateParams(templateParams),
         _ToStringFunc(toStringFunc)
@@ -135,7 +129,7 @@ namespace SimpleRTTR
         return _TemplateParams;
     }
 
-    const TypeData::MetaList& TypeData::GetMetadata() const
+    const MetaContainer& TypeData::GetMetadata() const
     {
         return _Metadata;
     }

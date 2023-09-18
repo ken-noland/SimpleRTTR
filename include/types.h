@@ -7,7 +7,6 @@ namespace SimpleRTTR
     public:
         using PropertyList = TypeData::PropertyList;
         using MethodList = TypeData::MethodList;
-        using MetaList = TypeData::MetaList;
         using NamespaceList = TypeData::NamespaceList;
         using TemplateTypeList = TypeData::TemplateTypeList;
 
@@ -38,7 +37,7 @@ namespace SimpleRTTR
         using MethodFunction = std::function<void(const class Method&)>;
         inline void ForEach(MethodFunction function) const;
 
-        inline const MetaList& Meta() const;
+        inline const MetaContainer& Meta() const;
         using MetaFunction = std::function<void(const class Meta&)>;
         inline void ForEach(MetaFunction function) const;
 

@@ -7,7 +7,6 @@ namespace SimpleRTTR
     public:
         using PropertyList = stdrttr::vector<Property>;
         using MethodList = stdrttr::vector<Method>;
-        using MetaList = stdrttr::vector<Meta>;
         using NamespaceList = stdrttr::vector<stdrttr::string>;
         using TemplateTypeList = stdrttr::vector<TypeReference>;
         using ToStringFunction = std::add_pointer<stdrttr::string(const Variant&)>::type;
@@ -28,7 +27,7 @@ namespace SimpleRTTR
         inline const NamespaceList& GetNamespaces() const;
         inline const TemplateTypeList& GetTemplateParams() const;
 
-        inline const MetaList& GetMetadata() const;
+        inline const MetaContainer& GetMetadata() const;
 
         inline const ToStringFunction GetToStringFunction() const;
 
@@ -48,7 +47,7 @@ namespace SimpleRTTR
         NamespaceList _Namespaces;
         TemplateTypeList _TemplateParams;
 
-        MetaList _Metadata;
+        MetaContainer _Metadata;
 
         ToStringFunction _ToStringFunc;
 
@@ -57,9 +56,6 @@ namespace SimpleRTTR
             const stdrttr::string& fullyQualifiedName,
             std::size_t size,
             bool registeredByUser,
-            PropertyList properties,
-            MethodList methods,
-            MetaList metadata,
             NamespaceList namespaces,
             TemplateTypeList templateParams,
             ToStringFunction toStringFunc);

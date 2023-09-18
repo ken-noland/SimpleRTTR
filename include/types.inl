@@ -111,14 +111,14 @@ namespace SimpleRTTR
         }
     }
 
-    const Type::MetaList& Type::Meta() const
+    const MetaContainer& Type::Meta() const
     {
         return _TypeData.GetMetadata();
     }
 
     void Type::ForEach(Type::MetaFunction function) const
     {
-        Type::MetaList::const_iterator iter = Meta().begin();
+        MetaContainer::const_iterator iter = Meta().begin();
         while (iter != Meta().end())
         {
             function(*iter);
@@ -304,9 +304,6 @@ namespace SimpleRTTR
             typeHelper.QualifiedName(),
             typeHelper.Size(),
             addedByUser,
-            {},
-            {},
-            {},
             typeHelper.Namespaces(),
             typeHelper.TemplateParams(),
             typeHelper.ToStringFunc());
@@ -459,7 +456,4 @@ namespace SimpleRTTR
             eval(type);
             });
     }
-
-
-
 }
