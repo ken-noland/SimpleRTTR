@@ -8,6 +8,7 @@ option(SIMPLERTTR_BUILD_TESTS "Build the tests" true)
 set(SIMPLERTTR_SRC		src/types.cpp)
 
 set(SIMPLERTTR_HEADERS	include/helpers.h
+						include/iterator.h
 						include/meta.h
 						include/meta.inl
 						include/method.h

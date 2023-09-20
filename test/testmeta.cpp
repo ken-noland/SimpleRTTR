@@ -39,6 +39,14 @@ TEST(RTTRMeta, TestTypeHasMeta)
     ASSERT_GE(type.Meta().size(), 4);
 }
 
+TEST(RTTRMeta, TestInvalidMeta)
+{
+    Type type = Types().GetType<SimpleRTTRTestMeta>();
+    const Meta& meta = type.Meta().Get("This value doesn't exist");
+    ASSERT_EQ(meta, Meta::InvalidMeta());
+}
+
+
 TEST(RTTRMeta, TestMetaStringKeyStringValue)
 {
     Type type = Types().GetType<SimpleRTTRTestMeta>();

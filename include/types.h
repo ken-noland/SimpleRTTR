@@ -31,15 +31,12 @@ namespace SimpleRTTR
 
         inline const PropertyList& Properties() const;
         using PropertyFunction = std::function<void(const class Property&)>;
-        inline void ForEach(PropertyFunction function) const;
 
         inline const MethodList& Methods() const;
         using MethodFunction = std::function<void(const class Method&)>;
-        inline void ForEach(MethodFunction function) const;
 
         inline const MetaContainer& Meta() const;
         using MetaFunction = std::function<void(const class Meta&)>;
-        inline void ForEach(MetaFunction function) const;
 
         inline const NamespaceList& Namespaces() const;
         inline const TemplateTypeList& TemplateParams() const;
@@ -72,6 +69,9 @@ namespace SimpleRTTR
         using TypePointer = std::unique_ptr<TypeData>;
         using TypeList = stdrttr::vector<TypePointer>;
 
+        using Iterator = TypeList::iterator;
+        using ConstIterator = TypeList::const_iterator;
+
         static inline const TypeData& InvalidTypeData();
         static inline constexpr std::size_t InvalidTypeSize();
 
@@ -88,8 +88,12 @@ namespace SimpleRTTR
         template<typename ClassType>
         inline TypeData& GetOrCreateType(bool _addedByUser);
 
-        using TypeDataFunction = std::function<void(const class TypeData&)>;
-        inline void ForEach(TypeDataFunction eval) const;
+        inline Iterator Begin() { return _Data.begin(); }
+        inline ConstIterator Begin() const { return _Data.begin(); }
+
+        inline Iterator End() { return _Data.end(); }
+        inline ConstIterator End() const { return _Data.end(); }
+
 
     protected:
         friend class TypeManager;
@@ -107,10 +111,42 @@ namespace SimpleRTTR
         std::function<void(class TypeData&)> _OnRegisterTypeCallback;
     };
 
+    //Since we store types in TypeData but we need to convert it to Type, this is done in a special iterator.
+    template<typename TypeMgr>
+    class TypeIterable
+    {
+    public:
+
+        class TypeIteratorProxy : public IteratorProxyBase<TypeStorage::TypeList::iterator>
+        {
+        public:
+            TypeIteratorProxy(iterator iter) : IteratorProxyBase(iter) {}
+            value_type operator*() const { return *(*_Iter); }  //Notice we use value_type instead of reference here. This converts TypeData to Type.
+            pointer operator->() { return *_Iter; }
+        };
+
+        class ConstTypeIteratorProxy : public IteratorProxyBase<TypeStorage::TypeList::const_iterator>
+        {
+        public:
+            ConstTypeIteratorProxy(const_iterator iter) : IteratorProxyBase(iter) {}
+            const value_type operator*() const { return *(*_Iter); } //Notice we use value_type instead of reference here. This converts TypeData to Type.
+            const pointer operator->() const { return *_Iter; }
+        };
+
+        using iterator = TypeIteratorProxy;
+        using const_iterator = ConstTypeIteratorProxy;
+
+        iterator begin() { return static_cast<TypeMgr*>(this)->Begin(); }
+        const_iterator begin() const { return static_cast<TypeMgr*>(this)->Begin(); }
+        iterator end() { return static_cast<TypeMgr*>(this)->End(); }
+        const_iterator end() const { return static_cast<TypeMgr*>(this)->End(); }
+    };
+
     class TypeManager;
     inline TypeManager& Types();
 
-    class TypeManager
+    class TypeManager : public
+        TypeIterable<TypeManager>
     {
     public:
         inline TypeManager();
@@ -131,8 +167,11 @@ namespace SimpleRTTR
         template<class ClassType>
         inline const Type GetOrCreateType();
 
-        using TypeFunction = std::function<void(const class Type&)>;
-        inline void ForEach(TypeFunction eval) const;
+        inline TypeIteratorProxy Begin();
+        inline ConstTypeIteratorProxy Begin() const;
+
+        inline TypeIteratorProxy End();
+        inline ConstTypeIteratorProxy End() const;
 
     protected:
         friend class TypeBindingBase;

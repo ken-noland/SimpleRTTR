@@ -86,44 +86,14 @@ namespace SimpleRTTR
         return _TypeData.GetPropertyList();
     }
 
-    void Type::ForEach(Type::PropertyFunction function) const
-    {
-        Type::PropertyList::const_iterator iter = Properties().begin();
-        while (iter != Properties().end())
-        {
-            function(*iter);
-            ++iter;
-        }
-    }
-
     const Type::MethodList& Type::Methods() const
     {
         return _TypeData.GetMethodList();
     }
 
-    void Type::ForEach(Type::MethodFunction function) const
-    {
-        Type::MethodList::const_iterator iter = Methods().begin();
-        while (iter != Methods().end())
-        {
-            function(*iter);
-            ++iter;
-        }
-    }
-
     const MetaContainer& Type::Meta() const
     {
         return _TypeData.GetMetadata();
-    }
-
-    void Type::ForEach(Type::MetaFunction function) const
-    {
-        MetaContainer::const_iterator iter = Meta().begin();
-        while (iter != Meta().end())
-        {
-            function(*iter);
-            ++iter;
-        }
     }
 
     const Type::NamespaceList& Type::Namespaces() const
@@ -323,13 +293,6 @@ namespace SimpleRTTR
         return newTypeData;
     }
 
-    void TypeStorage::ForEach(TypeDataFunction eval) const
-    {
-
-    }
-
-
-
     TypeManager& Types() 
     { 
         return TypeManager::GetInstance(); 
@@ -410,6 +373,26 @@ namespace SimpleRTTR
         }
     }
 
+    TypeManager::TypeIteratorProxy TypeManager::Begin()
+    {
+        return TypeIteratorProxy(GetStorage().Begin());
+    }
+
+    TypeManager::ConstTypeIteratorProxy TypeManager::Begin() const
+    {
+        return ConstTypeIteratorProxy(GetStorage().Begin());
+    }
+
+    TypeManager::TypeIteratorProxy TypeManager::End()
+    {
+        return TypeIteratorProxy(GetStorage().End());
+    }
+
+    TypeManager::ConstTypeIteratorProxy TypeManager::End() const
+    {
+        return ConstTypeIteratorProxy(GetStorage().End());
+    }
+
     void TypeManager::BeginRegistration(const char* filename)
     {
         Meta source_filename("source_filename", filename);
@@ -440,20 +423,11 @@ namespace SimpleRTTR
     {
         if (data.IsRegisteredByUser())
         {
-            printf("Adding metadata to type %s\n", data.GetName().c_str());
             //copy over the metadata in the user type meta section
             for (const Meta& meta : _UserTypeMetadata)
             {
                 data.AddMetadata(meta);
             }
         }
-    }
-
-    void TypeManager::ForEach(TypeManager::TypeFunction eval) const
-    {
-        GetStorage().ForEach([&](const TypeData& typeData) {
-            Type type(typeData);
-            eval(type);
-            });
     }
 }
