@@ -35,6 +35,9 @@ namespace SimpleRTTR
         inline const MethodList& Methods() const;
         using MethodFunction = std::function<void(const class Method&)>;
 
+        inline bool HasValue(const stdrttr::string& name) const;
+        inline const Variant& Value(const stdrttr::string& name) const;
+
         inline const MetaContainer& Meta() const;
         using MetaFunction = std::function<void(const class Meta&)>;
 
@@ -53,7 +56,7 @@ namespace SimpleRTTR
         inline void DestroyInstance(void* ptr) const;
 
         template<typename ClassType, typename PropType>
-        inline bool SetProperty(ClassType* Instance, const stdrttr::string& propertyName, const PropType& value) const;
+        inline bool SetProperty(ClassType* instance, const stdrttr::string& propertyName, const PropType& value) const;
 
         inline stdrttr::string ToString(const Variant& var) const;
 

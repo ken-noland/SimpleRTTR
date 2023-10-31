@@ -27,6 +27,9 @@ namespace SimpleRTTR
         inline const NamespaceList& GetNamespaces() const;
         inline const TemplateTypeList& GetTemplateParams() const;
 
+        inline bool HasValue(const stdrttr::string& name) const;
+        inline const Variant& Value(const stdrttr::string& name) const;
+
         inline const MetaContainer& GetMetadata() const;
 
         inline const ToStringFunction GetToStringFunction() const;

@@ -129,6 +129,16 @@ namespace SimpleRTTR
         return _TemplateParams;
     }
 
+    bool TypeData::HasValue(const stdrttr::string& name) const
+    {
+        return false;
+    }
+
+    const Variant& TypeData::Value(const stdrttr::string& name) const
+    {
+        return *(Variant*)nullptr;
+    }
+
     const MetaContainer& TypeData::GetMetadata() const
     {
         return _Metadata;

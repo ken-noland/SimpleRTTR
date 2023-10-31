@@ -31,6 +31,7 @@ set(SIMPLERTTR_HEADERS	include/helpers.h
 						include/types.h
 						include/types.inl
 						include/value.h
+						include/value.inl
 						include/variant.h
 						include/variant.inl
 						include/variant_tostring.inl

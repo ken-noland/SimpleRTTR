@@ -91,6 +91,16 @@ namespace SimpleRTTR
         return _TypeData.GetMethodList();
     }
 
+    bool Type::HasValue(const stdrttr::string& name) const
+    {
+        return _TypeData.HasValue(name);
+    }
+
+    const Variant& Type::Value(const stdrttr::string& name) const
+    {
+        return _TypeData.Value(name);
+    }
+
     const MetaContainer& Type::Meta() const
     {
         return _TypeData.GetMetadata();

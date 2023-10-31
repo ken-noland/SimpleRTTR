@@ -39,4 +39,13 @@ TEST(RTTREnum, TestBasicEnum)
     Type enumType = Types().GetType<Color>();
 
     EXPECT_EQ(enumType.Name(), "Color");
+
+    EXPECT_EQ(enumType.HasValue("RED"), true);
+    EXPECT_EQ(enumType.HasValue("GREEN"), true);
+    EXPECT_EQ(enumType.HasValue("BLUE"), true);
+    EXPECT_EQ(enumType.HasValue("ALPHA"), true);
+
+    EXPECT_EQ(enumType.Value("RED").GetAs<Color>(), Color::RED);
+
+
 }

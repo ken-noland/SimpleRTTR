@@ -114,6 +114,7 @@ namespace SimpleRTTR
                 name = name.substr(5);
             }
 #       endif
+
             name = RemoveTemplateArguments(name);
 
 #       if defined(_MSC_VER)

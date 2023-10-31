@@ -83,7 +83,7 @@ namespace SimpleRTTR
     template<typename MemberType>
     PropertyBinding<ClassType> TypeBinding<ClassType>::Property(MemberType memberPtr, const stdrttr::string& name)
     {
-        Type type = PropertyHelper<ClassType>(memberPtr);
+        TypeReference type = PropertyHelper<ClassType>(memberPtr);
         std::size_t offset = OffsetHelper<ClassType>(memberPtr);
 
         class Property& prop = _TypeData.GetOrCreateProperty(name, type, offset);
@@ -120,7 +120,7 @@ namespace SimpleRTTR
     template <typename EnumType>
     inline ValueBinding<ClassType> TypeBinding<ClassType>::Value(EnumType value, const stdrttr::string& name)
     {
-        class Value valueData;
+        class Value valueData(value);
         return ValueBinding<ClassType>(valueData, _TypeData);
     }
 
