@@ -25,6 +25,7 @@ namespace SimpleRTTR
     class RegistrationManager;
     class Type;
     class TypeReference;
+    class Value;
     class TypeData;
     class TypeHelperBase;
     class TypeManager;

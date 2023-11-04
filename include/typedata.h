@@ -9,6 +9,7 @@ namespace SimpleRTTR
         using MethodList = stdrttr::vector<Method>;
         using NamespaceList = stdrttr::vector<stdrttr::string>;
         using TemplateTypeList = stdrttr::vector<TypeReference>;
+        using ValuesList = stdrttr::vector<Value>;
         using ToStringFunction = std::add_pointer<stdrttr::string(const Variant&)>::type;
 
         inline TypeData(const TypeData& typeData);
@@ -34,9 +35,12 @@ namespace SimpleRTTR
 
         inline const ToStringFunction GetToStringFunction() const;
 
+        //TODO: I'm not to sure about leaving these as public. It feels a bit hackish, but then again, the 
+        //  TypeData class is meant for internal use only... soooo.... ¯\_(?)_/¯
         inline Property& GetOrCreateProperty(const stdrttr::string& name, const TypeReference& type, std::size_t offset);
         inline Method& GetOrCreateMethod(Method& method);
         inline Meta& AddMetadata(const Meta& meta);
+        inline class Value& AddValue(const class Value& value);
 
 
     protected:
@@ -49,6 +53,7 @@ namespace SimpleRTTR
         MethodList _Methods;
         NamespaceList _Namespaces;
         TemplateTypeList _TemplateParams;
+        ValuesList _Values;
 
         MetaContainer _Metadata;
 

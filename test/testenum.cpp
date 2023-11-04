@@ -46,6 +46,18 @@ TEST(RTTREnum, TestBasicEnum)
     EXPECT_EQ(enumType.HasValue("ALPHA"), true);
 
     EXPECT_EQ(enumType.Value("RED").GetAs<Color>(), Color::RED);
+    EXPECT_EQ(enumType.Value("GREEN").GetAs<Color>(), Color::GREEN);
+    EXPECT_EQ(enumType.Value("BLUE").GetAs<Color>(), Color::BLUE);
+    EXPECT_EQ(enumType.Value("ALPHA").GetAs<Color>(), Color::ALPHA);
+}
 
+TEST(RTTREnum, TestEnumValueDoesNotExist)
+{
+    Type enumType = Types().GetType<Color>();
 
+    EXPECT_EQ(enumType.Name(), "Color");
+
+    EXPECT_EQ(enumType.HasValue("X"), false);
+
+    EXPECT_THROW(enumType.Value("X").GetAs<Color>(), std::bad_any_cast);
 }

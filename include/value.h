@@ -5,18 +5,13 @@ namespace SimpleRTTR
     class Value
     {
     public:
-        inline Value(Variant value);
+        inline Value(stdrttr::string name, class Variant value);
+
+        inline const stdrttr::string& Name() const;
+        inline const Variant& Variant() const;
 
     protected:
-        Variant _Value;
-    };
-
-    //TODO
-    template<typename T>
-    class TValue : public Value
-    {
-    public:
-        TValue(T value);
-
+        stdrttr::string _Name;
+        class Variant _Value;
     };
 }

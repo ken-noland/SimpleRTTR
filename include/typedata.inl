@@ -131,11 +131,25 @@ namespace SimpleRTTR
 
     bool TypeData::HasValue(const stdrttr::string& name) const
     {
+        for (const class Value& value : _Values)
+        {
+            if (value.Name() == name)
+            {
+                return true;
+            }
+        }
         return false;
     }
 
     const Variant& TypeData::Value(const stdrttr::string& name) const
     {
+        for(const class Value & value : _Values)
+        {
+            if (value.Name() == name)
+            {
+                return value.Variant();
+            }
+        }
         return *(Variant*)nullptr;
     }
 
@@ -169,7 +183,6 @@ namespace SimpleRTTR
     Method& TypeData::GetOrCreateMethod(Method& method)
     {
         //TODO: Check if the method exists already
-
         _Methods.push_back(method);
         return _Methods.back();
     }
@@ -181,4 +194,9 @@ namespace SimpleRTTR
         return _Metadata.back();
     }
 
+    class Value& TypeData::AddValue(const class Value& value)
+    {
+        _Values.push_back(value);
+        return _Values.back();
+    }
 }

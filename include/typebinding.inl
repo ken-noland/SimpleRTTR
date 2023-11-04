@@ -120,7 +120,8 @@ namespace SimpleRTTR
     template <typename EnumType>
     inline ValueBinding<ClassType> TypeBinding<ClassType>::Value(EnumType value, const stdrttr::string& name)
     {
-        class Value valueData(value);
+        class Value valueData(name, value);
+        _TypeData.AddValue(valueData);
         return ValueBinding<ClassType>(valueData, _TypeData);
     }
 
