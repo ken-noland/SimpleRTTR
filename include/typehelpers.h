@@ -12,8 +12,8 @@ namespace SimpleRTTR
     public:
         typedef void(*QualifiedNameParseFunc)(char* name);
 
-        using NamespaceList = TypeData::NamespaceList;
-        using TemplateTypeList = stdrttr::vector<TypeReference>;
+        using NamespaceContainer = TypeData::NamespaceContainer;
+        using TemplateTypeContainer = stdrttr::vector<TypeReference>;
 
         typedef stdrttr::string (*ToStringFunction)(const Variant&);
 
@@ -27,8 +27,8 @@ namespace SimpleRTTR
 
         inline const stdrttr::string& Name() const { return _Name; };
         inline const stdrttr::string& QualifiedName() const { return _QualifiedName; }
-        inline const NamespaceList& Namespaces() const { return _Namespaces; }
-        inline const TemplateTypeList& TemplateParams() const { return _TemplateParams; }
+        inline const NamespaceContainer& Namespaces() const { return _Namespaces; }
+        inline const TemplateTypeContainer& TemplateParams() const { return _TemplateParams; }
         inline const ToStringFunction& ToStringFunc() const { return _ToStringFunc; }
 
         inline std::size_t Size() const { return _Size; }
@@ -140,23 +140,23 @@ namespace SimpleRTTR
         }
 
 
-        stdrttr::string  _Name;
-        stdrttr::string  _TypeID;
-        stdrttr::string  _QualifiedName;
-        NamespaceList    _Namespaces;
-        TemplateTypeList _TemplateParams;
-        std::size_t      _Size;
+        stdrttr::string         _Name;
+        stdrttr::string         _TypeID;
+        stdrttr::string         _QualifiedName;
+        NamespaceContainer      _Namespaces;
+        TemplateTypeContainer   _TemplateParams;
+        std::size_t             _Size;
 
         ToStringFunction _ToStringFunc;
 
     };
 
     template<typename ClassType>
-    inline void TemplateParameterHelper(TypeHelperBase::TemplateTypeList& outParams);
+    inline void TemplateParameterHelper(TypeHelperBase::TemplateTypeContainer& outParams);
 
     template<typename ClassType, typename... TemplateArgs >
     inline typename std::enable_if<sizeof...(TemplateArgs) != 0, void>::type
-        TemplateParameterHelper(TypeHelperBase::TemplateTypeList& outParams);
+        TemplateParameterHelper(TypeHelperBase::TemplateTypeContainer& outParams);
 
     class TypeHelper1
     {
@@ -216,7 +216,7 @@ namespace SimpleRTTR
     };
 
     template<typename ClassType>
-    inline void TemplateParameterHelper(TypeHelperBase::TemplateTypeList& outParams)
+    inline void TemplateParameterHelper(TypeHelperBase::TemplateTypeContainer& outParams)
     {
         //it's worth noting that this creates a pointer from a reference to a unique_ptr buried in 
         //  the TypeStorage vector... not something that should EVER be done under normal circumstances
@@ -225,7 +225,7 @@ namespace SimpleRTTR
 
     template<typename ClassType, typename... TemplateArgs >
     inline typename std::enable_if<sizeof...(TemplateArgs) != 0, void>::type
-        TemplateParameterHelper(TypeHelperBase::TemplateTypeList& outParams)
+        TemplateParameterHelper(TypeHelperBase::TemplateTypeContainer& outParams)
     {
         TemplateParameterHelper<ClassType>(outParams);
         TemplateParameterHelper<TemplateArgs...>(outParams);

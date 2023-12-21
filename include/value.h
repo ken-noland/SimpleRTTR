@@ -10,6 +10,8 @@ namespace SimpleRTTR
         inline const stdrttr::string& Name() const;
         inline const Variant& Variant() const;
 
+        inline bool operator==(const Value& other) const;
+
     protected:
         stdrttr::string _Name;
         class Variant _Value;

@@ -86,8 +86,9 @@ namespace SimpleRTTR
         TypeReference type = PropertyHelper<ClassType>(memberPtr);
         std::size_t offset = OffsetHelper<ClassType>(memberPtr);
 
-        class Property& prop = _TypeData.GetOrCreateProperty(name, type, offset);
-        return PropertyBinding<ClassType>(prop, _TypeData);
+        PropertyContainer& properties = _InternalGetProperties(_TypeData);
+        properties.PushBack(class Property(class PropertyData(name, type, offset)));
+        return PropertyBinding<ClassType>(properties.Back(), _TypeData);
     }
 
     template<typename ClassType>
@@ -139,8 +140,8 @@ namespace SimpleRTTR
     inline PropertyBinding<ClassType>& PropertyBinding<ClassType>::Meta(MetaKey key, MetaValue value)
     {
         class Meta meta(key, value);
-        PropertyData::MetaList& propertyDataMetaList = _InternalPropertyDataGetMetaListRef(_PropertyData);
-        propertyDataMetaList.push_back(meta);
+        MetaContainer& propertyDataMetaList = _InternalPropertyDataGetMetaListRef(_PropertyData);
+        propertyDataMetaList.PushBack(meta);
         return *this;
     }
 
@@ -150,8 +151,8 @@ namespace SimpleRTTR
     {
         //need to copy the contents of value to vector since initializer_list only stores stack pointers
         class Meta meta(key, stdrttr::vector<MetaValue>(value));
-        PropertyData::MetaList& propertyDataMetaList = _InternalPropertyDataGetMetaListRef(_PropertyData);
-        propertyDataMetaList.push_back(meta);
+        MetaContainer& propertyDataMetaList = _InternalPropertyDataGetMetaListRef(_PropertyData);
+        propertyDataMetaList.PushBack(meta);
         return *this;
     }
 

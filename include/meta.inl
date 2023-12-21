@@ -59,6 +59,18 @@ namespace SimpleRTTR
         return _Value;
     }
 
+    bool MetaContainer::Has(Variant key) const
+    {
+        for (const Meta& meta : _Meta)
+        {
+            if (key == meta.Key())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     const Meta& MetaContainer::Get(Variant key) const
     {
         for (const Meta& meta : _Meta)
@@ -71,45 +83,43 @@ namespace SimpleRTTR
         return Meta::InvalidMeta();
     }
 
-    MetaContainer::iterator MetaContainer::begin()
+    MetaContainer::Iterator MetaContainer::Begin()
     {
         return _Meta.begin();
     }
 
-    MetaContainer::const_iterator MetaContainer::begin() const
+    MetaContainer::ConstIterator MetaContainer::Begin() const
     {
         return _Meta.begin();
     }
 
-    MetaContainer::iterator MetaContainer::end()
+    MetaContainer::Iterator MetaContainer::End()
     {
         return _Meta.end();
     }
 
-    MetaContainer::const_iterator MetaContainer::end() const
+    MetaContainer::ConstIterator MetaContainer::End() const
     {
         return _Meta.end();
     }
 
-    Meta& MetaContainer::back()
+    Meta& MetaContainer::Back()
     {
         return _Meta.back();
     }
 
-    const Meta& MetaContainer::back() const
+    const Meta& MetaContainer::Back() const
     {
         return _Meta.back();
     }
 
-    std::size_t MetaContainer::size() const
+    std::size_t MetaContainer::Size() const
     {
         return _Meta.size();
     }
 
-    void MetaContainer::push_back(const Meta& meta)
+    void MetaContainer::PushBack(const Meta& meta)
     {
         _Meta.push_back(meta);
     }
-
-
 }

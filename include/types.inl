@@ -81,24 +81,19 @@ namespace SimpleRTTR
         return _TypeData.GetSize();
     }
 
-    const Type::PropertyList& Type::Properties() const
+    const PropertyContainer& Type::Properties() const
     {
         return _TypeData.GetPropertyList();
     }
 
-    const Type::MethodList& Type::Methods() const
+    const Type::MethodContainer& Type::Methods() const
     {
         return _TypeData.GetMethodList();
     }
 
-    bool Type::HasValue(const stdrttr::string& name) const
+    const Type::ValuesContainer& Type::Values() const
     {
-        return _TypeData.HasValue(name);
-    }
-
-    const Variant& Type::Value(const stdrttr::string& name) const
-    {
-        return _TypeData.Value(name);
+        return _TypeData.GetValues();
     }
 
     const MetaContainer& Type::Meta() const

@@ -17,4 +17,10 @@ namespace SimpleRTTR
     {
         return _Value;
     }
+
+    bool Value::operator== (const Value& other) const
+    {
+        return _Name == other._Name && _Value == other._Value;
+    }
+
 }

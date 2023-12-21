@@ -36,7 +36,7 @@ SIMPLERTTR
 TEST(RTTRMeta, TestTypeHasMeta)
 {
     Type type = Types().GetType<SimpleRTTRTestMeta>();
-    ASSERT_GE(type.Meta().size(), 4);
+    ASSERT_GE(type.Meta().Size(), 4);
 }
 
 TEST(RTTRMeta, TestInvalidMeta)
@@ -154,7 +154,7 @@ TEST(RTTRMeta, TestMetaOnFundamentalTypes)
     {
         //verify that we haven't touched the meta on the "char" type
         Type type = Types().GetType<char>();
-        EXPECT_EQ(type.Meta().size(), 0);
+        EXPECT_EQ(type.Meta().Size(), 0);
     }
 
     //register our own metadata on the char type
@@ -162,5 +162,5 @@ TEST(RTTRMeta, TestMetaOnFundamentalTypes)
         .Meta("type", "fundamental");
 
     Type type = Types().GetType<char>();
-    EXPECT_EQ(type.Meta().size(), 1);
+    EXPECT_EQ(type.Meta().Size(), 1);
 }

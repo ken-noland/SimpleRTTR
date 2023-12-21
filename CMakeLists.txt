@@ -56,4 +56,7 @@ enable_testing()
 
 add_subdirectory(test)
 
+set(SIMPLERTTR_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_subdirectory(examples/codegen)
+
 endif()

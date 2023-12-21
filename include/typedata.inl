@@ -6,8 +6,8 @@ namespace SimpleRTTR
         const stdrttr::string& fullyQualifiedName,
         std::size_t size,
         bool registeredByUser,
-        NamespaceList namespaces,
-        TemplateTypeList templateParams,
+        NamespaceContainer namespaces,
+        TemplateTypeContainer templateParams,
         ToStringFunction toStringFunc)
         :
         _Name(name),
@@ -107,50 +107,31 @@ namespace SimpleRTTR
         return _RegisteredByUser;
     }
 
-    const TypeData::PropertyList& TypeData::GetPropertyList() const
+    const PropertyContainer& TypeData::GetPropertyList() const
     {
         return _Properties;
     }
 
 
 
-    const TypeData::MethodList& TypeData::GetMethodList() const
+    const TypeData::MethodContainer& TypeData::GetMethodList() const
     {
         return _Methods;
     }
 
-    const TypeData::NamespaceList& TypeData::GetNamespaces() const
+    const TypeData::NamespaceContainer& TypeData::GetNamespaces() const
     {
         return _Namespaces;
     }
 
-    const TypeData::TemplateTypeList& TypeData::GetTemplateParams() const
+    const TypeData::TemplateTypeContainer& TypeData::GetTemplateParams() const
     {
         return _TemplateParams;
     }
 
-    bool TypeData::HasValue(const stdrttr::string& name) const
+    const TypeData::ValuesContainer& TypeData::GetValues() const
     {
-        for (const class Value& value : _Values)
-        {
-            if (value.Name() == name)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    const Variant& TypeData::Value(const stdrttr::string& name) const
-    {
-        for(const class Value & value : _Values)
-        {
-            if (value.Name() == name)
-            {
-                return value.Variant();
-            }
-        }
-        return *(Variant*)nullptr;
+        return _Values;
     }
 
     const MetaContainer& TypeData::GetMetadata() const
@@ -163,22 +144,22 @@ namespace SimpleRTTR
         return _ToStringFunc;
     }
 
-    Property& TypeData::GetOrCreateProperty(const stdrttr::string& name, const TypeReference& type, std::size_t offset)
-    {
-        PropertyData propData(name, type, offset);
+    //const Property& TypeData::GetOrCreateProperty(const stdrttr::string& name, const TypeReference& type, std::size_t offset)
+    //{
+    //    PropertyData propData(name, type, offset);
 
-        class Property prop(propData);
+    //    class Property prop(propData);
 
-        //check to see if property exists
-        PropertyList::iterator iter = std::find_if(_Properties.begin(), _Properties.end(), [&prop](const class Property& existing) { return existing == prop; });
-        if (iter == _Properties.end())
-        {
-            _Properties.push_back(prop);
-            return _Properties.back();
-        }
+    //    //check to see if property exists
+    //    PropertyContainer::iterator iter = std::find_if(_Properties.begin(), _Properties.end(), [&prop](const class Property& existing) { return existing == prop; });
+    //    if (iter == _Properties.end())
+    //    {
+    //        _Properties.PushBack(prop);
+    //        return _Properties.Back();
+    //    }
 
-        return (*iter);
-    }
+    //    return (*iter);
+    //}
 
     Method& TypeData::GetOrCreateMethod(Method& method)
     {
@@ -190,13 +171,18 @@ namespace SimpleRTTR
     Meta& TypeData::AddMetadata(const Meta& meta)
     {
         //TODO: Check if the meta exists already
-        _Metadata.push_back(meta);
-        return _Metadata.back();
+        _Metadata.PushBack(meta);
+        return _Metadata.Back();
     }
 
     class Value& TypeData::AddValue(const class Value& value)
     {
         _Values.push_back(value);
         return _Values.back();
+    }
+
+    inline PropertyContainer& _InternalGetProperties(TypeData& typeData)
+    {
+        return typeData._Properties;
     }
 }

@@ -60,7 +60,7 @@ TEST(RTTRRegistration, TestBasicRegistration)
 TEST(RTTRRegistration, TestBasicProperties)
 {
     Type test = Types().GetType<SimpleRTTRTestClass1>();
-    EXPECT_EQ(test.Properties().size(), 11);
+    EXPECT_EQ(test.Properties().Size(), 11);
 }
 
 TEST(RTTRRegistration, TestCharMember)

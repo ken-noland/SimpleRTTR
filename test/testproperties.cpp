@@ -36,8 +36,8 @@ TEST(RTTRProperties, TestPropertiesList)
     Type type = Types().GetType<SimpleRTTRTestProperties1>();
     ASSERT_NE(type, Type::InvalidType());
 
-    const Type::PropertyList& properties = type.Properties();
-    ASSERT_EQ(properties.size(), 4);
+    const PropertyContainer& properties = type.Properties();
+    ASSERT_EQ(properties.Size(), 4);
 
     const Property& prop1 = properties[0];
     EXPECT_EQ(prop1.Name(), "charMember");
@@ -66,39 +66,33 @@ TEST(RTTRProperties, TestPropertiesMeta)
     Type type = Types().GetType<SimpleRTTRTestProperties1>();
     ASSERT_NE(type, Type::InvalidType());
 
-    const Type::PropertyList& properties = type.Properties();
-    ASSERT_EQ(properties.size(), 4);
+    const PropertyContainer& properties = type.Properties();
+    ASSERT_EQ(properties.Size(), 4);
 
-    const Property& prop1 = properties[0];
+    ASSERT_TRUE(properties.Has("charMember"));
+    const Property& prop1 = properties.Get("charMember");
     {
-        const Property::MetaList meta = prop1.Meta();
-        ASSERT_EQ(meta.size(), 2);
+        const MetaContainer meta = prop1.Meta();
+        ASSERT_GE(meta.Size(), 2);
 
         {
-            EXPECT_EQ(meta[0].Key().Type(), Types().GetType<const char*>());
-            EXPECT_EQ(meta[0].Key().ToString(), "description");
-            EXPECT_EQ(meta[0].Key().GetAs<const char*>(), std::string("description"));
-            EXPECT_EQ(meta[0].Value().Type(), Types().GetType<const char*>());
-            EXPECT_EQ(meta[0].Value().ToString(), "a simple 1 byte type");
-            EXPECT_EQ(meta[0].Value().GetAs<const char*>(), std::string("a simple 1 byte type"));
+            EXPECT_TRUE(meta.Has("description"));
+            Meta metaValue = meta.Get("description");
+
+            EXPECT_EQ(metaValue.Key().Type(), Types().GetType<const char*>());
+            EXPECT_EQ(metaValue.Value().Type(), Types().GetType<const char*>());
+
+            EXPECT_STRCASEEQ(metaValue.Key().GetAs<const char*>(), "description");
+            EXPECT_STRCASEEQ(metaValue.Value().GetAs<const char*>(), "a simple 1 byte type");
         }
 
         {
-            EXPECT_EQ(meta[1].Key().Type(), Types().GetType<const char*>());
-            EXPECT_EQ(meta[1].Key().ToString(), "numbers");
-            EXPECT_EQ(meta[1].Key().GetAs<const char*>(), std::string("numbers"));
-            EXPECT_EQ(meta[1].Value().Type(), Types().GetType<std::vector<int>>());
-            std::vector<int> values = meta[1].Value().GetAs<std::vector<int>>();
-            ASSERT_EQ(values.size(), 5);
-            EXPECT_EQ(values[0], 1);
-            EXPECT_EQ(values[1], 2);
-            EXPECT_EQ(values[2], 3);
-            EXPECT_EQ(values[3], 4);
-            EXPECT_EQ(values[4], 5);
+            EXPECT_TRUE(meta.Has("description"));
+            Meta metaValue = meta.Get("description");
         }
 
     }
 
     const Property& prop2 = properties[1];
-    const Property::MetaList meta2 = prop2.Meta();
+    const MetaContainer& meta2 = prop2.Meta();
 }

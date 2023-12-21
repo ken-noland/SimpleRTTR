@@ -63,20 +63,20 @@ namespace SimpleRTTR
 #include "typebinding.inl"
 #include "registration.inl"
 
-#define SIMPLERTTR  namespace {                                     \
-                        class AutoRegister                          \
-                        {                                           \
-                        public:                                     \
-                            AutoRegister()                          \
-                            {                                       \
-                                _InternalBeginRegistration(         \
-                                    __FILE__                        \
-                                );                                  \
-                                Register();                         \
-                                _InternalEndRegistration();         \
-                            }                                       \
-                            void Register();                        \
-                        };                                          \
-                        static const AutoRegister AutoReg;          \
-                    }                                               \
+#define SIMPLERTTR  namespace {                                         \
+                        class AutoRegister                              \
+                        {                                               \
+                        public:                                         \
+                            AutoRegister()                              \
+                            {                                           \
+                                SimpleRTTR::_InternalBeginRegistration( \
+                                    __FILE__                            \
+                                );                                      \
+                                Register();                             \
+                                SimpleRTTR::_InternalEndRegistration(); \
+                            }                                           \
+                            void Register();                            \
+                        };                                              \
+                        static const AutoRegister AutoReg;              \
+                    }                                                   \
                     void AutoRegister::Register()

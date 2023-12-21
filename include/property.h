@@ -13,12 +13,10 @@ namespace SimpleRTTR
     {
     public:
         using PropertyFlagsBits = std::bitset<(uint16_t)PropertyFlags::PropertyFlagsMax>;
-        using MetaList = stdrttr::vector<Meta>;
 
         inline bool operator==(const PropertyData& data) const;
 
         inline bool Equals(const PropertyData& data) const;
-
 
         inline PropertyData(const stdrttr::string& name, const TypeReference& type, std::size_t offset);
         inline PropertyData(PropertyData&& data);
@@ -27,7 +25,7 @@ namespace SimpleRTTR
         inline const stdrttr::string& Name() const;
         inline class Type Type() const;
         inline const std::size_t Offset() const;
-        inline const MetaList& Meta() const;
+        inline const MetaContainer& Meta() const;
 
     protected:
         stdrttr::string _Name;
@@ -36,15 +34,13 @@ namespace SimpleRTTR
         PropertyFlagsBits _Flags;
 
 
-        friend MetaList& _InternalPropertyDataGetMetaListRef(PropertyData& prop);
-        MetaList _Meta;
+        friend MetaContainer& _InternalPropertyDataGetMetaListRef(PropertyData& prop);
+        MetaContainer _Meta;
     };
 
     class Property
     {
     public:
-        using MetaList = PropertyData::MetaList;
-
         inline Property(Property&& data);
         inline Property(const Property& data);
         inline Property(const PropertyData& data);
@@ -57,7 +53,7 @@ namespace SimpleRTTR
         inline const stdrttr::string& Name() const;
         inline const class Type Type() const;
         inline const std::size_t Offset() const;
-        inline const MetaList& Meta() const;
+        inline const MetaContainer& Meta() const;
 
         using MetaFunction = std::function<void(const class Meta&)>;
         inline void ForEach(MetaFunction eval) const;
@@ -69,5 +65,34 @@ namespace SimpleRTTR
     protected:
         friend PropertyData& _InternalPropertyGetPropertyDataRef(Property& prop);
         PropertyData _PropData;
+    };
+
+
+    class PropertyContainer : public DefaultIterable<PropertyContainer, std::vector<Property>>
+    {
+    public:
+
+        inline bool Has(const stdrttr::string& key) const;
+        inline const Property& Get(const stdrttr::string& key) const;
+
+        inline Iterator Begin();
+        inline ConstIterator Begin() const;
+
+        inline Iterator End();
+        inline ConstIterator End() const;
+
+        inline void PushBack(const Property& prop);
+        inline void PushBack(Property&& prop);
+
+        inline std::size_t Size() const;
+
+        inline Property& Back();
+        inline const Property& Back() const;
+
+        inline Property& operator[](std::size_t index);
+        inline const Property& operator[](std::size_t index) const;
+
+    protected:
+        ContainerType _Properties;
     };
 }

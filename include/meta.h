@@ -24,33 +24,27 @@ namespace SimpleRTTR
         Variant _Value;
     };
 
-    //follow std library conventions?
-    class MetaContainer
+    //TODO: meta should be encoded in a map of sorts(maybe? I mean, it is super fast to iterate and keeps things cache friendly as is)
+    class MetaContainer : public DefaultIterable<MetaContainer, std::vector<Meta>>
     {
     public:
-        using type = Meta;
-        using MetaList = std::vector<type>;
-
-        using iterator = MetaList::iterator;
-        using const_iterator = MetaList::const_iterator;
-
+        inline bool Has(Variant key) const;
         inline const Meta& Get(Variant key) const;
 
-        inline iterator begin();
-        inline const_iterator begin() const;
+        inline Iterator Begin();
+        inline ConstIterator Begin() const;
 
-        inline iterator end();
-        inline const_iterator end() const;
+        inline Iterator End();
+        inline ConstIterator End() const;
 
-        inline Meta& back();
-        inline const Meta& back() const;
+        inline Meta& Back();
+        inline const Meta& Back() const;
 
-        inline std::size_t size() const;
+        inline std::size_t Size() const;
 
-        inline void push_back(const Meta& meta);
+        inline void PushBack(const Meta& meta);
 
     private:
-        //TODO: meta should be encoded in a map of sorts, with the key being the value hash and the type hash combined
-        MetaList _Meta;
+        ContainerType _Meta;
     };
 }

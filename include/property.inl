@@ -56,12 +56,12 @@ namespace SimpleRTTR
         return _Offset;
     }
 
-    const PropertyData::MetaList& PropertyData::Meta() const
+    const MetaContainer& PropertyData::Meta() const
     {
         return _Meta;
     }
 
-    inline PropertyData::MetaList& _InternalPropertyDataGetMetaListRef(PropertyData& prop)
+    inline MetaContainer& _InternalPropertyDataGetMetaListRef(PropertyData& prop)
     {
         return prop._Meta;
     }
@@ -119,14 +119,14 @@ namespace SimpleRTTR
         return _PropData.Type();
     }
 
-    const Property::MetaList& Property::Meta() const
+    const MetaContainer& Property::Meta() const
     {
         return _PropData.Meta();
     }
 
     void Property::ForEach(Property::MetaFunction eval) const
     {
-        std::for_each(Meta().begin(), Meta().end(), eval);
+        std::for_each(Meta().Begin(), Meta().End(), eval);
     }
 
     bool Property::IsConst()
@@ -144,5 +144,79 @@ namespace SimpleRTTR
     inline PropertyData& _InternalPropertyGetPropertyDataRef(Property& prop)
     {
         return prop._PropData;
+    }
+
+    bool PropertyContainer::Has(const stdrttr::string& key) const
+    {
+        ConstIterator found = std::find_if(Begin(), End(), [&key](const Property& prop) { return prop.Name().compare(key) == 0; });
+        return found != End();
+    }
+
+    const Property& PropertyContainer::Get(const stdrttr::string& key) const
+    {
+        ConstIterator found = std::find_if(Begin(), End(), [&key](const Property& prop) { return prop.Name().compare(key) == 0; });
+        if (found != End())
+        {
+            return *found;
+        }
+        else
+        {
+            throw std::runtime_error("Property not found");
+        }
+    }
+
+    PropertyContainer::Iterator PropertyContainer::Begin()
+    {
+        return _Properties.begin();
+    }
+
+    PropertyContainer::ConstIterator PropertyContainer::Begin() const
+    {
+        return _Properties.begin();
+    }
+
+    PropertyContainer::Iterator PropertyContainer::End()
+    {
+        return _Properties.end();
+    }
+
+    PropertyContainer::ConstIterator PropertyContainer::End() const
+    {
+        return _Properties.end();
+    }
+
+    void PropertyContainer::PushBack(const Property& prop)
+    {
+        _Properties.push_back(prop);
+    }
+
+    void PropertyContainer::PushBack(Property&& prop)
+    {
+        _Properties.push_back(std::move(prop));
+    }
+
+    std::size_t PropertyContainer::Size() const
+    {
+        return _Properties.size();
+    }
+
+    Property& PropertyContainer::Back()
+    {
+        return _Properties.back();
+    }
+    
+    const Property& PropertyContainer::Back() const
+    {
+       return _Properties.back();
+    }
+
+    Property& PropertyContainer::operator[](std::size_t index)
+    {
+        return _Properties[index];
+    }
+
+    const Property& PropertyContainer::operator[](std::size_t index) const
+    {
+        return _Properties[index];
     }
 }

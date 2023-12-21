@@ -5,11 +5,10 @@ namespace SimpleRTTR
     class TypeData
     {
     public:
-        using PropertyList = stdrttr::vector<Property>;
-        using MethodList = stdrttr::vector<Method>;
-        using NamespaceList = stdrttr::vector<stdrttr::string>;
-        using TemplateTypeList = stdrttr::vector<TypeReference>;
-        using ValuesList = stdrttr::vector<Value>;
+        using MethodContainer = stdrttr::vector<Method>;
+        using NamespaceContainer = stdrttr::vector<stdrttr::string>;
+        using TemplateTypeContainer = stdrttr::vector<TypeReference>;
+        using ValuesContainer = stdrttr::vector<Value>;
         using ToStringFunction = std::add_pointer<stdrttr::string(const Variant&)>::type;
 
         inline TypeData(const TypeData& typeData);
@@ -21,15 +20,15 @@ namespace SimpleRTTR
         inline const stdrttr::string& GetName() const;
         inline const stdrttr::string& GetFullyQualifiedName() const;
         inline std::size_t GetSize() const;
+
+        //TODO: Remove this function. It's only used in the TypeStorage class.
         inline bool IsRegisteredByUser() const;
 
-        inline const PropertyList& GetPropertyList() const;
-        inline const MethodList& GetMethodList() const;
-        inline const NamespaceList& GetNamespaces() const;
-        inline const TemplateTypeList& GetTemplateParams() const;
-
-        inline bool HasValue(const stdrttr::string& name) const;
-        inline const Variant& Value(const stdrttr::string& name) const;
+        inline const PropertyContainer& GetPropertyList() const;
+        inline const MethodContainer& GetMethodList() const;
+        inline const NamespaceContainer& GetNamespaces() const;
+        inline const TemplateTypeContainer& GetTemplateParams() const;
+        inline const ValuesContainer& GetValues() const;
 
         inline const MetaContainer& GetMetadata() const;
 
@@ -37,7 +36,7 @@ namespace SimpleRTTR
 
         //TODO: I'm not to sure about leaving these as public. It feels a bit hackish, but then again, the 
         //  TypeData class is meant for internal use only... soooo.... ¯\_(?)_/¯
-        inline Property& GetOrCreateProperty(const stdrttr::string& name, const TypeReference& type, std::size_t offset);
+        //inline Property& GetOrCreateProperty(const stdrttr::string& name, const TypeReference& type, std::size_t offset);
         inline Method& GetOrCreateMethod(Method& method);
         inline Meta& AddMetadata(const Meta& meta);
         inline class Value& AddValue(const class Value& value);
@@ -49,11 +48,13 @@ namespace SimpleRTTR
         std::size_t _Size;
         bool _RegisteredByUser;
 
-        PropertyList _Properties;
-        MethodList _Methods;
-        NamespaceList _Namespaces;
-        TemplateTypeList _TemplateParams;
-        ValuesList _Values;
+        friend PropertyContainer& _InternalGetProperties(TypeData& typeData);
+
+        PropertyContainer _Properties;
+        MethodContainer _Methods;
+        NamespaceContainer _Namespaces;
+        TemplateTypeContainer _TemplateParams;
+        ValuesContainer _Values;
 
         MetaContainer _Metadata;
 
@@ -64,8 +65,8 @@ namespace SimpleRTTR
             const stdrttr::string& fullyQualifiedName,
             std::size_t size,
             bool registeredByUser,
-            NamespaceList namespaces,
-            TemplateTypeList templateParams,
+            NamespaceContainer namespaces,
+            TemplateTypeContainer templateParams,
             ToStringFunction toStringFunc);
 
         inline TypeData(const stdrttr::string& name,

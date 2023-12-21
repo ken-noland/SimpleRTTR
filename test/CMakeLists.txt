@@ -3,6 +3,7 @@ set(SIMPLERTTR_TEST_SRC		testallocator.cpp
 							testenum.cpp
 							testmeta.cpp
 							testmethod.cpp
+							testfactory.cpp
 							testpreprocessor.cpp
 							testproperties.cpp
 							testsimplerttr.cpp

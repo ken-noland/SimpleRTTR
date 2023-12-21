@@ -5,10 +5,10 @@ namespace SimpleRTTR
     class Type
     {
     public:
-        using PropertyList = TypeData::PropertyList;
-        using MethodList = TypeData::MethodList;
-        using NamespaceList = TypeData::NamespaceList;
-        using TemplateTypeList = TypeData::TemplateTypeList;
+        using MethodContainer = TypeData::MethodContainer;
+        using ValuesContainer = TypeData::ValuesContainer;
+        using NamespaceList = TypeData::NamespaceContainer;
+        using TemplateTypeList = TypeData::TemplateTypeContainer;
 
         inline Type(const TypeData& data);
         inline Type(const Type& type);
@@ -29,17 +29,14 @@ namespace SimpleRTTR
         inline const stdrttr::string& FullyQualifiedName() const;
         inline std::size_t Size() const;
 
-        inline const PropertyList& Properties() const;
-        using PropertyFunction = std::function<void(const class Property&)>;
+        inline const PropertyContainer& Properties() const;
+        inline const MethodContainer& Methods() const;
+        inline const ValuesContainer& Values() const;
 
-        inline const MethodList& Methods() const;
-        using MethodFunction = std::function<void(const class Method&)>;
-
-        inline bool HasValue(const stdrttr::string& name) const;
-        inline const Variant& Value(const stdrttr::string& name) const;
+        //inline bool HasValue(const stdrttr::string& name) const;
+        //inline const Variant& Value(const stdrttr::string& name) const;
 
         inline const MetaContainer& Meta() const;
-        using MetaFunction = std::function<void(const class Meta&)>;
 
         inline const NamespaceList& Namespaces() const;
         inline const TemplateTypeList& TemplateParams() const;
@@ -136,13 +133,14 @@ namespace SimpleRTTR
             const pointer operator->() const { return *_Iter; }
         };
 
+        //std implementations
         using iterator = TypeIteratorProxy;
         using const_iterator = ConstTypeIteratorProxy;
 
-        iterator begin() { return static_cast<TypeMgr*>(this)->Begin(); }
-        const_iterator begin() const { return static_cast<TypeMgr*>(this)->Begin(); }
-        iterator end() { return static_cast<TypeMgr*>(this)->End(); }
-        const_iterator end() const { return static_cast<TypeMgr*>(this)->End(); }
+        inline iterator begin() { return static_cast<TypeMgr*>(this)->Begin(); }
+        inline const_iterator begin() const { return static_cast<TypeMgr*>(this)->Begin(); }
+        inline iterator end() { return static_cast<TypeMgr*>(this)->End(); }
+        inline const_iterator end() const { return static_cast<TypeMgr*>(this)->End(); }
     };
 
     class TypeManager;

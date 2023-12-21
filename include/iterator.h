@@ -27,35 +27,36 @@ namespace SimpleRTTR
         iterator _Iter;
     };
 
-    template<typename Container>
+    /****
+    * The purpose of this class is just to provide an STL compliant being and end iterator to allow for range based for loops. Since we use upper camel case for
+    *   member functions, and I want to be consistent, then this just provides a way to use the STL algorithms with our iterators. It also creates a very early 
+    *   form of "concepts" since the class that inherits from this must have a Begin() and End() function, as well as defined the Iterator and ConstIterator types.
+    ****/
+
+    template<typename Iterable, typename StdContainer>
     class DefaultIterable
     {
     public:
-        class IteratorProxy : public IteratorProxyBase<Container>
-        {
-        public:
-            IteratorProxy(iterator iter) : TypeIteratorProxyBase(iter) {}
-            reference operator*() const { return *(*_Iter); }
-            pointer operator->() { return *_Iter; }
-        };
+        using ContainerType = StdContainer;
+        using Iterator = typename StdContainer::iterator;
+        using ConstIterator = typename StdContainer::const_iterator;
 
-        class ConstIteratorProxy : public IteratorProxyBase<Container>
-        {
-        public:
-            ConstIteratorProxy(const_iterator iter) : TypeIteratorProxyBase(iter) {}
-            const reference operator*() const { return *(*_Iter); }
-            const pointer operator->() const { return *_Iter; }
-        };
-
-
-        using iterator = IteratorProxy;
-        using const_iterator = ConstIteratorProxy;
-
-        iterator begin() { return static_cast<TypeMgr*>(this)->Begin(); }
-        const_iterator begin() const { return static_cast<TypeMgr*>(this)->Begin(); }
-        iterator end() { return static_cast<TypeMgr*>(this)->End(); }
-        const_iterator end() const { return static_cast<TypeMgr*>(this)->End(); }
+        // std type aliases
+        using iterator = Iterator;
+        using const_interator = ConstIterator;
+        iterator begin() { return static_cast<Iterable*>(this)->Begin(); }
+        const_interator begin() const { return static_cast<const Iterable*>(this)->Begin(); }
+        iterator end() { return static_cast<Iterable*>(this)->End(); }
+        const_interator end() const { return static_cast<const Iterable*>(this)->End(); }
     };
 
+    template<typename Iterable>
+    class ConstIterable
+    {
+    public:
+        using const_iterator = typename Iterable::ConstIterator;
 
+        const_iterator begin() const { return static_cast<Iterable*>(this)->Begin(); }
+        const_iterator end() const { return static_cast<Iterable*>(this)->End(); }
+    };
 }
