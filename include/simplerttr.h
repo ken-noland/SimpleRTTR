@@ -56,6 +56,7 @@ namespace SimpleRTTR
 #include "method.inl"
 #include "variant.inl"
 #include "value.inl"
+#include "variant_copy.inl"
 #include "variant_tostring.inl"
 #include "meta.inl"
 #include "types.inl"

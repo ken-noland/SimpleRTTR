@@ -27,6 +27,9 @@ namespace SimpleRTTR
         inline const std::size_t Offset() const;
         inline const MetaContainer& Meta() const;
 
+        template<typename ClassType>
+        inline void Set(ClassType* obj, const Variant& value) const;
+
     protected:
         stdrttr::string _Name;
         TypeReference _Type;
@@ -55,9 +58,8 @@ namespace SimpleRTTR
         inline const std::size_t Offset() const;
         inline const MetaContainer& Meta() const;
 
-        using MetaFunction = std::function<void(const class Meta&)>;
-        inline void ForEach(MetaFunction eval) const;
-
+        template<typename ClassType>
+        inline void Set(ClassType* obj, const Variant& value) const;
 
         inline bool IsConst();
         inline bool IsPointer();

@@ -33,9 +33,6 @@ namespace SimpleRTTR
         inline const MethodContainer& Methods() const;
         inline const ValuesContainer& Values() const;
 
-        //inline bool HasValue(const stdrttr::string& name) const;
-        //inline const Variant& Value(const stdrttr::string& name) const;
-
         inline const MetaContainer& Meta() const;
 
         inline const NamespaceList& Namespaces() const;
@@ -60,6 +57,7 @@ namespace SimpleRTTR
         inline const stdrttr::string& GetFullyQualifiedName() const;
 
     protected:
+        friend TypeData& _InternalGetTypeData(Type& type);
         const TypeData& _TypeData;
     };
 

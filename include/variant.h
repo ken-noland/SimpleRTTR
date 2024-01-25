@@ -34,6 +34,13 @@ namespace SimpleRTTR
         CompareFunc _Comparator;
     };
 
+
+    template<typename VariantType>
+    inline void VariantCopy(const Variant& src, void* dest, const TypeReference& destType);
+
+    template<template <typename... > class Tmpl, typename ...Args>
+    inline void VariantCopy(const Variant& src, void* dest, const TypeReference& destType);
+
     template<typename VariantType>
     inline stdrttr::string VariantToString(const Variant& var);
 

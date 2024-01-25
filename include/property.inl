@@ -61,6 +61,22 @@ namespace SimpleRTTR
         return _Meta;
     }
 
+    template<typename ClassType>
+    inline void PropertyData::Set(ClassType* obj, const Variant& value) const
+    {
+        void* ptr = reinterpret_cast<void*>(reinterpret_cast<std::size_t>(obj) + _Offset);
+
+        TypeData::UnsafeCopyFunction unsafeCopyFunc = _InternalGetTypeData(Type()).GetUnsafeCopyFunction();
+        if(unsafeCopyFunc)
+        {
+            unsafeCopyFunc(value, ptr, _Type);
+        }
+        else
+        {
+            SIMPLERTTR_ASSERT(!"No copy function available");
+        }
+    }
+
     inline MetaContainer& _InternalPropertyDataGetMetaListRef(PropertyData& prop)
     {
         return prop._Meta;
@@ -124,9 +140,10 @@ namespace SimpleRTTR
         return _PropData.Meta();
     }
 
-    void Property::ForEach(Property::MetaFunction eval) const
+    template<typename ClassType>
+    inline void Property::Set(ClassType* obj, const Variant& value) const
     {
-        std::for_each(Meta().Begin(), Meta().End(), eval);
+        _PropData.Set(obj, value);
     }
 
     bool Property::IsConst()

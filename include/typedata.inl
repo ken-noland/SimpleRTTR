@@ -6,8 +6,9 @@ namespace SimpleRTTR
         const stdrttr::string& fullyQualifiedName,
         std::size_t size,
         bool registeredByUser,
-        NamespaceContainer namespaces,
-        TemplateTypeContainer templateParams,
+        const NamespaceContainer& namespaces,
+        const TemplateTypeContainer& templateParams,
+        UnsafeCopyFunction unsafeCopyFunc,
         ToStringFunction toStringFunc)
         :
         _Name(name),
@@ -16,6 +17,7 @@ namespace SimpleRTTR
         _RegisteredByUser(registeredByUser),
         _Namespaces(namespaces),
         _TemplateParams(templateParams),
+        _UnsafeCopyFunc(unsafeCopyFunc),
         _ToStringFunc(toStringFunc)
     {
 
@@ -30,7 +32,7 @@ namespace SimpleRTTR
         _Size(size),
         _RegisteredByUser(false)
     {
-
+        _UnsafeCopyFunc = nullptr;
     }
 
 
@@ -46,6 +48,7 @@ namespace SimpleRTTR
         _Namespaces(typeData._Namespaces),
         _TemplateParams(typeData._TemplateParams),
         _Metadata(typeData._Metadata),
+        _UnsafeCopyFunc(typeData._UnsafeCopyFunc),
         _ToStringFunc(typeData._ToStringFunc)
     {
     }
@@ -61,6 +64,7 @@ namespace SimpleRTTR
         _Namespaces(std::move(typeData._Namespaces)),
         _TemplateParams(std::move(typeData._TemplateParams)),
         _Metadata(std::move(typeData._Metadata)),
+        _UnsafeCopyFunc(std::move(typeData._UnsafeCopyFunc)),
         _ToStringFunc(std::move(typeData._ToStringFunc))
     {
     }
@@ -76,6 +80,7 @@ namespace SimpleRTTR
         _Namespaces = typeData._Namespaces;
         _TemplateParams = typeData._TemplateParams;
         _Metadata = typeData._Metadata;
+        _UnsafeCopyFunc = typeData._UnsafeCopyFunc;
         _ToStringFunc = typeData._ToStringFunc;
         return *this;
     }
@@ -137,6 +142,11 @@ namespace SimpleRTTR
     const MetaContainer& TypeData::GetMetadata() const
     {
         return _Metadata;
+    }
+
+    inline const TypeData::UnsafeCopyFunction TypeData::GetUnsafeCopyFunction() const
+    {
+        return _UnsafeCopyFunc;
     }
 
     const TypeData::ToStringFunction TypeData::GetToStringFunction() const

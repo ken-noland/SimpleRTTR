@@ -9,6 +9,7 @@ namespace SimpleRTTR
         using NamespaceContainer = stdrttr::vector<stdrttr::string>;
         using TemplateTypeContainer = stdrttr::vector<TypeReference>;
         using ValuesContainer = stdrttr::vector<Value>;
+        using UnsafeCopyFunction = std::add_pointer<void(const Variant& src, void* dest, const TypeReference& destType)>::type;
         using ToStringFunction = std::add_pointer<stdrttr::string(const Variant&)>::type;
 
         inline TypeData(const TypeData& typeData);
@@ -32,7 +33,11 @@ namespace SimpleRTTR
 
         inline const MetaContainer& GetMetadata() const;
 
+        // Okay, this might be worth explaining a bit. The UnsafeCopyFunction is a function pointer that is used to copy the data from the variant type
+        //  to the destination pointer. This is used for the Variant::CopyTo function. 
+        inline const UnsafeCopyFunction GetUnsafeCopyFunction() const;
         inline const ToStringFunction GetToStringFunction() const;
+
 
         //TODO: I'm not to sure about leaving these as public. It feels a bit hackish, but then again, the 
         //  TypeData class is meant for internal use only... soooo.... ¯\_(?)_/¯
@@ -58,6 +63,7 @@ namespace SimpleRTTR
 
         MetaContainer _Metadata;
 
+        UnsafeCopyFunction _UnsafeCopyFunc;
         ToStringFunction _ToStringFunc;
 
         friend class TypeStorage;
@@ -65,8 +71,9 @@ namespace SimpleRTTR
             const stdrttr::string& fullyQualifiedName,
             std::size_t size,
             bool registeredByUser,
-            NamespaceContainer namespaces,
-            TemplateTypeContainer templateParams,
+            const NamespaceContainer& namespaces,
+            const TemplateTypeContainer& templateParams,
+            UnsafeCopyFunction unsafeCopyFunction,
             ToStringFunction toStringFunc);
 
         inline TypeData(const stdrttr::string& name,

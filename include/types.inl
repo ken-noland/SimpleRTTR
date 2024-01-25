@@ -56,7 +56,7 @@ namespace SimpleRTTR
     bool Type::Equals(const std::type_info& typeData) const
     {
         //TODO: maybe not use a heavy constructor like TypeHelperBase(which is littered with allocations) to just test if a type if equal
-        TypeHelperBase typeHelper(typeData, -1, nullptr);    
+        TypeHelperBase typeHelper(typeData, -1, nullptr, nullptr);    
         return FullyQualifiedName().compare(typeHelper.QualifiedName()) == 0;
     }
 
@@ -153,6 +153,12 @@ namespace SimpleRTTR
     {
         return _TypeData.GetFullyQualifiedName();
     }
+
+    inline TypeData& _InternalGetTypeData(Type& type)
+    {
+        return const_cast<TypeData&>(type._TypeData);
+    }
+
 
     //--
     //Type Storage
@@ -281,6 +287,7 @@ namespace SimpleRTTR
             addedByUser,
             typeHelper.Namespaces(),
             typeHelper.TemplateParams(),
+            typeHelper.UnsafeCopyFunc(),
             typeHelper.ToStringFunc());
 
         return RegisterType(data);
@@ -347,7 +354,7 @@ namespace SimpleRTTR
 
     const Type TypeManager::GetType(const std::type_info& typeInfo) const
     {
-        TypeHelperBase helper(typeInfo, -1, nullptr);
+        TypeHelperBase helper(typeInfo, -1, nullptr, nullptr);
         return GetType(helper);
     }
 
