@@ -77,7 +77,7 @@ TEST(RTTRProperties, TestPropertiesMeta)
 
         {
             EXPECT_TRUE(meta.Has("description"));
-            Meta metaValue = meta.Get("description");
+            const Meta& metaValue = meta.Get("description");
 
             EXPECT_EQ(metaValue.Key().Type(), Types().GetType<const char*>());
             EXPECT_EQ(metaValue.Value().Type(), Types().GetType<const char*>());

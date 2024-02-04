@@ -86,12 +86,12 @@ namespace SimpleRTTR
         return _TypeData.GetPropertyList();
     }
 
-    const Type::MethodContainer& Type::Methods() const
+    const MethodContainer& Type::Methods() const
     {
         return _TypeData.GetMethodList();
     }
 
-    const Type::ValuesContainer& Type::Values() const
+    const ValueContainer& Type::Values() const
     {
         return _TypeData.GetValues();
     }
@@ -438,7 +438,7 @@ namespace SimpleRTTR
             //copy over the metadata in the user type meta section
             for (const Meta& meta : _UserTypeMetadata)
             {
-                data.AddMetadata(meta);
+                _InternalGetMetadata(data).Add(meta);
             }
         }
     }

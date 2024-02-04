@@ -64,7 +64,7 @@ namespace SimpleRTTR
     TypeBinding<ClassType>& TypeBinding<ClassType>::Meta(MetaKey key, MetaValue value)
     {
         class Meta meta(key, value);
-        _TypeData.AddMetadata(meta);
+        _InternalGetMetadata(_TypeData).Add(meta);
         return *this;
     }
 
@@ -73,8 +73,7 @@ namespace SimpleRTTR
     TypeBinding<ClassType>& TypeBinding<ClassType>::Meta(MetaKey key, const std::initializer_list<MetaValue>& value)
     {
         //need to copy the contents of value to vector since initializer_list only stores stack pointers
-        class Meta meta(key, stdrttr::vector<MetaValue>(value));
-        _TypeData.AddMetadata(meta);
+        _InternalGetMetadata(_TypeData).Add(class Meta(key, stdrttr::vector<MetaValue>(value)));
         return *this;
     }
 
@@ -100,7 +99,10 @@ namespace SimpleRTTR
         //if you catch this error, then that means you should be specifying the parameter names(see the function below)
         SIMPLERTTR_ASSERT(methodData.Parameters().size() == 0);
 
-        class Method& method = _TypeData.GetOrCreateMethod(methodData);
+        MethodContainer& methods = _InternalGetMethods(_TypeData);
+        methods.Add(methodData);
+        class Method& method = methods.Back();
+
         return MethodBinding<ClassType>(method, _TypeData);
     }
 
@@ -113,7 +115,10 @@ namespace SimpleRTTR
         //if you catch this error, then that means you need an equal number of names to parameters
         SIMPLERTTR_ASSERT(methodData.Parameters().size() == paramNames.size());
 
-        class Method& method = _TypeData.GetOrCreateMethod(methodData);
+        MethodContainer& methods = _InternalGetMethods(_TypeData);
+        methods.Add(methodData);
+        class Method& method = methods.Back();
+
         return MethodBinding<ClassType>(method, _TypeData);
     }
 
@@ -122,7 +127,7 @@ namespace SimpleRTTR
     inline ValueBinding<ClassType> TypeBinding<ClassType>::Value(EnumType value, const stdrttr::string& name)
     {
         class Value valueData(name, value);
-        _TypeData.AddValue(valueData);
+        _InternalGetValues(_TypeData).Add(valueData);
         return ValueBinding<ClassType>(valueData, _TypeData);
     }
 
@@ -139,9 +144,7 @@ namespace SimpleRTTR
     template <typename MetaKey, typename MetaValue>
     inline PropertyBinding<ClassType>& PropertyBinding<ClassType>::Meta(MetaKey key, MetaValue value)
     {
-        class Meta meta(key, value);
-        MetaContainer& propertyDataMetaList = _InternalPropertyDataGetMetaListRef(_PropertyData);
-        propertyDataMetaList.PushBack(meta);
+        _InternalPropertyDataGetMetaListRef(_PropertyData).Add(class Meta(key, value));
         return *this;
     }
 
@@ -150,9 +153,7 @@ namespace SimpleRTTR
     inline PropertyBinding<ClassType>& PropertyBinding<ClassType>::Meta(MetaKey key, const std::initializer_list<MetaValue>& value)
     {
         //need to copy the contents of value to vector since initializer_list only stores stack pointers
-        class Meta meta(key, stdrttr::vector<MetaValue>(value));
-        MetaContainer& propertyDataMetaList = _InternalPropertyDataGetMetaListRef(_PropertyData);
-        propertyDataMetaList.PushBack(meta);
+        _InternalPropertyDataGetMetaListRef(_PropertyData).Add(class Meta(key, stdrttr::vector<MetaValue>(value)));
         return *this;
     }
 
@@ -162,6 +163,22 @@ namespace SimpleRTTR
         TypeBinding<ClassType>(typeData),
         _Method(method)
     {
+    }
+
+    template<typename ClassType>
+    template <typename MetaKey, typename MetaValue>
+    inline MethodBinding<ClassType>& MethodBinding<ClassType>::Meta(MetaKey key, MetaValue value)
+    {
+        _InternalGetMetadata(_Method).Add(class Meta(key, value));
+        return *this;
+    }
+
+    template<typename ClassType>
+    template <typename MetaKey, typename MetaValue>
+    inline MethodBinding<ClassType>& MethodBinding<ClassType>::Meta(MetaKey key, const std::initializer_list<MetaValue>& value)
+    {
+        _InternalGetMetadata(_Method).Add(class Meta meta(key, stdrttr::vector<MetaValue>(value)));
+        return *this;
     }
 
     template<typename ClassType>

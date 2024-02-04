@@ -5,8 +5,6 @@ namespace SimpleRTTR
     class Type
     {
     public:
-        using MethodContainer = TypeData::MethodContainer;
-        using ValuesContainer = TypeData::ValuesContainer;
         using NamespaceList = TypeData::NamespaceContainer;
         using TemplateTypeList = TypeData::TemplateTypeContainer;
 
@@ -31,7 +29,7 @@ namespace SimpleRTTR
 
         inline const PropertyContainer& Properties() const;
         inline const MethodContainer& Methods() const;
-        inline const ValuesContainer& Values() const;
+        inline const ValueContainer& Values() const;
 
         inline const MetaContainer& Meta() const;
 
@@ -48,9 +46,6 @@ namespace SimpleRTTR
         inline void DestroyInstance(ClassType* ptr) const;
 
         inline void DestroyInstance(void* ptr) const;
-
-        template<typename ClassType, typename PropType>
-        inline bool SetProperty(ClassType* instance, const stdrttr::string& propertyName, const PropType& value) const;
 
         inline stdrttr::string ToString(const Variant& var) const;
 

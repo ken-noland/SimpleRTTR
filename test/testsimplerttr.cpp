@@ -186,7 +186,7 @@ TEST(RTTRRegistration, TestDoubleMember)
 TEST(RTTRRegistration, TestBasicMethods)
 {
     Type test = Types().GetType<SimpleRTTRTestClass1>();
-    EXPECT_EQ(test.Methods().size(), 3);
+    EXPECT_EQ(test.Methods().Size(), 3);
 }
 
 TEST(RTTRRegistration, TestAddTwoPlusTwoMethod)

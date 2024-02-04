@@ -16,4 +16,8 @@ namespace SimpleRTTR
         stdrttr::string _Name;
         class Variant _Value;
     };
+
+    class ValueContainer : public DefaultContainer<Value>
+    {
+    };
 }

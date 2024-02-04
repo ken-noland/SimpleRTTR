@@ -5,10 +5,8 @@ namespace SimpleRTTR
     class TypeData
     {
     public:
-        using MethodContainer = stdrttr::vector<Method>;
         using NamespaceContainer = stdrttr::vector<stdrttr::string>;
         using TemplateTypeContainer = stdrttr::vector<TypeReference>;
-        using ValuesContainer = stdrttr::vector<Value>;
         using UnsafeCopyFunction = std::add_pointer<void(const Variant& src, void* dest, const TypeReference& destType)>::type;
         using ToStringFunction = std::add_pointer<stdrttr::string(const Variant&)>::type;
 
@@ -29,7 +27,7 @@ namespace SimpleRTTR
         inline const MethodContainer& GetMethodList() const;
         inline const NamespaceContainer& GetNamespaces() const;
         inline const TemplateTypeContainer& GetTemplateParams() const;
-        inline const ValuesContainer& GetValues() const;
+        inline const ValueContainer& GetValues() const;
 
         inline const MetaContainer& GetMetadata() const;
 
@@ -38,28 +36,23 @@ namespace SimpleRTTR
         inline const UnsafeCopyFunction GetUnsafeCopyFunction() const;
         inline const ToStringFunction GetToStringFunction() const;
 
-
-        //TODO: I'm not to sure about leaving these as public. It feels a bit hackish, but then again, the 
-        //  TypeData class is meant for internal use only... soooo.... ¯\_(?)_/¯
-        //inline Property& GetOrCreateProperty(const stdrttr::string& name, const TypeReference& type, std::size_t offset);
-        inline Method& GetOrCreateMethod(Method& method);
-        inline Meta& AddMetadata(const Meta& meta);
-        inline class Value& AddValue(const class Value& value);
-
-
     protected:
         stdrttr::string _Name;
         stdrttr::string _FullyQualifiedName;
         std::size_t _Size;
         bool _RegisteredByUser;
 
+        // to be used to access non-const versions of the containers
         friend PropertyContainer& _InternalGetProperties(TypeData& typeData);
+        friend MethodContainer& _InternalGetMethods(TypeData& typeData);
+        friend MetaContainer& _InternalGetMetadata(TypeData& typeData);
+        friend ValueContainer& _InternalGetValues(TypeData& typeData);
 
         PropertyContainer _Properties;
         MethodContainer _Methods;
         NamespaceContainer _Namespaces;
         TemplateTypeContainer _TemplateParams;
-        ValuesContainer _Values;
+        ValueContainer _Values;
 
         MetaContainer _Metadata;
 

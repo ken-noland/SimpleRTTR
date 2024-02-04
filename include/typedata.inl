@@ -119,7 +119,7 @@ namespace SimpleRTTR
 
 
 
-    const TypeData::MethodContainer& TypeData::GetMethodList() const
+    const MethodContainer& TypeData::GetMethodList() const
     {
         return _Methods;
     }
@@ -134,7 +134,7 @@ namespace SimpleRTTR
         return _TemplateParams;
     }
 
-    const TypeData::ValuesContainer& TypeData::GetValues() const
+    const ValueContainer& TypeData::GetValues() const
     {
         return _Values;
     }
@@ -154,45 +154,24 @@ namespace SimpleRTTR
         return _ToStringFunc;
     }
 
-    //const Property& TypeData::GetOrCreateProperty(const stdrttr::string& name, const TypeReference& type, std::size_t offset)
-    //{
-    //    PropertyData propData(name, type, offset);
 
-    //    class Property prop(propData);
-
-    //    //check to see if property exists
-    //    PropertyContainer::iterator iter = std::find_if(_Properties.begin(), _Properties.end(), [&prop](const class Property& existing) { return existing == prop; });
-    //    if (iter == _Properties.end())
-    //    {
-    //        _Properties.PushBack(prop);
-    //        return _Properties.Back();
-    //    }
-
-    //    return (*iter);
-    //}
-
-    Method& TypeData::GetOrCreateMethod(Method& method)
+    inline MetaContainer& _InternalGetMetadata(TypeData& typeData)
     {
-        //TODO: Check if the method exists already
-        _Methods.push_back(method);
-        return _Methods.back();
+        return typeData._Metadata;
     }
 
-    Meta& TypeData::AddMetadata(const Meta& meta)
+    inline ValueContainer& _InternalGetValues(TypeData& typeData)
     {
-        //TODO: Check if the meta exists already
-        _Metadata.PushBack(meta);
-        return _Metadata.Back();
-    }
-
-    class Value& TypeData::AddValue(const class Value& value)
-    {
-        _Values.push_back(value);
-        return _Values.back();
+        return typeData._Values;
     }
 
     inline PropertyContainer& _InternalGetProperties(TypeData& typeData)
     {
         return typeData._Properties;
+    }
+
+    inline MethodContainer& _InternalGetMethods(TypeData& typeData)
+    {
+        return typeData._Methods;
     }
 }

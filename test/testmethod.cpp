@@ -45,7 +45,7 @@ TEST(RTTRMethod, TestArgumentNames)
 
     Type type = Types().GetType<SimpleRTTRTestMethod2>();
 
-    Type::MethodContainer::const_iterator found = std::find_if(type.Methods().begin(), type.Methods().end(), 
+    MethodContainer::ConstIterator found = std::find_if(type.Methods().begin(), type.Methods().end(), 
         [](const Method& method) { return (method.Name() == "AddXPlusY") && (method.Parameters().size() == 2); });
 
     EXPECT_NE(found, type.Methods().end());

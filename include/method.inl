@@ -42,6 +42,13 @@ namespace SimpleRTTR
         return _Type.Type();
     }
 
+    const Method& Method::InvalidMethod()
+    {
+        static Method InvalidMethod("invalid", Type::InvalidType(), {});
+        return InvalidMethod;
+    }
+
+
     Method::Method(const stdrttr::string& name, const TypeReference& retType, const Method::ParamList& params)
         :
         _Name(name),
@@ -55,16 +62,18 @@ namespace SimpleRTTR
         :
         _Name(method._Name),
         _RetType(method._RetType),
-        _Params(std::move(method._Params))
+        _Params(std::move(method._Params)),
+        _Meta(std::move(method._Meta))
     {
 
     }
 
     Method::Method(const Method& method)
         :
-        _Name(std::move(method._Name)),
+        _Name(method._Name),
         _RetType(method._RetType),
-        _Params(std::move(method._Params))
+        _Params(method._Params),
+        _Meta(method._Meta)
     {
 
     }
@@ -72,6 +81,22 @@ namespace SimpleRTTR
     Method& Method::operator=(const Method& method)
     {
         return *this;
+    }
+
+    bool Method::operator==(const Method& method) const
+    {
+        return Equals(method);
+    }
+
+    bool Method::operator!=(const Method& method) const
+    {
+        return !Equals(method);
+    }
+
+    inline bool Method::Equals(const Method& method) const
+    {
+        //TODO: probably need to compare parameters, meta, and return type as well
+        return _Name == method._Name;
     }
 
     const stdrttr::string& Method::Name() const
@@ -89,4 +114,37 @@ namespace SimpleRTTR
         return _Params;
     }
 
+    inline MetaContainer& _InternalGetMetadata(Method& method)
+    {
+        return method._Meta;
+    }
+
+    const MetaContainer& Method::Meta() const
+    {
+        return _Meta;
+    }
+
+    bool MethodContainer::Has(const stdrttr::string& name) const
+    {
+        for (const Method& method : _Data)
+        {
+            if (name == method.Name())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const Method& MethodContainer::Get(const stdrttr::string& name) const
+    {
+        for (const Method& method : _Data)
+        {
+            if (name == method.Name())
+            {
+                return method;
+            }
+        }
+        return Method::InvalidMethod();
+    }
 }

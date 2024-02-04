@@ -30,7 +30,10 @@ SIMPLERTTR
             .Meta("here is an int as a value", 32)
             .Meta("this should resolve to std::vector<int>", { 1, 2, 3, 4 })
         .Property(&SimpleRTTRTestMeta::property2, "property2")
-        .Property(&SimpleRTTRTestMeta::property3, "property3");
+        .Property(&SimpleRTTRTestMeta::property3, "property3")
+
+        .Method(&SimpleRTTRTestMeta::someFunc, "someFunc", { "p1", "p2" })
+            .Meta("description", "this function does something");
 }
 
 TEST(RTTRMeta, TestTypeHasMeta)
@@ -163,4 +166,15 @@ TEST(RTTRMeta, TestMetaOnFundamentalTypes)
 
     Type type = Types().GetType<char>();
     EXPECT_EQ(type.Meta().Size(), 1);
+}
+
+TEST(RTTRMeta, TestMetaOnClassMethod)
+{
+    //check that the method has the correct metadata
+    Type type = Types().GetType<SimpleRTTRTestMeta>();
+    const Method& method = type.Methods().Get("someFunc");
+    ASSERT_NE(method, Method::InvalidMethod());
+    const Meta& meta = method.Meta().Get("description");
+    ASSERT_NE(meta, Meta::InvalidMeta());
+    EXPECT_STREQ(meta.Value().GetAs<const char*>(), "this function does something");
 }

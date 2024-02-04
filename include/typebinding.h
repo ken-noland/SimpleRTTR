@@ -72,8 +72,8 @@ namespace SimpleRTTR
     public:
         inline MethodBinding(class Method& method, TypeData& typeData);
 
-        template <typename... MetaType>
-        inline MethodBinding& Meta(MetaType...);
+        template <typename MetaKey, typename MetaValue>
+        inline MethodBinding& Meta(MetaKey key, MetaValue value);
 
         template <typename MetaKey, typename MetaValue>
         inline MethodBinding& Meta(MetaKey key, const std::initializer_list<MetaValue>& value);

@@ -25,26 +25,11 @@ namespace SimpleRTTR
     };
 
     //TODO: meta should be encoded in a map of sorts(maybe? I mean, it is super fast to iterate and keeps things cache friendly as is)
-    class MetaContainer : public DefaultIterable<MetaContainer, std::vector<Meta>>
+    class MetaContainer : public DefaultContainer<Meta>
     {
     public:
         inline bool Has(Variant key) const;
         inline const Meta& Get(Variant key) const;
-
-        inline Iterator Begin();
-        inline ConstIterator Begin() const;
-
-        inline Iterator End();
-        inline ConstIterator End() const;
-
-        inline Meta& Back();
-        inline const Meta& Back() const;
-
-        inline std::size_t Size() const;
-
-        inline void PushBack(const Meta& meta);
-
     private:
-        ContainerType _Meta;
     };
 }
