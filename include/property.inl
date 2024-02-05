@@ -100,7 +100,7 @@ namespace SimpleRTTR
 
     const Property& Property::InvalidProperty()
     {
-        static Property InvalidProperty(PropertyData("invalid", Type::InvalidType(), -1));
+        static Property InvalidProperty(PropertyData("invalid", Type::InvalidType(), (std::size_t) - 1));
         return InvalidProperty;
     }
 

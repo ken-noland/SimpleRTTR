@@ -56,7 +56,7 @@ namespace SimpleRTTR
     bool Type::Equals(const std::type_info& typeData) const
     {
         //TODO: maybe not use a heavy constructor like TypeHelperBase(which is littered with allocations) to just test if a type if equal
-        TypeHelperBase typeHelper(typeData, -1, nullptr, nullptr);    
+        TypeHelperBase typeHelper(typeData, (std::size_t)-1, nullptr, nullptr);
         return FullyQualifiedName().compare(typeHelper.QualifiedName()) == 0;
     }
 

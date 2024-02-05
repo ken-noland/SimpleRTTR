@@ -14,6 +14,11 @@ namespace SimpleRTTR
     template<>
     inline void VariantCopyHelper<std::string>(const Variant& src, void* dest, const TypeReference& destType)
     {
+        (void)src;
+        (void)dest;
+        (void)destType; //unreferenced parameter
+
+
         std::string* destPtr = reinterpret_cast<std::string*>(dest);
         Type srcType = src.Type();
         if (srcType == Types().GetType<std::string>())
@@ -51,8 +56,8 @@ namespace SimpleRTTR
     template<typename VariantType> 
     inline void VariantCopy(const Variant& src, void* dest, const TypeReference& destType)
     {
+        (void)destType; //unreferenced parameter
         VariantCopyHelper<VariantType>(src, dest, destType);
-//        static_assert(!"Not yet implemented")
     }
 
     template<> inline 

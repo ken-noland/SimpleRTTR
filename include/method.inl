@@ -88,6 +88,10 @@ namespace SimpleRTTR
 
     Method& Method::operator=(const Method& method)
     {
+        _Name = method._Name;
+        _RetType = method._RetType;
+        _Params = method._Params;
+        _Meta = method._Meta;
         return *this;
     }
 

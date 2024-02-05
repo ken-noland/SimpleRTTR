@@ -36,6 +36,7 @@ namespace SimpleRTTR
     template<>
     bool CompareInternal<std::nullptr_t>::Compare(const std::any& lhs, const std::any& rhs)
     {
+        (void)lhs;
         return std::type_index(rhs.type()) == std::type_index(typeid(std::nullptr_t));
     }
 
