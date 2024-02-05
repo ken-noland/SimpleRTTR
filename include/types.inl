@@ -146,6 +146,7 @@ namespace SimpleRTTR
 
     void Type::DestroyInstance(void* ptr) const
     {
+        (void)ptr;
         SIMPLERTTR_ASSERT(!"Not yet implemented");   //TODO: check inheritance!
     }
 
@@ -177,7 +178,7 @@ namespace SimpleRTTR
 
     const TypeData& TypeStorage::InvalidTypeData()
     {
-        static TypeData invalidTypeData("<invalid>","<invalid>",-1);
+        static TypeData invalidTypeData("<invalid>","<invalid>",(std::size_t)-1);
         return invalidTypeData;
     }
 
@@ -359,7 +360,7 @@ namespace SimpleRTTR
 
     const Type TypeManager::GetType(const std::type_info& typeInfo) const
     {
-        TypeHelperBase helper(typeInfo, -1, nullptr, nullptr);
+        TypeHelperBase helper(typeInfo, (std::size_t)-1, nullptr, nullptr);
         return GetType(helper);
     }
 

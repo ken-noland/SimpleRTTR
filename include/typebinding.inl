@@ -28,7 +28,7 @@ namespace SimpleRTTR
 
     void TypeBindingBase::RegisterType(const TypeData& typeData)
     {
-//        TypeManager::GetInstance().RegisterType(typeData);
+        (void)typeData;
     }
 
     template<typename ClassType>
