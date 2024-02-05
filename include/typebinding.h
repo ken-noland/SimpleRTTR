@@ -88,8 +88,8 @@ namespace SimpleRTTR
     public:
         inline ValueBinding(class Value& value, TypeData& typeData);
 
-        template <typename... MetaType>
-        inline ValueBinding& Meta(MetaType...);
+        template <typename MetaKey, typename MetaValue>
+        inline ValueBinding& Meta(MetaKey key, MetaValue value);
 
         template <typename MetaKey, typename MetaValue>
         inline ValueBinding& Meta(MetaKey key, const std::initializer_list<MetaValue>& value);

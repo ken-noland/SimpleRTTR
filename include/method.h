@@ -20,14 +20,16 @@ namespace SimpleRTTR
         TypeReference _Type;
     };
 
+    class ParameterContainer : public DefaultContainer<Parameter>
+    {
+    };
+
     class Method
     {
     public:
         static inline const Method& InvalidMethod();
 
-        using ParamList = stdrttr::vector<Parameter>;
-
-        inline Method(const stdrttr::string& name, const TypeReference& retType, const ParamList& params);
+        inline Method(const stdrttr::string& name, const TypeReference& retType, const ParameterContainer& params);
         inline Method(Method&& method);
         inline Method(const Method& method);
         inline Method& operator=(const Method& method);
@@ -39,7 +41,7 @@ namespace SimpleRTTR
 
         inline const stdrttr::string& Name() const;
         inline const Type ReturnType() const;
-        inline const ParamList& Parameters() const;
+        inline const ParameterContainer& Parameters() const;
 
         inline const MetaContainer& Meta() const;
 
@@ -50,7 +52,7 @@ namespace SimpleRTTR
 
         stdrttr::string _Name;
         TypeReference _RetType;
-        ParamList   _Params;
+        ParameterContainer   _Params;
         MetaContainer _Meta;
     };
 

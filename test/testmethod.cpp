@@ -46,12 +46,12 @@ TEST(RTTRMethod, TestArgumentNames)
     Type type = Types().GetType<SimpleRTTRTestMethod2>();
 
     MethodContainer::ConstIterator found = std::find_if(type.Methods().begin(), type.Methods().end(), 
-        [](const Method& method) { return (method.Name() == "AddXPlusY") && (method.Parameters().size() == 2); });
+        [](const Method& method) { return (method.Name() == "AddXPlusY") && (method.Parameters().Size() == 2); });
 
     EXPECT_NE(found, type.Methods().end());
 
     const Method& method = *found;
-    EXPECT_EQ(method.Parameters().size(), 2);
+    EXPECT_EQ(method.Parameters().Size(), 2);
 
     Parameter param1 = method.Parameters()[0];
     EXPECT_EQ(param1.Name(), "X");

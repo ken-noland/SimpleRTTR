@@ -49,7 +49,7 @@ namespace SimpleRTTR
     }
 
 
-    Method::Method(const stdrttr::string& name, const TypeReference& retType, const Method::ParamList& params)
+    Method::Method(const stdrttr::string& name, const TypeReference& retType, const ParameterContainer& params)
         :
         _Name(name),
         _RetType(retType),
@@ -109,14 +109,9 @@ namespace SimpleRTTR
         return _RetType.Type();
     }
 
-    const Method::ParamList& Method::Parameters() const
+    const ParameterContainer& Method::Parameters() const
     {
         return _Params;
-    }
-
-    inline MetaContainer& _InternalGetMetadata(Method& method)
-    {
-        return method._Meta;
     }
 
     const MetaContainer& Method::Meta() const
@@ -146,5 +141,10 @@ namespace SimpleRTTR
             }
         }
         return Method::InvalidMethod();
+    }
+
+    inline MetaContainer& _InternalGetMetadata(Method& method)
+    {
+        return method._Meta;
     }
 }

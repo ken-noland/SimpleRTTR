@@ -86,7 +86,7 @@ namespace SimpleRTTR
         std::size_t offset = OffsetHelper<ClassType>(memberPtr);
 
         PropertyContainer& properties = _InternalGetProperties(_TypeData);
-        properties.PushBack(class Property(class PropertyData(name, type, offset)));
+        properties.Add(class Property(class PropertyData(name, type, offset)));
         return PropertyBinding<ClassType>(properties.Back(), _TypeData);
     }
 
@@ -97,7 +97,7 @@ namespace SimpleRTTR
         class Method methodData = MethodHelper(methodPtr, name, {});
 
         //if you catch this error, then that means you should be specifying the parameter names(see the function below)
-        SIMPLERTTR_ASSERT(methodData.Parameters().size() == 0);
+        SIMPLERTTR_ASSERT(methodData.Parameters().Size() == 0);
 
         MethodContainer& methods = _InternalGetMethods(_TypeData);
         methods.Add(methodData);
@@ -113,7 +113,7 @@ namespace SimpleRTTR
         class Method methodData = MethodHelper(methodPtr, name, paramNames);
 
         //if you catch this error, then that means you need an equal number of names to parameters
-        SIMPLERTTR_ASSERT(methodData.Parameters().size() == paramNames.size());
+        SIMPLERTTR_ASSERT(methodData.Parameters().Size() == paramNames.size());
 
         MethodContainer& methods = _InternalGetMethods(_TypeData);
         methods.Add(methodData);
@@ -126,9 +126,9 @@ namespace SimpleRTTR
     template <typename EnumType>
     inline ValueBinding<ClassType> TypeBinding<ClassType>::Value(EnumType value, const stdrttr::string& name)
     {
-        class Value valueData(name, value);
-        _InternalGetValues(_TypeData).Add(valueData);
-        return ValueBinding<ClassType>(valueData, _TypeData);
+        ValueContainer& values = _InternalGetValues(_TypeData);
+        values.Add(class Value(name, value));
+        return ValueBinding<ClassType>(values.Back(), _TypeData);
     }
 
 
@@ -177,6 +177,7 @@ namespace SimpleRTTR
     template <typename MetaKey, typename MetaValue>
     inline MethodBinding<ClassType>& MethodBinding<ClassType>::Meta(MetaKey key, const std::initializer_list<MetaValue>& value)
     {
+        //need to copy the contents of value to vector since initializer_list only stores stack pointers
         _InternalGetMetadata(_Method).Add(class Meta meta(key, stdrttr::vector<MetaValue>(value)));
         return *this;
     }
@@ -187,13 +188,13 @@ namespace SimpleRTTR
         TypeBinding(typeData),
         _Value(value)
     {
-
     }
 
     template<typename ClassType>
-    template <typename... MetaType>
-    inline ValueBinding<ClassType>& ValueBinding<ClassType>::Meta(MetaType...)
+    template <typename MetaKey, typename MetaValue>
+    inline ValueBinding<ClassType>& ValueBinding<ClassType>::Meta(MetaKey key, MetaValue value)
     {
+        _InternalGetMetadata(_Value).Add(class Meta(key, value));
         return *this;
     }
 
@@ -201,7 +202,8 @@ namespace SimpleRTTR
     template <typename MetaKey, typename MetaValue>
     inline ValueBinding<ClassType>& ValueBinding<ClassType>::Meta(MetaKey key, const std::initializer_list<MetaValue>& value)
     {
+        //need to copy the contents of value to vector since initializer_list only stores stack pointers
+        _InternalGetMetadata(_Value).Add(class Meta(key, stdrttr::vector<MetaValue>(value)));
         return *this;
     }
-
 }

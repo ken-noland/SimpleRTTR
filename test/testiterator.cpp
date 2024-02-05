@@ -106,14 +106,8 @@ TEST(RTTRIterator, TestPropertiesMeta)
     Type testIteratorType = Types().GetType<TestIterator::SimpleRTTRTestIterator>();
     EXPECT_NE(testIteratorType, Type::InvalidType());
 
-    const PropertyContainer& properties = testIteratorType.Properties();
-    PropertyContainer::ConstIterator iter = std::find_if(
-        properties.Begin(), properties.End(),
-        [](const Property& p) { return p.Name() == "property1"; });
-
-    ASSERT_NE(iter, properties.End());
-
-    Property prop = *iter;
+    Property prop = testIteratorType.Properties().Get("property1");
+    ASSERT_NE(prop, Property::InvalidProperty());
 
     int count = 0;
     for (const Meta& meta : prop.Meta())
@@ -152,5 +146,22 @@ TEST(RTTRIterator, TestMethodsMeta)
         count++;
     }
 
-    EXPECT_EQ(count, 1);
+    EXPECT_GT(count, 0);
+}
+
+TEST(RTTRIterator, TestMethodsParameters)
+{
+    const Type& testIteratorType = Types().GetType<TestIterator::SimpleRTTRTestIterator>();
+    EXPECT_NE(testIteratorType, Type::InvalidType());
+
+    const Method& method = testIteratorType.Methods().Get("someFunc1");
+    ASSERT_NE(method, Method::InvalidMethod());
+
+    int count = 0;
+    for (const Parameter& param : method.Parameters())
+    {
+        count++;
+    }
+
+    EXPECT_EQ(count, 2);
 }

@@ -47,6 +47,7 @@ namespace SimpleRTTR
         _Methods(typeData._Methods),
         _Namespaces(typeData._Namespaces),
         _TemplateParams(typeData._TemplateParams),
+        _Values(typeData._Values),
         _Metadata(typeData._Metadata),
         _UnsafeCopyFunc(typeData._UnsafeCopyFunc),
         _ToStringFunc(typeData._ToStringFunc)
@@ -63,6 +64,7 @@ namespace SimpleRTTR
         _Methods(std::move(typeData._Methods)),
         _Namespaces(std::move(typeData._Namespaces)),
         _TemplateParams(std::move(typeData._TemplateParams)),
+        _Values(std::move(typeData._Values)),
         _Metadata(std::move(typeData._Metadata)),
         _UnsafeCopyFunc(std::move(typeData._UnsafeCopyFunc)),
         _ToStringFunc(std::move(typeData._ToStringFunc))
@@ -79,6 +81,7 @@ namespace SimpleRTTR
         _Methods = typeData._Methods;
         _Namespaces = typeData._Namespaces;
         _TemplateParams = typeData._TemplateParams;
+        _Values = typeData._Values;
         _Metadata = typeData._Metadata;
         _UnsafeCopyFunc = typeData._UnsafeCopyFunc;
         _ToStringFunc = typeData._ToStringFunc;

@@ -13,7 +13,7 @@ namespace SimpleRTTR
         inline const stdrttr::string& GetFullyQualifiedName() const;
 
     protected:
-        //TODO: Instead of a string, use a hash of the string
+        //TODO: Instead of a string, use a hash of the whole data type
         stdrttr::string _FullyQualifiedName;
     };
 }

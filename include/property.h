@@ -44,12 +44,15 @@ namespace SimpleRTTR
     class Property
     {
     public:
+        static inline const Property& InvalidProperty();
+
         inline Property(Property&& data);
         inline Property(const Property& data);
         inline Property(const PropertyData& data);
         inline Property& operator=(const Property& prop);
 
         inline bool operator==(const Property& data) const;
+        inline bool operator!=(const Property& data) const;
 
         inline bool Equals(const Property& data) const;
 
@@ -70,31 +73,10 @@ namespace SimpleRTTR
     };
 
 
-    class PropertyContainer : public DefaultIterable<PropertyContainer, std::vector<Property>>
+    class PropertyContainer : public DefaultContainer<Property>
     {
     public:
-
         inline bool Has(const stdrttr::string& key) const;
         inline const Property& Get(const stdrttr::string& key) const;
-
-        inline Iterator Begin();
-        inline ConstIterator Begin() const;
-
-        inline Iterator End();
-        inline ConstIterator End() const;
-
-        inline void PushBack(const Property& prop);
-        inline void PushBack(Property&& prop);
-
-        inline std::size_t Size() const;
-
-        inline Property& Back();
-        inline const Property& Back() const;
-
-        inline Property& operator[](std::size_t index);
-        inline const Property& operator[](std::size_t index) const;
-
-    protected:
-        ContainerType _Properties;
     };
 }

@@ -38,6 +38,7 @@ namespace SimpleRTTR
 
     bool PropertyData::Equals(const PropertyData& data) const
     {
+        //TODO: add type
         return (_Name.compare(data._Name) == 0) && _Offset == data._Offset;
     }
 
@@ -89,6 +90,14 @@ namespace SimpleRTTR
 
     }
 
+
+    const Property& Property::InvalidProperty()
+    {
+        static Property InvalidProperty(PropertyData("invalid", Type::InvalidType(), -1));
+        return InvalidProperty;
+    }
+
+
     Property::Property(const Property& prop)
         :
         _PropData(prop._PropData)
@@ -113,6 +122,11 @@ namespace SimpleRTTR
     bool Property::operator==(const Property& data) const
     {
         return Equals(data);
+    }
+
+    bool Property::operator!=(const Property& data) const
+    {
+        return !Equals(data);
     }
 
     bool Property::Equals(const Property& data) const
@@ -180,60 +194,5 @@ namespace SimpleRTTR
         {
             throw std::runtime_error("Property not found");
         }
-    }
-
-    PropertyContainer::Iterator PropertyContainer::Begin()
-    {
-        return _Properties.begin();
-    }
-
-    PropertyContainer::ConstIterator PropertyContainer::Begin() const
-    {
-        return _Properties.begin();
-    }
-
-    PropertyContainer::Iterator PropertyContainer::End()
-    {
-        return _Properties.end();
-    }
-
-    PropertyContainer::ConstIterator PropertyContainer::End() const
-    {
-        return _Properties.end();
-    }
-
-    void PropertyContainer::PushBack(const Property& prop)
-    {
-        _Properties.push_back(prop);
-    }
-
-    void PropertyContainer::PushBack(Property&& prop)
-    {
-        _Properties.push_back(std::move(prop));
-    }
-
-    std::size_t PropertyContainer::Size() const
-    {
-        return _Properties.size();
-    }
-
-    Property& PropertyContainer::Back()
-    {
-        return _Properties.back();
-    }
-    
-    const Property& PropertyContainer::Back() const
-    {
-       return _Properties.back();
-    }
-
-    Property& PropertyContainer::operator[](std::size_t index)
-    {
-        return _Properties[index];
-    }
-
-    const Property& PropertyContainer::operator[](std::size_t index) const
-    {
-        return _Properties[index];
     }
 }

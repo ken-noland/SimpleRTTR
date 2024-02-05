@@ -247,17 +247,17 @@ namespace SimpleRTTR
     };
 
     template<typename ParameterType>
-    void ParameterHelper(stdrttr::vector<Parameter>& outTypes, std::initializer_list<stdrttr::string>::const_iterator nameIter, std::initializer_list<stdrttr::string>::const_iterator endIter)
+    void ParameterHelper(ParameterContainer& outTypes, std::initializer_list<stdrttr::string>::const_iterator nameIter, std::initializer_list<stdrttr::string>::const_iterator endIter)
     {
         SIMPLERTTR_ASSERT_MSG(nameIter != endIter, "Not enough names specified in the method declaration. You must have a name for each function parameter.");
 
         Parameter param(*nameIter, Types().GetOrCreateType<ParameterType>());
-        outTypes.push_back(param);
+        outTypes.Add(param);
     }
 
     template<typename ClassType, typename... Parameters>
     typename std::enable_if<sizeof...(Parameters) != 0, void>::type
-        ParameterHelper(stdrttr::vector<Parameter>& outTypes, std::initializer_list<stdrttr::string>::const_iterator nameIter, std::initializer_list<stdrttr::string>::const_iterator endIter)
+        ParameterHelper(ParameterContainer& outTypes, std::initializer_list<stdrttr::string>::const_iterator nameIter, std::initializer_list<stdrttr::string>::const_iterator endIter)
     {
         ParameterHelper<ClassType>(outTypes, nameIter, endIter);
         ParameterHelper<Parameters...>(outTypes, ++nameIter, endIter);
@@ -271,7 +271,7 @@ namespace SimpleRTTR
         NameIter paramNameEnd = paramNames.end();
 
         Type returnType = Types().GetOrCreateType<RetType>();
-        stdrttr::vector<Parameter> params;
+        ParameterContainer params;
         ParameterHelper<ParameterTypes...>(params, paramNameIter, paramNameEnd);
 
         return Method(name, returnType, params);
@@ -283,7 +283,6 @@ namespace SimpleRTTR
         SIMPLERTTR_ASSERT_MSG(paramNames.size() == 0, "No need to specify parameters names on method that have 0 parameters");
 
         Type returnType = Types().GetOrCreateType<RetType>();
-        stdrttr::vector<Parameter> params;
-        return Method(name, returnType, params);
+        return Method(name, returnType, {});
     }
 }

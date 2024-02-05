@@ -68,6 +68,15 @@ namespace SimpleRTTR
     class DefaultContainer : public DefaultIterable<DefaultContainer<Type, Container>, Container>
     {
     public:
+        DefaultContainer() : _Data() { }
+        DefaultContainer(const DefaultContainer& container) : _Data(container._Data) { }
+        DefaultContainer(DefaultContainer&& container) : _Data(std::move(container._Data)) { }
+
+        DefaultContainer(const Container& values) : _Data(values) { }
+        DefaultContainer(Container&& values) : _Data(std::move(values)) { }
+
+        DefaultContainer& operator=(const DefaultContainer& rhs) { _Data = rhs._Data; return *this; }
+
         using ContainerType = std::vector<Type>;
         using Iterator = typename ContainerType::iterator;
         using ConstIterator = typename ContainerType::const_iterator;
@@ -81,7 +90,7 @@ namespace SimpleRTTR
         inline const Type& operator[](std::size_t index) const { return _Data[index]; }
 
         void Add(const Type& value) { _Data.push_back(value); }
-        void Add(Type&& value) { _Data.push_back(std::move(value)); }
+        void Add(Type&& value) { _Data.push_back(value); }
 
         void Clear() { _Data.clear(); }
 

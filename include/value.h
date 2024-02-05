@@ -10,11 +10,16 @@ namespace SimpleRTTR
         inline const stdrttr::string& Name() const;
         inline const Variant& Variant() const;
 
+        inline const MetaContainer& Meta() const;
+
         inline bool operator==(const Value& other) const;
 
     protected:
+        friend MetaContainer& _InternalGetMetadata(class Value& value);
+
         stdrttr::string _Name;
         class Variant _Value;
+        MetaContainer _Meta;
     };
 
     class ValueContainer : public DefaultContainer<Value>

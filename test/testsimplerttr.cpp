@@ -196,7 +196,7 @@ TEST(RTTRRegistration, TestAddTwoPlusTwoMethod)
     const Method& method = test.Methods()[0];
     EXPECT_EQ(method.Name(), "AddTwoPlusTwo");
     EXPECT_EQ(method.ReturnType(), Types().GetType<int>());
-    EXPECT_EQ(method.Parameters().size(), 0);
+    EXPECT_EQ(method.Parameters().Size(), 0);
 }
 
 TEST(RTTRRegistration, TestAddTwoPlusXMethod)
@@ -206,7 +206,7 @@ TEST(RTTRRegistration, TestAddTwoPlusXMethod)
     const Method& method = test.Methods()[1];
     EXPECT_EQ(method.Name(), "AddTwoPlusX");
     EXPECT_EQ(method.ReturnType(), Types().GetType<int>());
-    ASSERT_EQ(method.Parameters().size(), 1);
+    ASSERT_EQ(method.Parameters().Size(), 1);
 
     const Parameter& param1 = method.Parameters()[0];
     EXPECT_EQ(param1.Type(), Types().GetType<int>());
@@ -219,7 +219,7 @@ TEST(RTTRRegistration, TestAddXPlusYMethod)
     const Method& method = test.Methods()[2];
     EXPECT_EQ(method.Name(), "AddXPlusY");
     EXPECT_EQ(method.ReturnType(), Types().GetType<int>());
-    ASSERT_EQ(method.Parameters().size(), 2);
+    ASSERT_EQ(method.Parameters().Size(), 2);
 
     const Parameter& param1 = method.Parameters()[0];
     EXPECT_EQ(param1.Type(), Types().GetType<int>());
