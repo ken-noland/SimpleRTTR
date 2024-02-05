@@ -19,6 +19,8 @@ namespace SimpleRTTR
         inline const Variant& Key() const;
         inline const Variant& Value() const;
 
+        inline std::size_t Hash() const;
+
     protected:
         Variant _Key;
         Variant _Value;

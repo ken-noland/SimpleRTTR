@@ -64,8 +64,8 @@ namespace SimpleRTTR
     * that we can't specify the container name, but that's not a big deal. We can also use this as a base class for other containers that are not vectors, but we will have to
     * define the container type ourselves.
     ****/
-    template<typename Type, typename Container = std::vector<Type>>
-    class DefaultContainer : public DefaultIterable<DefaultContainer<Type, Container>, Container>
+    template<typename ClassType, typename Container = std::vector<ClassType>>
+    class DefaultContainer : public DefaultIterable<DefaultContainer<ClassType, Container>, Container>
     {
     public:
         DefaultContainer() : _Data() { }
@@ -77,7 +77,7 @@ namespace SimpleRTTR
 
         DefaultContainer& operator=(const DefaultContainer& rhs) { _Data = rhs._Data; return *this; }
 
-        using ContainerType = std::vector<Type>;
+        using ContainerType = std::vector<ClassType>;
         using Iterator = typename ContainerType::iterator;
         using ConstIterator = typename ContainerType::const_iterator;
 
@@ -86,17 +86,30 @@ namespace SimpleRTTR
         ConstIterator Begin() const { return _Data.begin(); }
         ConstIterator End() const { return _Data.end(); }
 
-        inline Type& operator[](std::size_t index) { return _Data[index]; }
-        inline const Type& operator[](std::size_t index) const { return _Data[index]; }
+        inline ClassType& operator[](std::size_t index) { return _Data[index]; }
+        inline const ClassType& operator[](std::size_t index) const { return _Data[index]; }
 
-        void Add(const Type& value) { _Data.push_back(value); }
-        void Add(Type&& value) { _Data.push_back(value); }
+        void Add(const ClassType& value) { _Data.push_back(value); }
+        void Add(ClassType&& value) { _Data.push_back(value); }
 
         void Clear() { _Data.clear(); }
 
         size_t Size() const { return _Data.size(); }
-        const Type& Back() const { return _Data.back(); }
-        Type& Back() { return _Data.back(); }
+
+        const ClassType& Back() const { return _Data.back(); }
+        ClassType& Back() { return _Data.back(); }
+
+        void Reserve(size_t size) { _Data.reserve(size); }
+
+        std::size_t Hash() const
+        {
+            std::size_t seed = 0;
+            for (const ClassType& value : _Data)
+            {
+                seed ^= std::hash<ClassType>()(value) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+            }
+            return seed;
+        }
 
     protected:
         ContainerType _Data;

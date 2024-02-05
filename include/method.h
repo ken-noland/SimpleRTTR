@@ -15,6 +15,8 @@ namespace SimpleRTTR
         inline const stdrttr::string& Name() const;
         inline const class Type Type() const;
 
+        inline std::size_t Hash() const;
+
     protected:
         stdrttr::string _Name;
         TypeReference _Type;
@@ -38,6 +40,8 @@ namespace SimpleRTTR
         inline bool operator!=(const Method& method) const;
 
         inline bool Equals(const Method& method) const;
+
+        inline std::size_t Hash() const;
 
         inline const stdrttr::string& Name() const;
         inline const Type ReturnType() const;

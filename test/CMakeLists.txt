@@ -4,6 +4,7 @@ set(SIMPLERTTR_TEST_SRC		testallocator.cpp
 							testmeta.cpp
 							testmethod.cpp
 							testfactory.cpp
+							testhash.cpp
 							testiterator.cpp
 							testpreprocessor.cpp
 							testproperties.cpp

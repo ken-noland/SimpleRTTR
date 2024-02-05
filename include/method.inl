@@ -42,6 +42,14 @@ namespace SimpleRTTR
         return _Type.Type();
     }
 
+    std::size_t Parameter::Hash() const
+    {
+        std::size_t seed = 0;
+        HashCombine(seed, _Name, _Type);
+        return seed;
+    }
+
+
     const Method& Method::InvalidMethod()
     {
         static Method InvalidMethod("invalid", Type::InvalidType(), {});
@@ -93,11 +101,19 @@ namespace SimpleRTTR
         return !Equals(method);
     }
 
-    inline bool Method::Equals(const Method& method) const
+    bool Method::Equals(const Method& method) const
     {
         //TODO: probably need to compare parameters, meta, and return type as well
         return _Name == method._Name;
     }
+
+    std::size_t Method::Hash() const
+    {
+        std::size_t seed = 0;
+        HashCombine(seed, _Name, _RetType, _Params, _Meta);
+        return seed;
+    }
+
 
     const stdrttr::string& Method::Name() const
     {

@@ -7,6 +7,7 @@ namespace SimpleRTTR
     public:
         using NamespaceContainer = stdrttr::vector<stdrttr::string>;
         using TemplateTypeContainer = stdrttr::vector<TypeReference>;
+
         using UnsafeCopyFunction = std::add_pointer<void(const Variant& src, void* dest, const TypeReference& destType)>::type;
         using ToStringFunction = std::add_pointer<stdrttr::string(const Variant&)>::type;
 
@@ -19,12 +20,14 @@ namespace SimpleRTTR
         inline const stdrttr::string& GetName() const;
         inline const stdrttr::string& GetFullyQualifiedName() const;
         inline std::size_t GetSize() const;
+        inline std::size_t Hash() const;
+
 
         //TODO: Remove this function. It's only used in the TypeStorage class.
         inline bool IsRegisteredByUser() const;
 
-        inline const PropertyContainer& GetPropertyList() const;
-        inline const MethodContainer& GetMethodList() const;
+        inline const PropertyContainer& GetProperties() const;
+        inline const MethodContainer& GetMethods() const;
         inline const NamespaceContainer& GetNamespaces() const;
         inline const TemplateTypeContainer& GetTemplateParams() const;
         inline const ValueContainer& GetValues() const;

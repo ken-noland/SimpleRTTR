@@ -55,9 +55,18 @@ namespace SimpleRTTR
         return _Key;
     }
 
-    const Variant& Meta::Value() const {
+    const Variant& Meta::Value() const 
+    {
         return _Value;
     }
+
+    std::size_t Meta::Hash() const
+    {
+        std::size_t seed = 0;
+        HashCombine(seed, _Key, _Value);
+        return seed;
+    }
+
 
     bool MetaContainer::Has(Variant key) const
     {

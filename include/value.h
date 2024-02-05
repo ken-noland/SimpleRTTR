@@ -12,6 +12,8 @@ namespace SimpleRTTR
 
         inline const MetaContainer& Meta() const;
 
+        inline std::size_t Hash() const;
+
         inline bool operator==(const Value& other) const;
 
     protected:

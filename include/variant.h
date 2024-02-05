@@ -25,13 +25,18 @@ namespace SimpleRTTR
 
         inline const class Type Type() const;
 
+        inline std::size_t Hash() const;
+
         inline stdrttr::string ToString() const;
 
     protected:
         std::any _Value;
 
         using CompareFunc = std::add_pointer<bool(const std::any&, const std::any&)>::type;
-        CompareFunc _Comparator;
+        CompareFunc _ComparatorFunc;
+
+        using HashFunc = std::add_pointer<std::size_t(const std::any&)>::type;
+        HashFunc _HashFunc;
     };
 
 

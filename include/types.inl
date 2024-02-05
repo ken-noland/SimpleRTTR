@@ -81,14 +81,19 @@ namespace SimpleRTTR
         return _TypeData.GetSize();
     }
 
+    std::size_t Type::Hash() const
+    {
+        return _TypeData.Hash();
+    }
+
     const PropertyContainer& Type::Properties() const
     {
-        return _TypeData.GetPropertyList();
+        return _TypeData.GetProperties();
     }
 
     const MethodContainer& Type::Methods() const
     {
-        return _TypeData.GetMethodList();
+        return _TypeData.GetMethods();
     }
 
     const ValueContainer& Type::Values() const

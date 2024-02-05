@@ -21,7 +21,7 @@ namespace SimpleRTTR
             return var1 == var2;
         }
 
-        SIMPLERTTR_ASSERT_MSG(false, "Unable to determine equality for non-integral types")
+        SIMPLERTTR_ASSERT_MSG(false, "Unable to determine equality operator for non-integral types")
     }
 
     template<>
@@ -39,25 +39,51 @@ namespace SimpleRTTR
         return std::type_index(rhs.type()) == std::type_index(typeid(std::nullptr_t));
     }
 
+    //find enabled(untainted) versions of the std::hash specialization
+    template<typename T, typename = void>
+    struct HasValidStdHash : std::false_type {};
+
+    template<typename T>
+    struct HasValidStdHash < T, std::void_t<decltype(std::hash<T>{}(std::declval<T>())) >> : std::true_type {};
+
+
+    template <typename ClassType>
+    struct HashInternal
+    {
+        static inline std::size_t Hash(const std::any& object) 
+        { 
+            if constexpr (HasValidStdHash<ClassType>::value)
+            {
+                return std::hash<ClassType>()(std::any_cast<ClassType>(object));
+            }
+
+            SIMPLERTTR_ASSERT_MSG(false, "Unable to determine hash function"); 
+            return 0; 
+        };
+    };
+
     template<typename VariantType>
     Variant::Variant(VariantType value)
         :
         _Value(value),
-        _Comparator(&CompareInternal<VariantType>::Compare)
+        _ComparatorFunc(&CompareInternal<VariantType>::Compare),
+        _HashFunc(&HashInternal<VariantType>::Hash)
     {
     }
 
     Variant::Variant(const Variant& var)
         :
         _Value(var._Value),
-        _Comparator(var._Comparator)
+        _ComparatorFunc(var._ComparatorFunc),
+        _HashFunc(var._HashFunc)
     {
     }
 
     Variant::Variant(Variant&& var)
         :
         _Value(std::move(var._Value)),
-        _Comparator(std::move(var._Comparator))
+        _ComparatorFunc(std::move(var._ComparatorFunc)),
+        _HashFunc(std::move(var._HashFunc))
     {
     }
 
@@ -71,7 +97,7 @@ namespace SimpleRTTR
     {
         if (Type() == var.Type())
         {
-            return _Comparator(_Value, var._Value);
+            return _ComparatorFunc(_Value, var._Value);
         }
         return false;
     }
@@ -103,6 +129,11 @@ namespace SimpleRTTR
     inline const class Type Variant::Type() const
     {
         return Types().GetType(_Value.type());
+    }
+
+    std::size_t Variant::Hash() const
+    {
+        return _HashFunc(_Value);
     }
 
     inline stdrttr::string Variant::ToString() const

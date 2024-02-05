@@ -110,19 +110,35 @@ namespace SimpleRTTR
         return _Size;
     }
 
+    inline std::size_t TypeData::Hash() const
+    {
+        std::size_t hash = 0;
+        HashCombine(hash,
+            _FullyQualifiedName,
+            _Size,
+            _Properties,
+            _Methods,
+            _Namespaces,
+            _TemplateParams,
+            _Values,
+            _Metadata);
+        return hash;
+    }
+
+
     bool TypeData::IsRegisteredByUser() const
     {
         return _RegisteredByUser;
     }
 
-    const PropertyContainer& TypeData::GetPropertyList() const
+    const PropertyContainer& TypeData::GetProperties() const
     {
         return _Properties;
     }
 
 
 
-    const MethodContainer& TypeData::GetMethodList() const
+    const MethodContainer& TypeData::GetMethods() const
     {
         return _Methods;
     }

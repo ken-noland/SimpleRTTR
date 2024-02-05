@@ -11,6 +11,7 @@ namespace SimpleRTTR
         inline class Type Type() const;
 
         inline const stdrttr::string& GetFullyQualifiedName() const;
+        inline std::size_t Hash() const;
 
     protected:
         //TODO: Instead of a string, use a hash of the whole data type

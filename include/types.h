@@ -26,6 +26,7 @@ namespace SimpleRTTR
         inline const stdrttr::string& Name() const;
         inline const stdrttr::string& FullyQualifiedName() const;
         inline std::size_t Size() const;
+        inline std::size_t Hash() const;
 
         inline const PropertyContainer& Properties() const;
         inline const MethodContainer& Methods() const;

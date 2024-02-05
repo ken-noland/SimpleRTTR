@@ -36,6 +36,7 @@ namespace SimpleRTTR
 //definitions
 #include "simplerttrassert.h"
 #include "stdtypes.h"
+#include "hash.h"
 #include "typereference.h"
 #include "helpers.h"
 #include "iterator.h"
@@ -51,6 +52,7 @@ namespace SimpleRTTR
 #include "registration.h"
 
 //implementations
+#include "hash.inl"
 #include "typereference.inl"
 #include "property.inl"
 #include "method.inl"

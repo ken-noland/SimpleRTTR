@@ -62,6 +62,13 @@ namespace SimpleRTTR
         return _Meta;
     }
 
+    std::size_t PropertyData::Hash() const
+    {
+        std::size_t seed = 0;
+        HashCombine(seed, _Name, _Type, _Offset, _Flags);
+        return seed;
+    }
+
     template<typename ClassType>
     inline void PropertyData::Set(ClassType* obj, const Variant& value) const
     {
@@ -171,6 +178,12 @@ namespace SimpleRTTR
         //TODO
         return false;
     }
+
+    inline std::size_t Property::Hash() const
+    {
+        return _PropData.Hash();
+    }
+
 
     inline PropertyData& _InternalPropertyGetPropertyDataRef(Property& prop)
     {

@@ -27,8 +27,11 @@ namespace SimpleRTTR
         inline const std::size_t Offset() const;
         inline const MetaContainer& Meta() const;
 
+        inline std::size_t Hash() const;
+
         template<typename ClassType>
         inline void Set(ClassType* obj, const Variant& value) const;
+
 
     protected:
         stdrttr::string _Name;
@@ -66,6 +69,8 @@ namespace SimpleRTTR
 
         inline bool IsConst();
         inline bool IsPointer();
+
+        inline std::size_t Hash() const;
 
     protected:
         friend PropertyData& _InternalPropertyGetPropertyDataRef(Property& prop);
