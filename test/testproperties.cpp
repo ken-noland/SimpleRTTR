@@ -10,6 +10,10 @@ public:
     short           shortMember;
     int             intMember;
     void*           voidpointerMember;
+protected:
+    SIMPLE_RTTR_ALLOW_PROTECTED;
+
+    int             protectedMember;
 };
 
 int someFunc(int x, int y) 
@@ -28,7 +32,9 @@ SIMPLERTTR
             .Meta("callback", someFunc)
         .Property(&SimpleRTTRTestProperties1::intMember, "intMember")
             .Meta("description", "a simple 4 byte type")
-        .Property(&SimpleRTTRTestProperties1::voidpointerMember, "voidpointerMember");
+        .Property(&SimpleRTTRTestProperties1::voidpointerMember, "voidpointerMember")
+        .Property(&SimpleRTTRTestProperties1::protectedMember, "protectedMember")
+    ;
 }
 
 TEST(RTTRProperties, TestPropertiesList)
@@ -95,4 +101,9 @@ TEST(RTTRProperties, TestPropertiesMeta)
 
     const Property& prop2 = properties[1];
     const MetaContainer& meta2 = prop2.Meta();
+}
+
+TEST(RTTRProperties, TestProtected)
+{
+
 }

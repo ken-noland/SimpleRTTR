@@ -66,6 +66,14 @@ namespace SimpleRTTR
 #include "typebinding.inl"
 #include "registration.inl"
 
+//forward declaration of auto-register
+namespace {
+    class AutoRegister;
+}
+
+#define SIMPLE_RTTR_ALLOW_PROTECTED friend class AutoRegister;
+
+
 #define SIMPLERTTR  namespace {                                         \
                         class AutoRegister                              \
                         {                                               \
