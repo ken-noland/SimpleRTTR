@@ -71,8 +71,7 @@ namespace {
     class AutoRegister;
 }
 
-#define SIMPLE_RTTR_ALLOW_PROTECTED friend class AutoRegister;
-
+#define SIMPLE_RTTR_ALLOW_ACCESS friend class AutoRegister;
 
 #define SIMPLERTTR  namespace {                                         \
                         class AutoRegister                              \

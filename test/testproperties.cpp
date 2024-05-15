@@ -5,15 +5,18 @@ using namespace SimpleRTTR;
 
 class SimpleRTTRTestProperties1
 {
+    SIMPLE_RTTR_ALLOW_ACCESS;
 public:
     char            charMember;
     short           shortMember;
     int             intMember;
     void*           voidpointerMember;
-protected:
-    SIMPLE_RTTR_ALLOW_PROTECTED;
 
+protected:
     int             protectedMember;
+
+private:
+    int             privateMember;
 };
 
 int someFunc(int x, int y) 
@@ -34,6 +37,7 @@ SIMPLERTTR
             .Meta("description", "a simple 4 byte type")
         .Property(&SimpleRTTRTestProperties1::voidpointerMember, "voidpointerMember")
         .Property(&SimpleRTTRTestProperties1::protectedMember, "protectedMember")
+        .Property(&SimpleRTTRTestProperties1::privateMember, "privateMember")
     ;
 }
 

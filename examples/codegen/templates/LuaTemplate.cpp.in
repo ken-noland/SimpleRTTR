@@ -1,0 +1,25 @@
+//////////////////////////////////////////////////////////////
+//
+// This file is auto-generated.
+//
+// {{name}}
+//
+//////////////////////////////////////////////////////////////
+
+//{{header}}
+//
+//#include "lua_helpers.h"
+//
+//template<>
+//bool from_lua<{{#namespaces}}{{.}}::{{/namespaces}}{{name}}>({{#namespaces}}{{.}}::{{/namespaces}}{{name}}& out, lua_State* luaState, int index) 
+//{
+//	return true;
+//}
+
+#include <iostream>
+
+int main(int arc, char** argv)
+{
+	std::cout << "Hello, World!" << std::endl;
+	return 0;
+}
