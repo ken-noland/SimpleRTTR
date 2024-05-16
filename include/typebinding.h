@@ -41,6 +41,12 @@ namespace SimpleRTTR
         template <typename MethodType>
         inline MethodBinding<ClassType> Method(MethodType methodPtr, const stdrttr::string& name, const std::initializer_list<stdrttr::string>& paramNames);
 
+        inline MethodBinding<ClassType> Constructor();
+
+        // constructors are a bit annoying since they have limitations around them which prevent them from being introspected
+        template<typename... ConstructorArgs>
+        inline MethodBinding<ClassType> Constructor(const std::initializer_list<stdrttr::string>& paramNames);
+
         template <typename EnumType>
         inline ValueBinding<ClassType> Value(EnumType value, const stdrttr::string& name);
 

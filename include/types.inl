@@ -86,6 +86,11 @@ namespace SimpleRTTR
         return _TypeData.Hash();
     }
 
+    const ConstructorContainer& Type::Constructors() const
+    {
+        return _TypeData.GetConstructors();
+    }
+
     const PropertyContainer& Type::Properties() const
     {
         return _TypeData.GetProperties();

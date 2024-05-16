@@ -8,8 +8,6 @@
 
 #include <mustache.hpp>
 
-#include "point.h"
-
 using namespace SimpleRTTR;
 using namespace kainjow::mustache;
 
@@ -242,13 +240,13 @@ bool RunDiff(CodeGenExportData& exportData, const CachedTypes& cachedTypes, cons
 
         if (cachedHash == -1)
         {
-            std::cout << "Type: \"" << type.FullyQualifiedName() << "\" has been added." << std::endl;
+            //std::cout << "Type: \"" << type.FullyQualifiedName() << "\" has been added." << std::endl;
             typeExportData.action = TypeExportAction::Add;
             exportData.hasAdded = true;
         }
         else if (typeHash != cachedHash)
         {
-            std::cout << "Type: \"" << type.FullyQualifiedName() << "\" has changed." << std::endl;
+            //std::cout << "Type: \"" << type.FullyQualifiedName() << "\" has changed." << std::endl;
             if (type.Meta().Has("source_filename"))
             {
                 exportData.sourceFiles.insert(type.Meta().Get("source_filename").Value().GetAs<const char*>());
@@ -266,7 +264,7 @@ bool RunDiff(CodeGenExportData& exportData, const CachedTypes& cachedTypes, cons
         const Type& type = Types().GetType(it->first);
         if (type == Type::InvalidType())
         {
-            std::cout << "Type: \"" << it->first << "\" has been removed." << std::endl;
+            //std::cout << "Type: \"" << it->first << "\" has been removed." << std::endl;
             exportData.typeExportData.push_back({ TypeReference(Type::InvalidType()), it->first, TypeExportAction::Remove, "" });
             exportData.hasRemoved = true;
         }
@@ -290,16 +288,14 @@ std::string escapeBackslashes(const std::string& input) {
     return result;
 }
 
+#define TEMPLATE_DIR SOURCE_DIR "/templates/"
+
 int main(int arc, char** argv)
 {
-    std::cout << PROJECT_DIR << std::endl;
-    std::cout << BINARY_DIR << std::endl;
-
     std::vector<TemplateDefinition> templates;
 
 //    templates.push_back(TemplateDefinition{ "Json", TEMPLATE_DIR "JsonTemplate.cpp.in" });
     templates.push_back(TemplateDefinition{ "Lua", TEMPLATE_DIR "LuaTemplate.cpp.in" });
-//    templates.push_back(TemplateDefinition{ "Python", TEMPLATE_DIR "PythonTemplate.cpp.in" });
 
     bool regenerateAll = false;
 
@@ -354,8 +350,23 @@ int main(int arc, char** argv)
             }
         }
 
+        data sourceLocations{ data::type::list };
+        std::set<std::filesystem::path> uniqueSourceLocations;
+
+        for (const std::filesystem::path& sourceFile : exportData.sourceFiles)
+        {
+            uniqueSourceLocations.insert(sourceFile.parent_path());
+        }
+        for (const std::filesystem::path& sourceLocation : uniqueSourceLocations)
+        {
+            sourceLocations << escapeBackslashes(sourceLocation.string());
+        }
+        sourceLocations << escapeBackslashes(SOURCE_DIR);
+
         data cmakeListsData;
         cmakeListsData.set("sources", sources);
+        cmakeListsData.set("source_dir", SOURCE_DIR);
+        cmakeListsData.set("source_locations", sourceLocations);
 
         //open the output file
         std::filesystem::path cmakeListsFilePath = cmakeListsPath / "CMakeLists.txt";

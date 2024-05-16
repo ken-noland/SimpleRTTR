@@ -26,6 +26,7 @@ namespace SimpleRTTR
         //TODO: Remove this function. It's only used in the TypeStorage class.
         inline bool IsRegisteredByUser() const;
 
+        inline const ConstructorContainer& GetConstructors() const;
         inline const PropertyContainer& GetProperties() const;
         inline const MethodContainer& GetMethods() const;
         inline const NamespaceContainer& GetNamespaces() const;
@@ -46,11 +47,13 @@ namespace SimpleRTTR
         bool _RegisteredByUser;
 
         // to be used to access non-const versions of the containers
+        friend ConstructorContainer& _InternalGetConstructors(TypeData& typeData);
         friend PropertyContainer& _InternalGetProperties(TypeData& typeData);
         friend MethodContainer& _InternalGetMethods(TypeData& typeData);
         friend MetaContainer& _InternalGetMetadata(TypeData& typeData);
         friend ValueContainer& _InternalGetValues(TypeData& typeData);
 
+        ConstructorContainer _Constructors;
         PropertyContainer _Properties;
         MethodContainer _Methods;
         NamespaceContainer _Namespaces;

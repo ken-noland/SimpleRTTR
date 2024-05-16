@@ -247,7 +247,7 @@ namespace SimpleRTTR
     };
 
     template<typename ParameterType>
-    void ParameterHelper(ParameterContainer& outTypes, std::initializer_list<stdrttr::string>::const_iterator nameIter, std::initializer_list<stdrttr::string>::const_iterator endIter)
+    inline void ParameterHelper(ParameterContainer& outTypes, std::initializer_list<stdrttr::string>::const_iterator nameIter, std::initializer_list<stdrttr::string>::const_iterator endIter)
     {
         SIMPLERTTR_ASSERT_MSG(nameIter != endIter, "Not enough names specified in the method declaration. You must have a name for each function parameter.");
 
@@ -264,7 +264,7 @@ namespace SimpleRTTR
     }
 
     template<typename RetType, typename ClassType, class... ParameterTypes>
-    Method MethodHelper(RetType(ClassType::*)(ParameterTypes...), const stdrttr::string& name, const std::initializer_list<stdrttr::string>& paramNames)
+    inline Method MethodHelper(RetType(ClassType::*)(ParameterTypes...), const stdrttr::string& name, const std::initializer_list<stdrttr::string>& paramNames)
     {
         using NameIter = std::initializer_list<stdrttr::string>::const_iterator;
         NameIter paramNameIter = paramNames.begin();
@@ -278,11 +278,31 @@ namespace SimpleRTTR
     }
 
     template<typename RetType, typename ClassType>
-    Method MethodHelper(RetType(ClassType::*)(void), const stdrttr::string& name, const std::initializer_list<stdrttr::string>& paramNames)
+    inline Method MethodHelper(RetType(ClassType::*)(void), const stdrttr::string& name, const std::initializer_list<stdrttr::string>& paramNames)
     {
         SIMPLERTTR_ASSERT_MSG(paramNames.size() == 0, "No need to specify parameters names on method that have 0 parameters");
 
         Type returnType = Types().GetOrCreateType<RetType>();
         return Method(name, returnType, {});
+    }
+
+    template<typename ClassType>
+    inline Method ConstructorHelper()
+    {
+        ParameterContainer params;
+        return Method("Constructor", Types().GetOrCreateType<ClassType>(), params);
+    }
+
+    template<typename ClassType, typename... ConstructorArgs>
+    inline Method ConstructorHelper(const std::initializer_list<stdrttr::string>& paramNames)
+    {
+        using NameIter = std::initializer_list<stdrttr::string>::const_iterator;
+        NameIter paramNameIter = paramNames.begin();
+        NameIter paramNameEnd = paramNames.end();
+
+        ParameterContainer params;
+        ParameterHelper<ConstructorArgs...>(params, paramNameIter, paramNameEnd);
+
+        return Method("Constructor", Types().GetOrCreateType<ClassType>(), params);
     }
 }

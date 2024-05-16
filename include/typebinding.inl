@@ -90,6 +90,46 @@ namespace SimpleRTTR
         return PropertyBinding<ClassType>(properties.Back(), _TypeData);
     }
 
+    //// constructors do not have function pointers like normal methods, so we need a wrapper that allows us to deduce the arguments for the constructor
+    //template <typename ClassType>
+    //struct ConstructorTraits;
+
+    //template <typename ClassType, typename... TArgs>
+    //struct ConstructorTraits<ClassType(TArgs...)>
+    //{
+    //    using Args = std::tuple<TArgs...>;
+    //};
+
+    template<typename ClassType>
+    MethodBinding<ClassType> TypeBinding<ClassType>::Constructor()
+    {
+        static_assert(std::is_constructible<ClassType>::value, "ClassType must be default constructible, or use the Constructor<...>({...}) binding with the correct arguments");
+
+        class Method constructorData = ConstructorHelper<ClassType>();
+
+        ConstructorContainer& constructors = _InternalGetConstructors(_TypeData);
+        constructors.Add(constructorData);
+        class Method& method = constructors.Back();
+
+        return MethodBinding<ClassType>(method, _TypeData);
+    }
+
+    template<typename ClassType>
+    template<typename... ConstructorArgs>
+    MethodBinding<ClassType> TypeBinding<ClassType>::Constructor(const std::initializer_list<stdrttr::string>& paramNames)
+    {
+        static_assert((std::is_constructible<ClassType, ConstructorArgs...>::value), "ClassType must be constructible with the arguments provided");
+        SIMPLERTTR_ASSERT_MSG(sizeof...(ConstructorArgs) == paramNames.size(), "You must specify the correct number of argument names")
+
+        class Method constructorData = ConstructorHelper<ClassType, ConstructorArgs...>(paramNames);
+
+        ConstructorContainer& constructors = _InternalGetConstructors(_TypeData);
+        constructors.Add(constructorData);
+        class Method& method = constructors.Back();
+
+        return MethodBinding<ClassType>(method, _TypeData);
+    }
+
     template<typename ClassType>
     template<typename MethodType>
     MethodBinding<ClassType> TypeBinding<ClassType>::Method(MethodType methodPtr, const stdrttr::string& name)

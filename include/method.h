@@ -67,4 +67,9 @@ namespace SimpleRTTR
         inline bool Has(const stdrttr::string& key) const;
         inline const Method& Get(const stdrttr::string& key) const;
     };
+
+    class ConstructorContainer : public DefaultContainer<Method>
+    {
+
+    };
 }

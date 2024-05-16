@@ -9,3 +9,10 @@ set(SOURCES
 )
 
 add_library(CodeGen OBJECT ${SOURCES})
+
+{{#source_locations}}
+target_include_directories(CodeGen PUBLIC "{{.}}")
+{{/source_locations}}
+
+target_include_directories(CodeGen PUBLIC ${SIMPLERTTR_INCLUDE_PATH})
+target_include_directories(CodeGen PUBLIC ${LUA_INCLUDE_PATH})

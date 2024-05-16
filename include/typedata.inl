@@ -131,12 +131,15 @@ namespace SimpleRTTR
         return _RegisteredByUser;
     }
 
+    const ConstructorContainer& TypeData::GetConstructors() const
+    {
+        return _Constructors;
+    }
+
     const PropertyContainer& TypeData::GetProperties() const
     {
         return _Properties;
     }
-
-
 
     const MethodContainer& TypeData::GetMethods() const
     {
@@ -173,15 +176,9 @@ namespace SimpleRTTR
         return _ToStringFunc;
     }
 
-
-    inline MetaContainer& _InternalGetMetadata(TypeData& typeData)
+    inline ConstructorContainer& _InternalGetConstructors(TypeData& typeData)
     {
-        return typeData._Metadata;
-    }
-
-    inline ValueContainer& _InternalGetValues(TypeData& typeData)
-    {
-        return typeData._Values;
+        return typeData._Constructors;
     }
 
     inline PropertyContainer& _InternalGetProperties(TypeData& typeData)
@@ -193,4 +190,15 @@ namespace SimpleRTTR
     {
         return typeData._Methods;
     }
+
+    inline MetaContainer& _InternalGetMetadata(TypeData& typeData)
+    {
+        return typeData._Metadata;
+    }
+
+    inline ValueContainer& _InternalGetValues(TypeData& typeData)
+    {
+        return typeData._Values;
+    }
+
 }

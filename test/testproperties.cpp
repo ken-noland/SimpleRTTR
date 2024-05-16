@@ -47,7 +47,7 @@ TEST(RTTRProperties, TestPropertiesList)
     ASSERT_NE(type, Type::InvalidType());
 
     const PropertyContainer& properties = type.Properties();
-    ASSERT_EQ(properties.Size(), 4);
+    ASSERT_EQ(properties.Size(), 6);
 
     const Property& prop1 = properties[0];
     EXPECT_EQ(prop1.Name(), "charMember");
@@ -77,7 +77,7 @@ TEST(RTTRProperties, TestPropertiesMeta)
     ASSERT_NE(type, Type::InvalidType());
 
     const PropertyContainer& properties = type.Properties();
-    ASSERT_EQ(properties.Size(), 4);
+    ASSERT_EQ(properties.Size(), 6);
 
     ASSERT_TRUE(properties.Has("charMember"));
     const Property& prop1 = properties.Get("charMember");

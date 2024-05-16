@@ -10,6 +10,7 @@
 
 #define SIMPLERTTR_STRINGIFY(value) #value
 #define SIMPLERTTR_TOSTR(value) SIMPLERTTR_STRINGIFY(value)
+
 #define SIMPLERTTR_ASSERT(exp)                                      \
             if(!(exp))                                              \
             {                                                       \
@@ -20,6 +21,7 @@
                     "    Statement: " #exp "\n";                    \
                 SIMPLERTTR_ERROR(message.c_str());                  \
             }
+
 #define SIMPLERTTR_ASSERT_MSG(exp, msg)                             \
             if(!(exp))                                              \
             {                                                       \
