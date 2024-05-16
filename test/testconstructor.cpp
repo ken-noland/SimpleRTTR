@@ -54,10 +54,22 @@ SIMPLERTTR
 TEST(RTTRConstructor, TestNoArguments)
 {
     Type type = Types().GetType<SimpleRTTRTestConstructor1>();
+
+    const ConstructorContainer& constructors = type.Constructors();
+    ASSERT_EQ(constructors.Size(), 1);
+
+    Method constructor = constructors[0];
+    ASSERT_EQ(constructor.Parameters().Size(), 0);
 }
 
 
 TEST(RTTRConstructor, Test2Arguments)
 {
     Type type = Types().GetType<SimpleRTTRTestConstructor2>();
+
+    const ConstructorContainer& constructors = type.Constructors();
+    ASSERT_EQ(constructors.Size(), 1);
+
+    Method constructor = constructors[0];
+    ASSERT_EQ(constructor.Parameters().Size(), 2);
 }
