@@ -15,6 +15,7 @@ using namespace kainjow::mustache;
 #define GENERATED_DIR "generated"
 #define CACHED_TYPES_FILE "cachedtypes.txt"
 
+#define TEMPLATE_DIR SOURCE_DIR "/templates/"
 
 enum class TypeExportAction
 {
@@ -47,6 +48,14 @@ struct CodeGenExportData
     // all collected source files
     std::set<std::filesystem::path> sourceFiles;
 };
+
+
+struct TemplateDefinition
+{
+    std::string name;
+    std::string source;
+};
+
 
 //Cached types is a class to load and store the type hashes of all the types that have been registered. It's a registry 
 // of sorts which allows us to determine if a type has been added, removed, or changed.
@@ -132,43 +141,37 @@ protected:
     TypeMap _typeHashes;
 };
 
-struct TemplateDefinition
+std::filesystem::path GetGeneratedDir()
 {
-    std::string name;
-    std::string source;
-};
+    std::filesystem::path outputDir = BINARY_DIR;
+    outputDir /= GENERATED_DIR;
+    return outputDir;
+}
 
-//#define TEMPLATE_DIR "templates/" 
 
-void ProcessSourceFile(std::ostream& output, const std::filesystem::path& sourceFilename)
+std::filesystem::path GetFilenameForTemplate(const std::string& typeName, const std::filesystem::path& relativePath, const TemplateDefinition& templateDefinition)
 {
-    //read the source file line by line
-    std::ifstream file(sourceFilename);
-    if (file.is_open())
-    {
-        bool multiline = false;
-        std::string line;
-        while (std::getline(file, line))
-        {
-            //check for the hash symbol which indicates a preprocessor directive
-            if (line[0] == '#' || multiline)
-            {
-                //we need to process all preprocessor directives so that if an include is between a ifdef/endif block, we can still get 
-                // the correct include directive.
-                output << line << std::endl;
+    std::filesystem::path outputFilename = GetGeneratedDir();
+    outputFilename /= relativePath;
+    outputFilename /= typeName + "_" + templateDefinition.name + ".cpp";
+    return outputFilename;
+}
 
-                //check for trailing backslash which indicates a multiline preprocessor directive
-                if (line[line.size() - 1] == '\\')
-                {
-                    multiline = true;
-                }
-                else
-                {
-                    multiline = false;
-                }
-            }
+// Reformat file paths to something CMake can handle
+std::string GetCMakePath(const std::string& input) {
+    std::string result;
+    result.reserve(input.size() * 2); // Reserve space to minimize reallocations
+
+    for (char ch : input) {
+        if (ch == '\\') {
+            result += "/";
+        }
+        else {
+            result += ch;
         }
     }
+
+    return result;
 }
 
 bool FilterTypes(const Type& type)
@@ -180,21 +183,6 @@ bool FilterTypes(const Type& type)
     }
 
     return false;
-}
-
-std::filesystem::path GetGeneratedDir()
-{
-    std::filesystem::path outputDir = BINARY_DIR;
-    outputDir /= GENERATED_DIR;
-    return outputDir;
-}
-
-std::filesystem::path GetFilenameForTemplate(const std::string& typeName, const std::filesystem::path& relativePath, const TemplateDefinition& templateDefinition)
-{
-    std::filesystem::path outputFilename = GetGeneratedDir();
-    outputFilename /= relativePath;
-    outputFilename /= typeName + "_" + templateDefinition.name + ".cpp";
-    return outputFilename;
 }
 
 bool RunDiff(CodeGenExportData& exportData, const CachedTypes& cachedTypes, const std::vector<TemplateDefinition>& templateDefinitions)
@@ -273,22 +261,142 @@ bool RunDiff(CodeGenExportData& exportData, const CachedTypes& cachedTypes, cons
     return true;
 }
 
-std::string escapeBackslashes(const std::string& input) {
-    std::string result;
-    result.reserve(input.size() * 2); // Reserve space to minimize reallocations
-
-    for (char ch : input) {
-        if (ch == '\\') {
-            result += "/";
-        } else {
-            result += ch;
+data GatherDataForCMakeLists(const CodeGenExportData& exportData)
+{
+    data sources{ data::type::list };
+    for (const TypeExportData& exportData : exportData.typeExportData)
+    {
+        if (exportData.action == TypeExportAction::None || exportData.action == TypeExportAction::Add || exportData.action == TypeExportAction::Change)
+        {
+            for (const std::filesystem::path& generatedFile : exportData.generatedFiles)
+            {
+                sources << GetCMakePath(generatedFile.string());
+            }
         }
     }
 
-    return result;
+    data sourceLocations{ data::type::list };
+    sourceLocations << GetCMakePath(SOURCE_DIR);
+
+    data cmakeListsData;
+    cmakeListsData.set("sources", sources);
+    cmakeListsData.set("source_dir", SOURCE_DIR);
+    cmakeListsData.set("source_locations", sourceLocations);
+
+    return cmakeListsData;
 }
 
-#define TEMPLATE_DIR SOURCE_DIR "/templates/"
+void ExportCMakeLists(const CodeGenExportData& exportData)
+{
+    //open the CMakeLists.txt template file
+    std::ifstream templateFile(TEMPLATE_DIR "CMakeLists.txt.in");
+    if (!templateFile.is_open())
+    {
+        std::cerr << "Failed to open file: " << TEMPLATE_DIR "CMakeLists.txt.in" << std::endl;
+        exit(1);
+    }
+
+    //read the template file into a string
+    std::string templateString((std::istreambuf_iterator<char>(templateFile)), std::istreambuf_iterator<char>());
+
+    //close the template file
+    templateFile.close();
+
+    //now move onto the output file
+    std::filesystem::path cmakeListsPath = GetGeneratedDir();
+    std::filesystem::create_directories(cmakeListsPath); //ensure the path exists
+
+    //gather data for the template
+    data cmakeListsData = GatherDataForCMakeLists(exportData);
+
+    //open the output file
+    std::filesystem::path cmakeListsFilePath = cmakeListsPath / "CMakeLists.txt";
+    std::ofstream cmakeListsFile(cmakeListsFilePath);
+    if (!cmakeListsFile.is_open())
+    {
+        std::cerr << "Failed to open file: " << cmakeListsFilePath << std::endl;
+        exit(1);
+    }
+
+    //render out the template
+    mustache tmpl(templateString);
+    tmpl.render(cmakeListsData, [&cmakeListsFile](const std::string& str) {
+        cmakeListsFile << str;
+        });
+
+    cmakeListsFile.close();
+}
+
+
+void ProcessSourceFile(std::ostream& output, const std::filesystem::path& sourceFilename)
+{
+    //read the source file line by line
+    std::ifstream file(sourceFilename);
+    if (file.is_open())
+    {
+        bool multiline = false;
+        std::string line;
+        while (std::getline(file, line))
+        {
+            //check for the hash symbol which indicates a preprocessor directive
+            if (line[0] == '#' || multiline)
+            {
+                //check for include directive that use quotes and use sourceFilename.parent_path() to resolve 
+                // the path
+                if (line.find("#include") != std::string::npos && line.find("<") == std::string::npos)
+                {
+                    std::size_t pos = line.find("\"");
+                    if (pos != std::string::npos)
+                    {
+                        std::size_t endPos = line.find("\"", pos + 1);
+                        if (endPos != std::string::npos)
+                        {
+                            std::string includePath = line.substr(pos + 1, endPos - pos - 1);
+                            std::filesystem::path includePathFull = sourceFilename.parent_path() / includePath;
+                            output << "#include \"" << includePathFull.string() << "\"" << std::endl;
+                        }
+                    }
+                }
+                else
+                {
+                    //we need to process all preprocessor directives so that if an include is between a ifdef/endif block, we can still get 
+                    // the correct include directive.
+                    output << line << std::endl;
+                }
+
+
+                //check for trailing backslash which indicates a multiline preprocessor directive
+                if (line[line.size() - 1] == '\\')
+                {
+                    multiline = true;
+                }
+                else
+                {
+                    multiline = false;
+                }
+            }
+        }
+
+        file.close();
+    }
+    else
+    {
+        std::cerr << "Failed to open file: " << sourceFilename << std::endl;
+        exit(1);
+    }
+}
+
+void ProcessSourceFiles(std::unordered_map<std::filesystem::path, std::string>& sourceFileHeaderData, const CodeGenExportData& exportData)
+{
+    for (const std::filesystem::path& sourceFilename : exportData.sourceFiles)
+    {
+        std::stringstream ss;
+        ProcessSourceFile(ss, sourceFilename);
+        sourceFileHeaderData[sourceFilename] = ss.str();
+    }
+}
+
+
 
 int main(int arc, char** argv)
 {
@@ -318,84 +426,12 @@ int main(int arc, char** argv)
     //only update the CMakeLists.txt file if we have added or removed a source file
     if (regenerateAll || exportData.hasAdded || exportData.hasRemoved)
     {
-        //open the CMakeLists.txt template file
-        std::ifstream templateFile(TEMPLATE_DIR "CMakeLists.txt.in");
-        if (!templateFile.is_open())
-        {
-            std::cerr << "Failed to open file: " << TEMPLATE_DIR "CMakeLists.txt.in" << std::endl;
-            exit(1);
-        }
-
-        //read the template file into a string
-        std::string templateString((std::istreambuf_iterator<char>(templateFile)), std::istreambuf_iterator<char>());
-
-        //close the template file
-        templateFile.close();
-
-        //now move onto the output file
-        std::filesystem::path cmakeListsPath = GetGeneratedDir();        
-        std::filesystem::create_directories(cmakeListsPath); //ensure the path exists
-
-
-        //gather data for the template
-        data sources{ data::type::list };
-        for (const TypeExportData& exportData : exportData.typeExportData)
-        {
-            if (exportData.action == TypeExportAction::None || exportData.action == TypeExportAction::Add || exportData.action == TypeExportAction::Change)
-            {
-                for (const std::filesystem::path& generatedFile : exportData.generatedFiles)
-                {
-                    sources << escapeBackslashes(generatedFile.string());
-                }
-            }
-        }
-
-        data sourceLocations{ data::type::list };
-        std::set<std::filesystem::path> uniqueSourceLocations;
-
-        for (const std::filesystem::path& sourceFile : exportData.sourceFiles)
-        {
-            uniqueSourceLocations.insert(sourceFile.parent_path());
-        }
-        for (const std::filesystem::path& sourceLocation : uniqueSourceLocations)
-        {
-            sourceLocations << escapeBackslashes(sourceLocation.string());
-        }
-        sourceLocations << escapeBackslashes(SOURCE_DIR);
-
-        data cmakeListsData;
-        cmakeListsData.set("sources", sources);
-        cmakeListsData.set("source_dir", SOURCE_DIR);
-        cmakeListsData.set("source_locations", sourceLocations);
-
-        //open the output file
-        std::filesystem::path cmakeListsFilePath = cmakeListsPath / "CMakeLists.txt";
-        std::ofstream cmakeListsFile(cmakeListsFilePath);
-        if (!cmakeListsFile.is_open())
-        {
-            std::cerr << "Failed to open file: " << cmakeListsFilePath << std::endl;
-            exit(1);
-        }
-
-        //render out the template
-        mustache tmpl(templateString);
-        tmpl.render(cmakeListsData, [&cmakeListsFile](const std::string& str) {
-            cmakeListsFile << str;
-            });
-
-        cmakeListsFile.close();
+        ExportCMakeLists(exportData);
     }
 
+    // parse out the source files to get the includes from the preprocessor directives
     std::unordered_map<std::filesystem::path, std::string> sourceFileHeaderData;
-
-    //we need to get the header information for the source files
-    for (const std::filesystem::path& sourceFilename : exportData.sourceFiles)
-    {
-        //TODO: lazy construct the header data
-        std::stringstream ss;
-        ProcessSourceFile(ss, sourceFilename);
-        sourceFileHeaderData[sourceFilename] = ss.str();
-    }
+    ProcessSourceFiles(sourceFileHeaderData, exportData);
 
     //we have a list of types, so now let's go about generating the source files for them.
     for (const TypeExportData& typeExportData : exportData.typeExportData)

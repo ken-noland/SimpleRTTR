@@ -110,13 +110,14 @@ set(CONFIGURED_CACHE ${GENERATED_BUILD_DIR}/CMakeCache.txt)
 #---------------------------------------------------------------------------------------------------------
 # With the CodeGen project compiled, we can now generate and build the generated code
 
-# the CodeGen project generates a separate CMakeLists.txt file that is used to build the generated code, so we need to set up a target and all the dependencies
+# the templates that are used to generate the code
 set(TEMPLATE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/templates/CMakeLists.txt.in"
     "${CMAKE_CURRENT_SOURCE_DIR}/templates/JsonTemplate.cpp.in"
     "${CMAKE_CURRENT_SOURCE_DIR}/templates/LuaTemplate.cpp.in"
 )
 
+# The CodeGen project generates a separate CMakeLists.txt file in the output folder that is used to build the generated code
 add_custom_command(
     OUTPUT ${GENERATED_CMAKELISTS}
     COMMAND ExampleCodeGen
@@ -139,21 +140,22 @@ add_custom_command(
     USES_TERMINAL
 )
 
-add_custom_target(ConfigureGenerated
-    DEPENDS ${CONFIGURED_CACHE}
-)
-
 # annoyingly, the library is located in a build directory, so we need to extract the path. I'm not too sure if this is portable
-set(GENERATED_LIBRARY ${GENERATED_BUILD_DIR}/CodeGen.dir/Debug/CodeGen.lib)
+set(EXAMPLE_GENERATED_LIBRARY ${GENERATED_BUILD_DIR}/CodeGen.dir/Debug/CodeGen.lib)
+message("Generated library : ${GENERATED_LIBRARY}")
 
 # Custom command to build the configured generated code
 add_custom_command(
-    OUTPUT ${GENERATED_LIBRARY}
+    OUTPUT ${EXAMPLE_GENERATED_LIBRARY}
     COMMAND ${CMAKE_COMMAND} --build ${GENERATED_BUILD_DIR}
     DEPENDS ${CONFIGURED_CACHE}
     COMMENT "Building generated code"
     USES_TERMINAL
 )
 
+add_custom_target(ExampleCodeGenBuild ALL DEPENDS ${EXAMPLE_GENERATED_LIBRARY})
+
 add_executable(ExampleCodeGenRun run_codegen.cpp)
-target_link_libraries(ExampleCodeGenRun ${ExampleObjects} ${GENERATED_LIBRARY} lua nlohmann_json::nlohmann_json)
+add_dependencies(ExampleCodeGenRun ExampleCodeGenBuild)
+
+target_link_libraries(ExampleCodeGenRun ${ExampleObjects} ${EXAMPLE_GENERATED_LIBRARY} lua nlohmann_json::nlohmann_json)
