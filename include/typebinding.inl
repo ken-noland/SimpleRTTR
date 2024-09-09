@@ -73,7 +73,7 @@ namespace SimpleRTTR
     TypeBinding<ClassType>& TypeBinding<ClassType>::Meta(MetaKey key, const std::initializer_list<MetaValue>& value)
     {
         //need to copy the contents of value to vector since initializer_list only stores stack pointers
-        _InternalGetMetadata(_TypeData).Add(class Meta(key, stdrttr::vector<MetaValue>(value)));
+        _InternalGetMetadata(_TypeData).Add(CLASS_SPECIFIER Meta(key, stdrttr::vector<MetaValue>(value)));
         return *this;
     }
 
@@ -86,7 +86,7 @@ namespace SimpleRTTR
         std::size_t offset = OffsetHelper<ClassType>(memberPtr);
 
         PropertyContainer& properties = _InternalGetProperties(_TypeData);
-        properties.Add(class Property(class PropertyData(name, type, offset)));
+        properties.Add(class Property(CLASS_SPECIFIER PropertyData(name, type, offset)));
         return PropertyBinding<ClassType>(properties.Back(), _TypeData);
     }
 
@@ -167,7 +167,7 @@ namespace SimpleRTTR
     inline ValueBinding<ClassType> TypeBinding<ClassType>::Value(EnumType value, const stdrttr::string& name)
     {
         ValueContainer& values = _InternalGetValues(_TypeData);
-        values.Add(class Value(name, value));
+        values.Add(CLASS_SPECIFIER Value(name, value));
         return ValueBinding<ClassType>(values.Back(), _TypeData);
     }
 
@@ -184,7 +184,7 @@ namespace SimpleRTTR
     template <typename MetaKey, typename MetaValue>
     inline PropertyBinding<ClassType>& PropertyBinding<ClassType>::Meta(MetaKey key, MetaValue value)
     {
-        _InternalPropertyDataGetMetaListRef(_PropertyData).Add(class Meta(key, value));
+        _InternalPropertyDataGetMetaListRef(_PropertyData).Add(CLASS_SPECIFIER Meta(key, value));
         return *this;
     }
 
@@ -193,7 +193,7 @@ namespace SimpleRTTR
     inline PropertyBinding<ClassType>& PropertyBinding<ClassType>::Meta(MetaKey key, const std::initializer_list<MetaValue>& value)
     {
         //need to copy the contents of value to vector since initializer_list only stores stack pointers
-        _InternalPropertyDataGetMetaListRef(_PropertyData).Add(class Meta(key, stdrttr::vector<MetaValue>(value)));
+        _InternalPropertyDataGetMetaListRef(_PropertyData).Add(CLASS_SPECIFIER Meta(key, stdrttr::vector<MetaValue>(value)));
         return *this;
     }
 
@@ -209,7 +209,7 @@ namespace SimpleRTTR
     template <typename MetaKey, typename MetaValue>
     inline MethodBinding<ClassType>& MethodBinding<ClassType>::Meta(MetaKey key, MetaValue value)
     {
-        _InternalGetMetadata(_Method).Add(class Meta(key, value));
+        _InternalGetMetadata(_Method).Add(CLASS_SPECIFIER Meta(key, value));
         return *this;
     }
 
@@ -218,7 +218,7 @@ namespace SimpleRTTR
     inline MethodBinding<ClassType>& MethodBinding<ClassType>::Meta(MetaKey key, const std::initializer_list<MetaValue>& value)
     {
         //need to copy the contents of value to vector since initializer_list only stores stack pointers
-        _InternalGetMetadata(_Method).Add(class Meta meta(key, stdrttr::vector<MetaValue>(value)));
+        _InternalGetMetadata(_Method).Add(CLASS_SPECIFIER Meta meta(key, stdrttr::vector<MetaValue>(value)));
         return *this;
     }
 
@@ -234,7 +234,7 @@ namespace SimpleRTTR
     template <typename MetaKey, typename MetaValue>
     inline ValueBinding<ClassType>& ValueBinding<ClassType>::Meta(MetaKey key, MetaValue value)
     {
-        _InternalGetMetadata(_Value).Add(class Meta(key, value));
+        _InternalGetMetadata(_Value).Add(CLASS_SPECIFIER Meta(key, value));
         return *this;
     }
 
@@ -243,7 +243,7 @@ namespace SimpleRTTR
     inline ValueBinding<ClassType>& ValueBinding<ClassType>::Meta(MetaKey key, const std::initializer_list<MetaValue>& value)
     {
         //need to copy the contents of value to vector since initializer_list only stores stack pointers
-        _InternalGetMetadata(_Value).Add(class Meta(key, stdrttr::vector<MetaValue>(value)));
+        _InternalGetMetadata(_Value).Add(CLASS_SPECIFIER Meta(key, stdrttr::vector<MetaValue>(value)));
         return *this;
     }
 }

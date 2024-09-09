@@ -54,7 +54,7 @@ namespace SimpleRTTR
         inline const stdrttr::string& GetFullyQualifiedName() const;
 
     protected:
-        friend TypeData& _InternalGetTypeData(Type& type);
+        friend TypeData& _InternalGetTypeData(const Type& type);
         const TypeData& _TypeData;
     };
 

@@ -165,7 +165,7 @@ namespace SimpleRTTR
         return _TypeData.GetFullyQualifiedName();
     }
 
-    inline TypeData& _InternalGetTypeData(Type& type)
+    inline TypeData& _InternalGetTypeData(const Type& type)
     {
         return const_cast<TypeData&>(type._TypeData);
     }

@@ -1,5 +1,23 @@
 #pragma once
 
+#if defined(_MSVC_LANG) // MSVC compiler
+#if _MSVC_LANG >= 202002L
+#define CLASS_SPECIFIER
+#elif _MSVC_LANG >= 201703L
+#define CLASS_SPECIFIER class
+#else
+#error "This code requires at least C++17."
+#endif
+#else // GCC or Clang
+#if __cplusplus >= 202002L
+#define CLASS_SPECIFIER
+#elif __cplusplus >= 201703L
+#define CLASS_SPECIFIER class
+#else
+#error "This code requires at least C++17."
+#endif
+#endif
+
 namespace SimpleRTTR
 {
     //--
