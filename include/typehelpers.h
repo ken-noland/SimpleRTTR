@@ -197,9 +197,9 @@ namespace SimpleRTTR
     {
     public:
         TypeHelper() : TypeHelperBase(typeid(this), sizeof(ClassType), 
-            &VariantCopy<ClassType>,
+            (UnsafeCopyFunction)&VariantCopy<ClassType>,
             (ToStringFunction)&VariantToString<ClassType>,
-            &ParseQualifiedName)
+            (QualifiedNameParseFunc)&ParseQualifiedName)
         {
             static_assert(sizeof(ClassType) > 0, "Classes must be fully declared before extracting the type information");
         }

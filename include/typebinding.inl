@@ -86,7 +86,7 @@ namespace SimpleRTTR
         std::size_t offset = OffsetHelper<ClassType>(memberPtr);
 
         PropertyContainer& properties = _InternalGetProperties(_TypeData);
-        properties.Add(class Property(CLASS_SPECIFIER PropertyData(name, type, offset)));
+	properties.Add(SimpleRTTR::Property(CLASS_SPECIFIER PropertyData(name, type, offset)));
         return PropertyBinding<ClassType>(properties.Back(), _TypeData);
     }
 
@@ -218,7 +218,7 @@ namespace SimpleRTTR
     inline MethodBinding<ClassType>& MethodBinding<ClassType>::Meta(MetaKey key, const std::initializer_list<MetaValue>& value)
     {
         //need to copy the contents of value to vector since initializer_list only stores stack pointers
-        _InternalGetMetadata(_Method).Add(CLASS_SPECIFIER Meta meta(key, stdrttr::vector<MetaValue>(value)));
+        _InternalGetMetadata(_Method).Add(CLASS_SPECIFIER Meta(key, stdrttr::vector<MetaValue>(value)));
         return *this;
     }
 

@@ -2,7 +2,7 @@
 
 #if defined(_MSVC_LANG) // MSVC compiler
 #if _MSVC_LANG >= 202002L
-#define CLASS_SPECIFIER
+#define CLASS_SPECIFIER 
 #elif _MSVC_LANG >= 201703L
 #define CLASS_SPECIFIER class
 #else

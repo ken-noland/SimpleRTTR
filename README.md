@@ -1,5 +1,5 @@
 # SimpleRTTR
-Run Time Type Reflection
+Run Time Type Reflection for C++x17
 
 SimpleRTTR is a simple to use Run Time Type Reflection system built using C++17 and tested on multiple compilers and hardware.
 
