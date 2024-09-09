@@ -6,14 +6,11 @@ SIMPLERTTR
 {
     SimpleRTTR::Registration().Type<Point>()
         .Meta("description", "A simple point class")
-        .Constructor<int, int>({"x", "y"})
+        .Constructor()
+        .Constructor<int, int>({"X", "Y"})
 
-        .Property(&Point::_x, "x")
+        .Property(&Point::X, "X")
             .Meta("description", "The x coordinate of the point")
-            .Meta("getter", &Point::GetX)
-            .Meta("setter", &Point::SetX)
-        .Property(&Point::_y, "y")
-            .Meta("description", "The y coordinate of the point")
-            .Meta("getter", &Point::GetY)
-            .Meta("setter", &Point::SetY);
+        .Property(&Point::Y, "Y")
+            .Meta("description", "The y coordinate of the point");
 }

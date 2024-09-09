@@ -127,7 +127,7 @@ namespace SimpleRTTR
         return std::any_cast<VariantType>(_Value);
     }
 
-    inline const class Type Variant::Type() const
+    inline const class TypeReference Variant::Type() const
     {
         return Types().GetType(_Value.type());
     }
@@ -139,7 +139,8 @@ namespace SimpleRTTR
 
     inline stdrttr::string Variant::ToString() const
     {
-        const class Type& type = Type();
+        const class TypeReference& typeRef = Type();
+        const class Type type = typeRef.Type();
         SIMPLERTTR_ASSERT(type != Type::InvalidType());
         return type.ToString(*this);
     }

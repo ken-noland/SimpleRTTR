@@ -20,7 +20,7 @@ namespace SimpleRTTR
 
 
         std::string* destPtr = reinterpret_cast<std::string*>(dest);
-        Type srcType = src.Type();
+        Type srcType = src.Type().Type();
         if (srcType == Types().GetType<std::string>())
         {
             *destPtr = src.GetAs<std::string>();

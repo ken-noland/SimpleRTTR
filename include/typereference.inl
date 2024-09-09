@@ -18,6 +18,16 @@ namespace SimpleRTTR
 
     }
 
+    inline bool TypeReference::operator==(const class Type& type) const
+    {
+        return Type() == type;
+    }
+
+    inline bool TypeReference::operator==(const TypeReference& type) const
+    {
+        return _FullyQualifiedName == type._FullyQualifiedName;
+    }
+
     class Type TypeReference::Type() const
     {
         return Types().GetType(GetFullyQualifiedName());

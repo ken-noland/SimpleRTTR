@@ -6,18 +6,11 @@ namespace Test
 {
     class Point
     {
-        SIMPLE_RTTR_ALLOW_ACCESS
     public:
-        Point(int x, int y) : _x(x), _y(y) {}
+        Point() : X(0), Y(0) {}
+        Point(int x, int y) : X(x), Y(y) {}
 
-        int GetX() const { return _x; }
-        void SetX(int x) { _x = x; }
-
-        int GetY() const { return _y; }
-        void SetY(int y) { _y = y; }
-
-    protected:
-        int _x;
-        int _y;
+        int X;
+        int Y;
     };
 }

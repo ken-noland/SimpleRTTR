@@ -396,7 +396,77 @@ void ProcessSourceFiles(std::unordered_map<std::filesystem::path, std::string>& 
     }
 }
 
+bool GatherPropertyData(data& propertyData, const Property& property)
+{
+    propertyData.set("name", property.Name());
+    propertyData.set("offset", std::to_string(property.Offset()));
 
+    data typeData{ data::type::object };
+    Type type = property.Type();
+    typeData.set("name", type.Name());
+    typeData.set("fullyQualifiedName", type.FullyQualifiedName());
+
+    propertyData.set("type", typeData);
+
+
+
+    return true;
+}
+
+bool GatherTypeData(data& typeData, const TypeExportData& typeExportData)
+{
+    const Type& type = typeExportData.type.Type();
+
+    typeData.set("name", type.Name());
+    typeData.set("fullyQualifiedName", type.FullyQualifiedName());
+    typeData.set("sourceFilename", typeExportData.sourceFilename.string());
+    typeData.set("relativePath", typeExportData.relativePath.string());
+
+    //TODO: deal with metadata
+    //data meta{ data::type::list };
+    //for (const Meta& meta : type.Meta())
+    //{
+    //    if(meta.Key().Type() == )
+    //    data metaItem;
+    //    metaItem.set("key", key);
+    //    metaItem.set("value", value.Value().GetAs<const char*>());
+    //    meta << metaItem;
+    //}
+
+    data namespaces{ data::type::list };
+    for (const std::string& ns : type.Namespaces())
+    {
+        namespaces << ns;
+    }
+    typeData.set("namespaces", namespaces);
+
+    data templateParams{ data::type::list };
+    for (const TypeReference& templateParam : type.TemplateParams())
+    {
+        Type templateType = templateParam.Type();
+
+        data templateParamData;
+        templateParamData.set("name", templateType.Name());
+        templateParamData.set("fullyQualifiedName", templateType.FullyQualifiedName());
+        templateParamData.set("hash", templateType.Hash());
+
+        templateParamData << templateParamData;
+    }
+    typeData.set("templateParams", templateParams);
+
+    data properties{ data::type::list };
+    for(const Property& property : type.Properties())
+    { 
+        data propertyData;
+        GatherPropertyData(propertyData, property);
+
+        propertyData.set("root", typeData);
+        properties << propertyData;
+    }
+    typeData.set("properties", properties);
+
+    return true;
+}
 
 int main(int arc, char** argv)
 {
@@ -444,17 +514,10 @@ int main(int arc, char** argv)
 
             //construct the data from the type information
             data typeData;
-            typeData.set("name", type.Name());
+            GatherTypeData(typeData, typeExportData);
 
             //TODO: lazy construct the header data
             typeData.set("header", sourceFileHeaderData[typeExportData.sourceFilename.string()]);
-
-            data namespaces{ data::type::list };
-            for (const std::string& ns : type.Namespaces())
-            {
-                namespaces << ns;
-            }
-            typeData.set("namespaces", namespaces);
 
             int templateIndex = 0;
             for (TemplateDefinition& templateDef : templates)

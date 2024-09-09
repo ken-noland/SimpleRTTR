@@ -4,7 +4,33 @@
 //
 // {{name}}
 //
+// Don't modify this file manually.
+//
+// Data:
+//	name = {{name}}
+//  fullyQualifiedName = {{fullyQualifiedName}}
+//  sourceFilename = {{sourceFilename}}
+//  relativePath = {{relativePath}}
+//	namespaces = {{#namespaces}}{{.}}::{{/namespaces}}
+//  templateParams = {{#templateParams}}{{.}}, {{/templateParams}}
+//  properties = 
+//		{{#properties}}name = {{name}}
+//			offset = {{offset}}
+//			type.name = {{type.name}}
+//			type.fullyQualifiedName = {{type.fullyQualifiedName}}
+//		{{/properties}}
 //////////////////////////////////////////////////////////////
+
+{{!
+
+!! WARNING !!
+
+If you are reading this, then you are currently looking at the template file for the generated 
+code. Since Mustache is a logic-less template engine, it is not possible to write any logic 
+here. All of the logic is contained within the CodeGen project.
+
+}}
+
 
 {{header}}
 

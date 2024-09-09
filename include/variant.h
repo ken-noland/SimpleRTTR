@@ -23,7 +23,7 @@ namespace SimpleRTTR
         template<typename VariantType>
         inline VariantType GetAs() const;
 
-        inline const class Type Type() const;
+        inline const class TypeReference Type() const;
 
         inline std::size_t Hash() const;
 

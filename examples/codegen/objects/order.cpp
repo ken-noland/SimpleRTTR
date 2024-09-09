@@ -6,9 +6,9 @@ SIMPLERTTR
 {
     SimpleRTTR::Registration().Type<Order>()
         .Meta("description", "A simple order class")
-        //.Constructor({"customer", "product", "quantity"})  //TODO: add constructor support
+        .Constructor<const std::string&, const std::string&, int>({"CustomerName", "ProductName", "Quantity"})
 
-        .Property(&Order::_customerName, "customer")
-        .Property(&Order::_productName, "product")
-        .Property(&Order::_quantity, "quantity");
+        .Property(&Order::CustomerName, "CustomerName")
+        .Property(&Order::ProductName, "ProductName")
+        .Property(&Order::Quantity, "Quantity");
 }
