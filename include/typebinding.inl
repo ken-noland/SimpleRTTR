@@ -167,7 +167,7 @@ namespace SimpleRTTR
     inline ValueBinding<ClassType> TypeBinding<ClassType>::Value(EnumType value, const stdrttr::string& name)
     {
         ValueContainer& values = _InternalGetValues(_TypeData);
-        values.Add(CLASS_SPECIFIER Value(name, value));
+        values.Add(SimpleRTTR::Value(name, value));
         return ValueBinding<ClassType>(values.Back(), _TypeData);
     }
 
@@ -224,8 +224,7 @@ namespace SimpleRTTR
 
     template<typename ClassType>
     ValueBinding<ClassType>::ValueBinding(class Value& value, TypeData& typeData)
-        :
-        TypeBinding(typeData),
+        : TypeBinding<ClassType>(typeData),
         _Value(value)
     {
     }

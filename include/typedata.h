@@ -9,6 +9,7 @@ namespace SimpleRTTR
         using TemplateTypeContainer = stdrttr::vector<TypeReference>;
 
         using UnsafeCopyFunction = std::add_pointer<void(const Variant& src, void* dest, const TypeReference& destType)>::type;
+        using ToAnyFunction = std::add_pointer<std::any(const void*)>::type;
         using ToStringFunction = std::add_pointer<stdrttr::string(const Variant&)>::type;
 
         inline TypeData(const TypeData& typeData);
@@ -63,7 +64,10 @@ namespace SimpleRTTR
         MetaContainer _Metadata;
 
         UnsafeCopyFunction _UnsafeCopyFunc;
+        ToAnyFunction _ToAnyFunc;
         ToStringFunction _ToStringFunc;
+
+        friend class Variant;   //needs access to _ToAnyFunc
 
         friend class TypeStorage;
         inline TypeData(const stdrttr::string& name,
@@ -73,6 +77,7 @@ namespace SimpleRTTR
             const NamespaceContainer& namespaces,
             const TemplateTypeContainer& templateParams,
             UnsafeCopyFunction unsafeCopyFunction,
+            ToAnyFunction toAnyFunc,
             ToStringFunction toStringFunc);
 
         inline TypeData(const stdrttr::string& name,

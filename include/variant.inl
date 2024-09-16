@@ -76,6 +76,17 @@ namespace SimpleRTTR
     {
     }
 
+    Variant::Variant(void* valuePtr, SimpleRTTR::Type type)
+    {
+        if(!_InternalGetTypeData(type)._ToAnyFunc)
+        {
+            SIMPLERTTR_ASSERT(!"No conversion function available");
+            return;
+        }
+        _Value = _InternalGetTypeData(type)._ToAnyFunc(valuePtr);
+    }
+
+
     Variant::Variant(const Variant& var)
         :
         _Value(var._Value),

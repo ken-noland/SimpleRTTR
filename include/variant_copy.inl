@@ -72,4 +72,35 @@ namespace SimpleRTTR
     {
         VariantCopy<Tmpl<Args...>>(src, dest, destType);
     }
+
+
+    template<typename VariantType>
+    inline std::any PtrToAny(const void* ptr)
+    {
+        if constexpr(std::is_reference_v<VariantType>) {
+            using BaseType = std::remove_reference_t<VariantType>;
+			return std::any(*static_cast<BaseType*>(const_cast<void*>(ptr)));
+        }
+		else if constexpr (std::is_trivially_constructible_v<VariantType> || std::is_copy_constructible_v<VariantType>)
+		{
+			return std::any(*static_cast<VariantType*>(const_cast<void*>(ptr)));
+		}
+		else
+		{
+			SIMPLERTTR_ASSERT(!"Attempting to copy type that isn't trivially constructable or copyable");
+			return std::any(0);
+		}
+    }
+
+    template<> inline std::any PtrToAny<void>(const void* ptr)
+    {
+        SIMPLERTTR_ASSERT(!"Attempting to copy void type");
+        return std::any(0);
+    }
+
+    template<template <typename... > class Tmpl, typename ...Args>
+    inline std::any PtrToAny(const void* ptr)
+    {
+        return std::any(*reinterpret_cast<const Tmpl<Args>*>(ptr));
+    }
 }

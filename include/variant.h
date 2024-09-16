@@ -7,6 +7,7 @@ namespace SimpleRTTR
     public:
         template<typename VariantType>
         inline Variant(VariantType value);
+        inline Variant(void* value, Type type);
 
         inline Variant(const Variant& var);
         inline Variant(Variant&& var);
@@ -45,6 +46,12 @@ namespace SimpleRTTR
 
     template<template <typename... > class Tmpl, typename ...Args>
     inline void VariantCopy(const Variant& src, void* dest, const TypeReference& destType);
+
+    template<typename VariantType>
+    inline std::any PtrToAny(const void*);
+
+    template<template <typename... > class Tmpl, typename ...Args>
+    inline std::any PtrToAny(const void*);
 
     template<typename VariantType>
     inline stdrttr::string VariantToString(const Variant& var);

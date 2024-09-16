@@ -162,10 +162,23 @@ namespace SimpleRTTR
     }
 
     template<typename ClassType>
-    inline void Property::Set(ClassType* obj, const Variant& value) const
+    void Property::Set(ClassType* obj, const Variant& value) const
     {
         _PropData.Set(obj, value);
     }
+
+    Variant Property::Get(void* obj) const
+	{
+		void* ptr = reinterpret_cast<void*>(reinterpret_cast<std::size_t>(obj) + Offset());
+		return Variant(ptr, Type());
+	}
+
+	template <typename ClassType>
+	ClassType Property::Get(void* obj) const
+	{
+		void* ptr = reinterpret_cast<void*>(reinterpret_cast<std::size_t>(obj) + Offset());
+		return *reinterpret_cast<ClassType*>(ptr);
+	}
 
     bool Property::IsConst()
     {

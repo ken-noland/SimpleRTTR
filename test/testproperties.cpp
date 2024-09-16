@@ -3,6 +3,14 @@
 
 using namespace SimpleRTTR;
 
+
+class SimpleRTTRTestComplexProperties1
+{
+public:
+    int             intMember;
+    std::string     stringMember;
+};
+
 class SimpleRTTRTestProperties1
 {
     SIMPLE_RTTR_ALLOW_ACCESS;
@@ -11,6 +19,10 @@ public:
     short           shortMember;
     int             intMember;
     void*           voidpointerMember;
+
+    SimpleRTTRTestComplexProperties1 complexProperties;
+    //SimpleRTTRTestComplexProperties1& complexPropertiesRef; //references can not be passed to properties
+    SimpleRTTRTestComplexProperties1* complexPropertiesPtr;
 
 protected:
     int             protectedMember;
@@ -38,6 +50,8 @@ SIMPLERTTR
         .Property(&SimpleRTTRTestProperties1::voidpointerMember, "voidpointerMember")
         .Property(&SimpleRTTRTestProperties1::protectedMember, "protectedMember")
         .Property(&SimpleRTTRTestProperties1::privateMember, "privateMember")
+        .Property(&SimpleRTTRTestProperties1::complexProperties, "complexProperties")
+        .Property(&SimpleRTTRTestProperties1::complexPropertiesPtr, "complexPropertiesPtr");
     ;
 }
 
@@ -47,7 +61,7 @@ TEST(RTTRProperties, TestPropertiesList)
     ASSERT_NE(type, Type::InvalidType());
 
     const PropertyContainer& properties = type.Properties();
-    ASSERT_EQ(properties.Size(), 6);
+    ASSERT_EQ(properties.Size(), 8);
 
     const Property& prop1 = properties[0];
     EXPECT_EQ(prop1.Name(), "charMember");
@@ -71,13 +85,74 @@ TEST(RTTRProperties, TestPropertiesList)
 
 }
 
+
+TEST(RTTRProperties, TestPropertiesGet)
+{
+    Type type = Types().GetType<SimpleRTTRTestProperties1>();
+    ASSERT_NE(type, Type::InvalidType());
+
+    SimpleRTTRTestProperties1 instance;
+    instance.charMember = 5;
+    instance.shortMember = 10;
+    instance.intMember = 15;
+    instance.voidpointerMember = (void*)0x1234;
+
+    const PropertyContainer& properties = type.Properties();
+    ASSERT_EQ(properties.Size(), 8);
+
+    const Property& prop1 = properties[0];
+    EXPECT_EQ(prop1.Get(&instance).GetAs<char>(), 5);
+
+    const Property& prop2 = properties[1];
+    EXPECT_EQ(prop2.Get(&instance).GetAs<short>(), 10);
+
+    const Property& prop3 = properties[2];
+    EXPECT_EQ(prop3.Get(&instance).GetAs<int>(), 15);
+
+    const Property& prop4 = properties[3];
+    EXPECT_EQ(prop4.Get(&instance).GetAs<void*>(), (void*)0x1234);
+}
+
+TEST(RTTRProperties, TestPropertiesSet)
+{
+    Type type = Types().GetType<SimpleRTTRTestProperties1>();
+    ASSERT_NE(type, Type::InvalidType());
+
+    SimpleRTTRTestProperties1 instance;
+    instance.charMember = 0;
+    instance.shortMember = 0;
+    instance.intMember = 0;
+    instance.voidpointerMember = nullptr;
+
+    const PropertyContainer& properties = type.Properties();
+    ASSERT_EQ(properties.Size(), 8);
+
+    const Property& prop1 = properties[0];
+    prop1.Set(&instance, (char)5);
+    EXPECT_EQ(instance.charMember, 5);
+
+    const Property& prop2 = properties[1];
+    prop2.Set(&instance, (short)10);
+    EXPECT_EQ(instance.shortMember, 10);
+
+    const Property& prop3 = properties[2];
+    prop3.Set(&instance, (int)15);
+    EXPECT_EQ(instance.intMember, 15);
+
+    const Property& prop4 = properties[3];
+    prop4.Set(&instance, (void*)0x1234);
+    EXPECT_EQ(instance.voidpointerMember, (void*)0x1234);
+}
+
+
+
 TEST(RTTRProperties, TestPropertiesMeta)
 {
     Type type = Types().GetType<SimpleRTTRTestProperties1>();
     ASSERT_NE(type, Type::InvalidType());
 
     const PropertyContainer& properties = type.Properties();
-    ASSERT_EQ(properties.Size(), 6);
+    ASSERT_EQ(properties.Size(), 8);
 
     ASSERT_TRUE(properties.Has("charMember"));
     const Property& prop1 = properties.Get("charMember");

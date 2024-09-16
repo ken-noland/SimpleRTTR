@@ -64,8 +64,15 @@ namespace SimpleRTTR
         inline const std::size_t Offset() const;
         inline const MetaContainer& Meta() const;
 
+        // Set a value given an instance of the class
         template<typename ClassType>
         inline void Set(ClassType* obj, const Variant& value) const;
+
+        // Get a value given an instance of the class
+        inline Variant Get(void* obj) const;
+
+        template <typename ClassType>
+		inline ClassType Get(void* obj) const;
 
         inline bool IsConst();
         inline bool IsPointer();

@@ -74,10 +74,10 @@ namespace {
 #define SIMPLE_RTTR_ALLOW_ACCESS friend class AutoRegister;
 
 #define SIMPLERTTR  namespace {                                         \
-                        class AutoRegister                              \
+                        class [[maybe_unused]] AutoRegister             \
                         {                                               \
                         public:                                         \
-                            AutoRegister()                              \
+                            inline AutoRegister()                       \
                             {                                           \
                                 SimpleRTTR::_InternalBeginRegistration( \
                                     __FILE__                            \
@@ -85,8 +85,8 @@ namespace {
                                 Register();                             \
                                 SimpleRTTR::_InternalEndRegistration(); \
                             }                                           \
-                            void Register();                            \
+                            inline void Register();                     \
                         };                                              \
-                        static const AutoRegister AutoReg;              \
+                        static volatile const AutoRegister AutoReg;     \
                     }                                                   \
                     void AutoRegister::Register()

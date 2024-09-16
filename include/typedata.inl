@@ -9,6 +9,7 @@ namespace SimpleRTTR
         const NamespaceContainer& namespaces,
         const TemplateTypeContainer& templateParams,
         UnsafeCopyFunction unsafeCopyFunc,
+        ToAnyFunction toAnyFunc,
         ToStringFunction toStringFunc)
         :
         _Name(name),
@@ -18,6 +19,7 @@ namespace SimpleRTTR
         _Namespaces(namespaces),
         _TemplateParams(templateParams),
         _UnsafeCopyFunc(unsafeCopyFunc),
+        _ToAnyFunc(toAnyFunc),
         _ToStringFunc(toStringFunc)
     {
 
@@ -50,6 +52,7 @@ namespace SimpleRTTR
         _Values(typeData._Values),
         _Metadata(typeData._Metadata),
         _UnsafeCopyFunc(typeData._UnsafeCopyFunc),
+        _ToAnyFunc(typeData._ToAnyFunc),
         _ToStringFunc(typeData._ToStringFunc)
     {
     }
@@ -67,6 +70,7 @@ namespace SimpleRTTR
         _Values(std::move(typeData._Values)),
         _Metadata(std::move(typeData._Metadata)),
         _UnsafeCopyFunc(std::move(typeData._UnsafeCopyFunc)),
+        _ToAnyFunc(std::move(typeData._ToAnyFunc)),
         _ToStringFunc(std::move(typeData._ToStringFunc))
     {
     }
@@ -84,6 +88,7 @@ namespace SimpleRTTR
         _Values = typeData._Values;
         _Metadata = typeData._Metadata;
         _UnsafeCopyFunc = typeData._UnsafeCopyFunc;
+        _ToAnyFunc = typeData._ToAnyFunc,
         _ToStringFunc = typeData._ToStringFunc;
         return *this;
     }
