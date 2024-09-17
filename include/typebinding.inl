@@ -184,7 +184,7 @@ namespace SimpleRTTR
     template <typename MetaKey, typename MetaValue>
     inline PropertyBinding<ClassType>& PropertyBinding<ClassType>::Meta(MetaKey key, MetaValue value)
     {
-        _InternalPropertyDataGetMetaListRef(_PropertyData).Add(CLASS_SPECIFIER Meta(key, value));
+        _InternalPropertyDataGetMetaListRef(_PropertyData).Add(SimpleRTTR::Meta(key, value));
         return *this;
     }
 
@@ -193,7 +193,7 @@ namespace SimpleRTTR
     inline PropertyBinding<ClassType>& PropertyBinding<ClassType>::Meta(MetaKey key, const std::initializer_list<MetaValue>& value)
     {
         //need to copy the contents of value to vector since initializer_list only stores stack pointers
-        _InternalPropertyDataGetMetaListRef(_PropertyData).Add(CLASS_SPECIFIER Meta(key, stdrttr::vector<MetaValue>(value)));
+		_InternalPropertyDataGetMetaListRef(_PropertyData).Add(SimpleRTTR::Meta(key, stdrttr::vector<MetaValue>(value)));
         return *this;
     }
 
