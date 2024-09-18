@@ -19,13 +19,14 @@ namespace SimpleRTTR
         typedef stdrttr::string(*ToStringFunction)(const Variant&);
         typedef std::any(*ToAnyFunction)(const void*);
 
-        TypeHelperBase(const std::type_info& typeInfo, std::size_t size, 
+        TypeHelperBase(const std::type_info& typeInfo, std::size_t size, bool isEnum,
             UnsafeCopyFunction unsafeCopyFunc,
             ToAnyFunction toAnyFunc,
             ToStringFunction toStringFunc,
             QualifiedNameParseFunc parseQualifiedName = nullptr)
             :
             _Size(size),
+            _IsEnum(isEnum),
             _UnsafeCopyFunc(unsafeCopyFunc),
             _ToAnyFunc(toAnyFunc),
             _ToStringFunc(toStringFunc)
@@ -42,6 +43,8 @@ namespace SimpleRTTR
         inline const UnsafeCopyFunction& UnsafeCopyFunc() const { return _UnsafeCopyFunc; }
 
         inline std::size_t Size() const { return _Size; }
+
+        inline bool IsEnum() const { return _IsEnum; }
 
     protected:
         inline stdrttr::string RemoveTemplateArguments(const stdrttr::string str, std::size_t offset = 0)
@@ -157,6 +160,8 @@ namespace SimpleRTTR
         TemplateTypeContainer   _TemplateParams;
         std::size_t             _Size;
 
+        bool                    _IsEnum;
+
         UnsafeCopyFunction _UnsafeCopyFunc;
         ToAnyFunction _ToAnyFunc;
         ToStringFunction _ToStringFunc;
@@ -201,7 +206,7 @@ namespace SimpleRTTR
     class TypeHelper : public TypeHelperBase, TypeHelper1
     {
     public:
-        TypeHelper() : TypeHelperBase(typeid(this), sizeof(ClassType), 
+        TypeHelper() : TypeHelperBase(typeid(this), sizeof(ClassType), std::is_enum_v<ClassType>,
             (TypeHelperBase::UnsafeCopyFunction)&VariantCopy<ClassType>,
             (TypeHelperBase::ToAnyFunction)&PtrToAny<ClassType>,
             (TypeHelperBase::ToStringFunction)&VariantToString<ClassType>,
@@ -215,7 +220,7 @@ namespace SimpleRTTR
     class TypeHelper<void> : public TypeHelperBase, TypeHelper1
     {
     public:
-        TypeHelper<void>() : TypeHelperBase(typeid(this), 0, 
+        TypeHelper<void>() : TypeHelperBase(typeid(this), 0, false,
             nullptr,
             nullptr,    //void is not a valid "any" type
             (ToStringFunction)&VariantToString<void>,
@@ -228,7 +233,7 @@ namespace SimpleRTTR
     public:
         TypeHelper()
             :
-            TypeHelperBase(typeid(this), sizeof(Tmpl<Args...>), 
+            TypeHelperBase(typeid(this), sizeof(Tmpl<Args...>), false,
                 (TypeHelperBase::UnsafeCopyFunction)&VariantCopy<Tmpl<Args...>>,
                 (TypeHelperBase::ToAnyFunction)&PtrToAny<Tmpl<Args...>>,
                 (TypeHelperBase::ToStringFunction)&VariantToString<Tmpl, Args...>,

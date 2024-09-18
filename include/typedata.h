@@ -23,6 +23,7 @@ namespace SimpleRTTR
         inline std::size_t GetSize() const;
         inline std::size_t Hash() const;
 
+        inline bool IsEnum() const;
 
         //TODO: Remove this function. It's only used in the TypeStorage class.
         inline bool IsRegisteredByUser() const;
@@ -46,6 +47,9 @@ namespace SimpleRTTR
         stdrttr::string _FullyQualifiedName;
         std::size_t _Size;
         bool _RegisteredByUser;
+
+        // This is just temporary until we get proper flag support in for types, as enum can easily be a flag
+        bool _IsEnum;
 
         // to be used to access non-const versions of the containers
         friend ConstructorContainer& _InternalGetConstructors(TypeData& typeData);
@@ -73,6 +77,7 @@ namespace SimpleRTTR
         inline TypeData(const stdrttr::string& name,
             const stdrttr::string& fullyQualifiedName,
             std::size_t size,
+            bool isEnum,
             bool registeredByUser,
             const NamespaceContainer& namespaces,
             const TemplateTypeContainer& templateParams,

@@ -32,6 +32,11 @@ namespace SimpleRTTR
         return TypeBinding<ClassType>(Types().GetStorage().GetOrCreateType<ClassType>(true));
     }
 
+    TypeBinding<SimpleRTTR::Type> RegistrationManager::Type(const SimpleRTTR::Type& type)
+    {
+        return TypeBinding<SimpleRTTR::Type>(_InternalGetTypeData(type));
+    }
+
     RegistrationManager& RegistrationManager::GetInstance()
     {
         static RegistrationManager mgr;

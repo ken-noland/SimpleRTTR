@@ -28,6 +28,8 @@ namespace SimpleRTTR
         inline std::size_t Size() const;
         inline std::size_t Hash() const;
 
+        inline bool IsEnum() const;
+
         inline const ConstructorContainer& Constructors() const;
         inline const PropertyContainer& Properties() const;
         inline const MethodContainer& Methods() const;

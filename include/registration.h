@@ -12,6 +12,8 @@ namespace SimpleRTTR
         template<typename ClassType>
         inline TypeBinding<ClassType> Type();
 
+        inline TypeBinding<SimpleRTTR::Type> Type(const SimpleRTTR::Type& type);
+
         static inline RegistrationManager& GetInstance();
 
     protected:

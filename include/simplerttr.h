@@ -90,3 +90,6 @@ namespace {
                         static volatile const AutoRegister AutoReg;     \
                     }                                                   \
                     void AutoRegister::Register()
+
+#define REGISTER_PROPERTY(cls, name) \
+	&cls::name, #name

@@ -5,6 +5,7 @@ namespace SimpleRTTR
     TypeData::TypeData(const stdrttr::string& name,
         const stdrttr::string& fullyQualifiedName,
         std::size_t size,
+        bool isEnum,
         bool registeredByUser,
         const NamespaceContainer& namespaces,
         const TemplateTypeContainer& templateParams,
@@ -15,6 +16,7 @@ namespace SimpleRTTR
         _Name(name),
         _FullyQualifiedName(fullyQualifiedName),
         _Size(size),
+        _IsEnum(isEnum),
         _RegisteredByUser(registeredByUser),
         _Namespaces(namespaces),
         _TemplateParams(templateParams),
@@ -44,6 +46,7 @@ namespace SimpleRTTR
         _Name(typeData._Name),
         _FullyQualifiedName(typeData._FullyQualifiedName),
         _Size(typeData._Size),
+        _IsEnum(typeData._IsEnum),
         _RegisteredByUser(typeData._RegisteredByUser),
         _Properties(typeData._Properties),
         _Methods(typeData._Methods),
@@ -62,6 +65,7 @@ namespace SimpleRTTR
         _Name(std::move(typeData._Name)),
         _FullyQualifiedName(std::move(typeData._FullyQualifiedName)),
         _Size(typeData._Size),
+        _IsEnum(typeData._IsEnum),
         _RegisteredByUser(typeData._RegisteredByUser),
         _Properties(std::move(typeData._Properties)),
         _Methods(std::move(typeData._Methods)),
@@ -80,6 +84,7 @@ namespace SimpleRTTR
         _Name = typeData._Name;
         _FullyQualifiedName = typeData._FullyQualifiedName;
         _Size = typeData._Size;
+        _IsEnum = typeData._IsEnum;
         _RegisteredByUser = typeData._RegisteredByUser;
         _Properties = typeData._Properties;
         _Methods = typeData._Methods;
@@ -130,6 +135,10 @@ namespace SimpleRTTR
         return hash;
     }
 
+    bool TypeData::IsEnum() const
+    {
+        return _IsEnum;
+    }
 
     bool TypeData::IsRegisteredByUser() const
     {

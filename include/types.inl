@@ -56,7 +56,7 @@ namespace SimpleRTTR
     bool Type::Equals(const std::type_info& typeData) const
     {
         //TODO: maybe not use a heavy constructor like TypeHelperBase(which is littered with allocations) to just test if a type if equal
-        TypeHelperBase typeHelper(typeData, (std::size_t)-1, nullptr, nullptr, nullptr);
+        TypeHelperBase typeHelper(typeData, (std::size_t)-1, false, nullptr, nullptr, nullptr);
         return FullyQualifiedName().compare(typeHelper.QualifiedName()) == 0;
     }
 
@@ -84,6 +84,11 @@ namespace SimpleRTTR
     std::size_t Type::Hash() const
     {
         return _TypeData.Hash();
+    }
+
+    bool Type::IsEnum() const
+    {
+        return _TypeData.IsEnum();
     }
 
     const ConstructorContainer& Type::Constructors() const
@@ -295,6 +300,7 @@ namespace SimpleRTTR
             typeHelper.Name(),
             typeHelper.QualifiedName(),
             typeHelper.Size(),
+            typeHelper.IsEnum(),
             addedByUser,
             typeHelper.Namespaces(),
             typeHelper.TemplateParams(),
@@ -366,7 +372,7 @@ namespace SimpleRTTR
 
     const Type TypeManager::GetType(const std::type_info& typeInfo) const
     {
-        TypeHelperBase helper(typeInfo, (std::size_t)-1, nullptr, nullptr, nullptr);
+        TypeHelperBase helper(typeInfo, (std::size_t)-1, false, nullptr, nullptr, nullptr);
         return GetType(helper);
     }
 

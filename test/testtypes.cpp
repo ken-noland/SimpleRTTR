@@ -75,6 +75,7 @@ TEST(RTTRType, TestGetType)
 
     Type validType = Types().GetType<SimpleRTTRTestType>();
     EXPECT_EQ(validType.Name(), "SimpleRTTRTestType");
+    EXPECT_EQ(validType.IsEnum(), false);
 }
 
 
@@ -149,4 +150,47 @@ TEST(RTTRType, TestBasicTypes)
 
     EXPECT_EQ(Types().GetType<double>().Name(), "double");
     EXPECT_EQ(Types().GetType<double>().Size(), sizeof(double));
+}
+
+TEST(RTTRType, TestExistingTemplateTypeRegistration)
+{
+    Registration().Type<std::vector<int>>();
+    Type validType = Types().GetType<std::vector<int>>();
+    EXPECT_EQ(validType.Name(), "vector");
+
+    const Type& existingType = Types().GetType<std::vector<int>>();
+    Registration().Type(existingType)
+        .Meta("test", "test");
+
+    //check that the metadata was added to the existing type
+    const Type& existingType2 = Types().GetType<std::vector<int>>();
+    const MetaContainer& metadata = existingType2.Meta();
+    EXPECT_EQ(metadata.Size(), 1);
+    EXPECT_EQ(metadata[0].Key(), "test");
+    EXPECT_EQ(metadata[0].Value().ToString(), "test");
+}
+
+
+enum class SimpleRTTREnum1
+{
+    Value1,
+    Value2
+};
+
+enum SimpleRTTREnum2
+{
+    Value1,
+    Value2
+};
+
+TEST(RTTRType, TestTypeIsEnum)
+{
+    Registration().Type<SimpleRTTREnum1>();
+    Registration().Type<SimpleRTTREnum2>();
+
+    Type enumType1 = Types().GetType<SimpleRTTREnum1>();
+    EXPECT_EQ(enumType1.IsEnum(), true);
+
+    Type enumType2 = Types().GetType<SimpleRTTREnum2>();
+    EXPECT_EQ(enumType2.IsEnum(), true);
 }
