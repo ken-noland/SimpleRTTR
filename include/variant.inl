@@ -139,7 +139,20 @@ namespace SimpleRTTR
     template<typename VariantType>
     VariantType Variant::GetAs() const
     {
-        return std::any_cast<VariantType>(_Value);
+        // First, check if the stored value is exactly the requested type
+        if(_Value.type() == typeid(VariantType)) {
+            return std::any_cast<VariantType>(_Value);
+        }
+
+        // If the requested type is int, and the stored type is an enum, cast to int
+        if constexpr(std::is_enum_v<std::decay_t<decltype(std::any_cast<VariantType>(_Value))>>) {
+            if constexpr(std::is_same_v<VariantType, int>) {
+                return static_cast<int>(std::any_cast<std::decay_t<decltype(std::any_cast<VariantType>(_Value))>>(_Value));
+            }
+        }
+
+        // If we couldn't cast, throw an exception
+        throw std::bad_any_cast();
     }
 
     inline const class TypeReference Variant::Type() const
