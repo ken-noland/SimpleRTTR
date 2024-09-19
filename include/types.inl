@@ -28,6 +28,12 @@ namespace SimpleRTTR
 
     }
 
+    Type& Type::operator=(const Type& other)
+    {
+        _TypeData = other._TypeData;
+        return *this;
+    }
+
     bool Type::operator==(const Type& type) const
     {
         return Equals(type);

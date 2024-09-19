@@ -13,6 +13,8 @@ namespace SimpleRTTR
         inline Type(Type&& type);
         inline ~Type();
 
+        inline Type& operator=(const Type& other);
+
         inline bool operator==(const Type& type) const;
         inline bool operator!=(const Type& type) const;
         inline bool Equals(const Type& type) const;
