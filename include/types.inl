@@ -30,7 +30,11 @@ namespace SimpleRTTR
 
     Type& Type::operator=(const Type& other)
     {
-        _TypeData = other._TypeData;
+        if(this != &other) 
+        { 
+            // remove the const qualifier since this is just copying a reference over
+            const_cast<TypeData&>(_TypeData) = other._TypeData;
+        }
         return *this;
     }
 
