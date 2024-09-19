@@ -15,20 +15,15 @@ namespace SimpleRTTR
         using NamespaceContainer = TypeData::NamespaceContainer;
         using TemplateTypeContainer = stdrttr::vector<TypeReference>;
 
-        typedef void(*UnsafeCopyFunction)(const Variant&, void*, const TypeReference&);
         typedef stdrttr::string(*ToStringFunction)(const Variant&);
-        typedef std::any(*ToAnyFunction)(const void*);
 
-        TypeHelperBase(const std::type_info& typeInfo, std::size_t size, bool isEnum,
-            UnsafeCopyFunction unsafeCopyFunc,
-            ToAnyFunction toAnyFunc,
+        TypeHelperBase(const std::type_info& typeInfo, std::size_t size, std::type_index typeIndex, std::uint64_t flags,
             ToStringFunction toStringFunc,
             QualifiedNameParseFunc parseQualifiedName = nullptr)
             :
             _Size(size),
-            _IsEnum(isEnum),
-            _UnsafeCopyFunc(unsafeCopyFunc),
-            _ToAnyFunc(toAnyFunc),
+            _Flags(flags),
+            _TypeIndex(typeIndex),
             _ToStringFunc(toStringFunc)
         {
             ParseName(typeInfo, parseQualifiedName);
@@ -39,12 +34,12 @@ namespace SimpleRTTR
         inline const NamespaceContainer& Namespaces() const { return _Namespaces; }
         inline const TemplateTypeContainer& TemplateParams() const { return _TemplateParams; }
         inline const ToStringFunction& ToStringFunc() const { return _ToStringFunc; }
-        inline const ToAnyFunction& ToAnyFunc() const { return _ToAnyFunc; }
-        inline const UnsafeCopyFunction& UnsafeCopyFunc() const { return _UnsafeCopyFunc; }
 
         inline std::size_t Size() const { return _Size; }
 
-        inline bool IsEnum() const { return _IsEnum; }
+        inline std::uint64_t Flags() const { return _Flags; }
+
+        inline std::type_index TypeIndex() const { return _TypeIndex; }
 
     protected:
         inline stdrttr::string RemoveTemplateArguments(const stdrttr::string str, std::size_t offset = 0)
@@ -153,18 +148,85 @@ namespace SimpleRTTR
         }
 
 
+        // Helper to check if a type is iterable
+        template <typename T>
+        class IsIterableHelper {
+        private:
+            template <typename U>
+            static auto test(int) -> decltype(std::begin(std::declval<U&>()) != std::end(std::declval<U&>()), std::true_type{});
+
+            template <typename U>
+            static std::false_type test(...);
+
+        public:
+            static constexpr bool value = decltype(test<T>(0))::value;
+        };
+
+        template <typename T>
+        constexpr uint64_t ExtractTypeFlags() {
+            uint64_t flags = (uint64_t)TypeFlag::None;
+
+            if (std::is_empty_v<T>) flags |= (uint64_t)TypeFlag::IsEmpty;
+            if (std::is_void_v<T>) flags |= (uint64_t)TypeFlag::IsVoid;
+            if (std::is_null_pointer_v<T>) flags |= (uint64_t)TypeFlag::IsNullPointer;
+            if (std::is_integral_v<T>) flags |= (uint64_t)TypeFlag::IsIntegral;
+            if (std::is_floating_point_v<T>) flags |= (uint64_t)TypeFlag::IsFloatingPoint;
+            if (std::is_array_v<T>) flags |= (uint64_t)TypeFlag::IsArray;
+            if (std::is_enum_v<T>) flags |= (uint64_t)TypeFlag::IsEnum;
+            if (std::is_union_v<T>) flags |= (uint64_t)TypeFlag::IsUnion;
+            if (std::is_class_v<T>) flags |= (uint64_t)TypeFlag::IsClass;
+            if (std::is_function_v<T>) flags |= (uint64_t)TypeFlag::IsFunction;
+            if (std::is_pointer_v<T>) flags |= (uint64_t)TypeFlag::IsPointer;
+            if (std::is_reference_v<T>) flags |= (uint64_t)TypeFlag::IsReference;
+            if (std::is_member_pointer_v<T>) flags |= (uint64_t)TypeFlag::IsMemberPointer;
+            if (std::is_member_object_pointer_v<T>) flags |= (uint64_t)TypeFlag::IsMemberObject;
+            if (std::is_member_function_pointer_v<T>) flags |= (uint64_t)TypeFlag::IsMemberFunction;
+            if (std::is_trivially_constructible_v<T>) flags |= (uint64_t)TypeFlag::IsTriviallyConstructible;
+            if (std::is_trivially_copyable_v<T>) flags |= (uint64_t)TypeFlag::IsTriviallyCopyable;
+//            if (std::is_trivially_assignable_v<T>) flags |= (uint64_t)TypeFlag::IsTriviallyAssignable;
+            if (std::is_nothrow_constructible_v<T>) flags |= (uint64_t)TypeFlag::IsNoThrowConstructible;
+//            if (std::is_nothrow_copyable_v<T>) flags |= (uint64_t)TypeFlag::IsNoThrowCopyable;
+//            if (std::is_nothrow_assignable_v<T>) flags |= (uint64_t)TypeFlag::IsNoThrowAssignable;
+            if (std::is_move_constructible_v<T>) flags |= (uint64_t)TypeFlag::IsMoveConstructible;
+            if (std::is_move_assignable_v<T>) flags |= (uint64_t)TypeFlag::IsMoveAssignable;
+            if (std::is_destructible_v<T>) flags |= (uint64_t)TypeFlag::IsDestructible;
+
+            // Check if the type is iterable (has begin() and end())
+            if (IsIterableHelper<T>::value) flags |= (uint64_t)TypeFlag::IsIterable;
+
+            if (std::is_const_v<T>) flags |= (uint64_t)TypeFlag::IsConst;
+            if (std::is_volatile_v<T>) flags |= (uint64_t)TypeFlag::IsVolatile;
+            if (std::is_trivial_v<T>) flags |= (uint64_t)TypeFlag::IsTrivial;
+            if (std::is_polymorphic_v<T>) flags |= (uint64_t)TypeFlag::IsPolymorphic;
+            if (std::is_standard_layout_v<T>) flags |= (uint64_t)TypeFlag::IsStandardLayout;
+            if (std::is_pod_v<T>) flags |= (uint64_t)TypeFlag::IsPOD;
+            if (std::is_aggregate_v<T>) flags |= (uint64_t)TypeFlag::IsAggregate;
+//            if (std::is_literal_type_v<T>) flags |= (uint64_t)TypeFlag::IsLiteral;
+            if (std::is_signed_v<T>) flags |= (uint64_t)TypeFlag::IsSigned;
+            if (std::is_unsigned_v<T>) flags |= (uint64_t)TypeFlag::IsUnsigned;
+            if (std::is_arithmetic_v<T>) flags |= (uint64_t)TypeFlag::IsArithmetic;
+            if (std::is_fundamental_v<T>) flags |= (uint64_t)TypeFlag::IsFundamental;
+            if (std::is_object_v<T>) flags |= (uint64_t)TypeFlag::IsObject;
+            if (std::is_scalar_v<T>) flags |= (uint64_t)TypeFlag::IsScalar;
+            if (std::is_compound_v<T>) flags |= (uint64_t)TypeFlag::IsCompound;
+
+            if (std::is_abstract_v<T>) flags |= (uint64_t)TypeFlag::IsAbstract;
+            if (std::is_final_v<T>) flags |= (uint64_t)TypeFlag::IsFinal;
+
+            return flags;
+        }
+
         stdrttr::string         _Name;
         stdrttr::string         _TypeID;
         stdrttr::string         _QualifiedName;
         NamespaceContainer      _Namespaces;
         TemplateTypeContainer   _TemplateParams;
         std::size_t             _Size;
+        std::type_index         _TypeIndex;
 
-        bool                    _IsEnum;
+        std::uint64_t           _Flags;
 
-        UnsafeCopyFunction _UnsafeCopyFunc;
-        ToAnyFunction _ToAnyFunc;
-        ToStringFunction _ToStringFunc;
+        ToStringFunction        _ToStringFunc;
     };
 
     template<typename ClassType>
@@ -206,9 +268,7 @@ namespace SimpleRTTR
     class TypeHelper : public TypeHelperBase, TypeHelper1
     {
     public:
-        TypeHelper() : TypeHelperBase(typeid(this), sizeof(ClassType), std::is_enum_v<ClassType>,
-            (TypeHelperBase::UnsafeCopyFunction)&VariantCopy<ClassType>,
-            (TypeHelperBase::ToAnyFunction)&PtrToAny<ClassType>,
+        TypeHelper() : TypeHelperBase(typeid(this), sizeof(ClassType), typeid(ClassType), std::is_enum_v<ClassType>,
             (TypeHelperBase::ToStringFunction)&VariantToString<ClassType>,
             (TypeHelperBase::QualifiedNameParseFunc)&ParseQualifiedName)
         {
@@ -220,9 +280,7 @@ namespace SimpleRTTR
     class TypeHelper<void> : public TypeHelperBase, TypeHelper1
     {
     public:
-        TypeHelper<void>() : TypeHelperBase(typeid(this), 0, false,
-            nullptr,
-            nullptr,    //void is not a valid "any" type
+        TypeHelper<void>() : TypeHelperBase(typeid(this), 0, typeid(void), (uint64_t)ExtractTypeFlags<void>(),
             (ToStringFunction)&VariantToString<void>,
             &ParseQualifiedName) {}
     };
@@ -233,9 +291,7 @@ namespace SimpleRTTR
     public:
         TypeHelper()
             :
-            TypeHelperBase(typeid(this), sizeof(Tmpl<Args...>), false,
-                (TypeHelperBase::UnsafeCopyFunction)&VariantCopy<Tmpl<Args...>>,
-                (TypeHelperBase::ToAnyFunction)&PtrToAny<Tmpl<Args...>>,
+            TypeHelperBase(typeid(this), sizeof(Tmpl<Args...>), typeid(Tmpl<Args...>), (uint64_t)ExtractTypeFlags<Tmpl<Args...>>(),
                 (TypeHelperBase::ToStringFunction)&VariantToString<Tmpl, Args...>,
                 (TypeHelperBase::QualifiedNameParseFunc)ParseQualifiedName)
         {

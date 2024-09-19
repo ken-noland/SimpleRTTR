@@ -65,9 +65,7 @@ namespace SimpleRTTR
 
     bool Type::Equals(const std::type_info& typeData) const
     {
-        //TODO: maybe not use a heavy constructor like TypeHelperBase(which is littered with allocations) to just test if a type if equal
-        TypeHelperBase typeHelper(typeData, (std::size_t)-1, false, nullptr, nullptr, nullptr);
-        return FullyQualifiedName().compare(typeHelper.QualifiedName()) == 0;
+        return GetTypeIndex() == typeData;
     }
 
     const Type& Type::InvalidType()
@@ -96,9 +94,14 @@ namespace SimpleRTTR
         return _TypeData.Hash();
     }
 
-    bool Type::IsEnum() const
+    bool Type::HasFlag(TypeFlag flag) const
     {
-        return _TypeData.IsEnum();
+        return _TypeData.HasFlag(flag);
+    }
+
+    const std::type_index& Type::GetTypeIndex() const
+    {
+        return _TypeData.GetTypeIndex();
     }
 
     const ConstructorContainer& Type::Constructors() const
@@ -198,7 +201,7 @@ namespace SimpleRTTR
 
     const TypeData& TypeStorage::InvalidTypeData()
     {
-        static TypeData invalidTypeData("<invalid>","<invalid>",(std::size_t)-1);
+        static TypeData invalidTypeData("<invalid>","<invalid>",(std::size_t)-1, 0, typeid(void));
         return invalidTypeData;
     }
 
@@ -240,8 +243,16 @@ namespace SimpleRTTR
     template<typename ClassType>
     const TypeData& TypeStorage::GetTypeData() const
     {
-        TypeHelper<ClassType> typeHelper;
-        return GetTypeData(typeHelper);
+        return GetTypeData(typeid(ClassType));
+    }
+
+    const TypeData& TypeStorage::GetTypeData(const std::type_index& typeIndex) const
+    {
+        TypeList::const_iterator found = std::find_if(_Data.begin(), _Data.end(), [&](const TypePointer& typeData) {
+            return typeIndex == typeData->GetTypeIndex();
+            });
+        if(found == _Data.end()) { return InvalidTypeData(); }
+        return *(*found).get();
     }
 
     const TypeData& TypeStorage::GetTypeData(const stdrttr::string& name, std::size_t size) const
@@ -310,13 +321,13 @@ namespace SimpleRTTR
             typeHelper.Name(),
             typeHelper.QualifiedName(),
             typeHelper.Size(),
-            typeHelper.IsEnum(),
+            typeHelper.Flags(),
+            typeHelper.TypeIndex(),
             addedByUser,
             typeHelper.Namespaces(),
             typeHelper.TemplateParams(),
-            typeHelper.UnsafeCopyFunc(),
-            typeHelper.ToAnyFunc(),
-            typeHelper.ToStringFunc());
+            typeHelper.ToStringFunc()
+        );
 
         return RegisterType(data);
     }
@@ -376,26 +387,22 @@ namespace SimpleRTTR
     template<class ClassType>
     const Type TypeManager::GetType() const
     {
-        TypeHelper<ClassType> helper;
-        return GetType(helper);
+        return GetStorage().GetTypeData<ClassType>();
     }
 
     const Type TypeManager::GetType(const std::type_info& typeInfo) const
     {
-        TypeHelperBase helper(typeInfo, (std::size_t)-1, false, nullptr, nullptr, nullptr);
-        return GetType(helper);
+        return GetStorage().GetTypeData(typeInfo);
     }
 
     const Type TypeManager::GetType(const stdrttr::string& name, std::size_t size) const
     {
-        Type type(GetStorage().GetTypeData(name, size));
-        return type;
+        return GetStorage().GetTypeData(name, size);
     }
 
     const Type TypeManager::GetType(const TypeHelperBase& typeHelper) const
     {
-        Type type(GetStorage().GetTypeData(typeHelper));
-        return type;
+        return GetStorage().GetTypeData(typeHelper);
     }
 
     template<class ClassType>

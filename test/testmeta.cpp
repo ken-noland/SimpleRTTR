@@ -125,7 +125,7 @@ TEST(RTTRMeta, TestMetaStringKeyListValue)
     const Meta& meta = type.Meta().Get("this should resolve to std::vector<int>");
     ASSERT_NE(meta, Meta::InvalidMeta());
 
-    const std::vector<int>& vectorValue = meta.Value().GetAs<const std::vector<int>&>();
+    const std::vector<int>& vectorValue = meta.Value().GetAs<const std::vector<int>>();
 
     EXPECT_EQ(meta.Key().Type().Type().Name(), "char const *");
     EXPECT_EQ(meta.Key().Type(), Types().GetType<char const*>());

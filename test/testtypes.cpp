@@ -75,7 +75,7 @@ TEST(RTTRType, TestGetType)
 
     Type validType = Types().GetType<SimpleRTTRTestType>();
     EXPECT_EQ(validType.Name(), "SimpleRTTRTestType");
-    EXPECT_EQ(validType.IsEnum(), false);
+    EXPECT_EQ(validType.HasFlag(TypeFlag::IsEnum), false);
 }
 
 
@@ -189,8 +189,8 @@ TEST(RTTRType, TestTypeIsEnum)
     Registration().Type<SimpleRTTREnum2>();
 
     Type enumType1 = Types().GetType<SimpleRTTREnum1>();
-    EXPECT_EQ(enumType1.IsEnum(), true);
+    EXPECT_EQ(enumType1.HasFlag(TypeFlag::IsEnum), true);
 
     Type enumType2 = Types().GetType<SimpleRTTREnum2>();
-    EXPECT_EQ(enumType2.IsEnum(), true);
+    EXPECT_EQ(enumType2.HasFlag(TypeFlag::IsEnum), true);
 }

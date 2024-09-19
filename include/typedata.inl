@@ -5,38 +5,39 @@ namespace SimpleRTTR
     TypeData::TypeData(const stdrttr::string& name,
         const stdrttr::string& fullyQualifiedName,
         std::size_t size,
-        bool isEnum,
+        std::uint64_t flags,
+        std::type_index typeIndex,
         bool registeredByUser,
         const NamespaceContainer& namespaces,
         const TemplateTypeContainer& templateParams,
-        UnsafeCopyFunction unsafeCopyFunc,
-        ToAnyFunction toAnyFunc,
         ToStringFunction toStringFunc)
         :
         _Name(name),
         _FullyQualifiedName(fullyQualifiedName),
         _Size(size),
-        _IsEnum(isEnum),
+        _Flags(flags),
+        _TypeIndex(typeIndex),
         _RegisteredByUser(registeredByUser),
         _Namespaces(namespaces),
         _TemplateParams(templateParams),
-        _UnsafeCopyFunc(unsafeCopyFunc),
-        _ToAnyFunc(toAnyFunc),
         _ToStringFunc(toStringFunc)
     {
 
     }
 
     TypeData::TypeData(const stdrttr::string& name,
-        const stdrttr::string& fullyQualifiedName,
-        std::size_t size)
+        const stdrttr::string& fqn,
+        std::size_t size, 
+        std::uint64_t flags, 
+        std::type_index typeIndex)
         :
         _Name(name),
-        _FullyQualifiedName(fullyQualifiedName),
+        _FullyQualifiedName(fqn),
         _Size(size),
+        _Flags(flags),
+        _TypeIndex(typeIndex),
         _RegisteredByUser(false)
     {
-        _UnsafeCopyFunc = nullptr;
     }
 
 
@@ -46,7 +47,8 @@ namespace SimpleRTTR
         _Name(typeData._Name),
         _FullyQualifiedName(typeData._FullyQualifiedName),
         _Size(typeData._Size),
-        _IsEnum(typeData._IsEnum),
+        _TypeIndex(typeData._TypeIndex),
+        _Flags(typeData._Flags),
         _RegisteredByUser(typeData._RegisteredByUser),
         _Properties(typeData._Properties),
         _Methods(typeData._Methods),
@@ -54,8 +56,6 @@ namespace SimpleRTTR
         _TemplateParams(typeData._TemplateParams),
         _Values(typeData._Values),
         _Metadata(typeData._Metadata),
-        _UnsafeCopyFunc(typeData._UnsafeCopyFunc),
-        _ToAnyFunc(typeData._ToAnyFunc),
         _ToStringFunc(typeData._ToStringFunc)
     {
     }
@@ -65,7 +65,8 @@ namespace SimpleRTTR
         _Name(std::move(typeData._Name)),
         _FullyQualifiedName(std::move(typeData._FullyQualifiedName)),
         _Size(typeData._Size),
-        _IsEnum(typeData._IsEnum),
+        _TypeIndex(typeData._TypeIndex),
+        _Flags(typeData._Flags),
         _RegisteredByUser(typeData._RegisteredByUser),
         _Properties(std::move(typeData._Properties)),
         _Methods(std::move(typeData._Methods)),
@@ -73,8 +74,6 @@ namespace SimpleRTTR
         _TemplateParams(std::move(typeData._TemplateParams)),
         _Values(std::move(typeData._Values)),
         _Metadata(std::move(typeData._Metadata)),
-        _UnsafeCopyFunc(std::move(typeData._UnsafeCopyFunc)),
-        _ToAnyFunc(std::move(typeData._ToAnyFunc)),
         _ToStringFunc(std::move(typeData._ToStringFunc))
     {
     }
@@ -84,7 +83,8 @@ namespace SimpleRTTR
         _Name = typeData._Name;
         _FullyQualifiedName = typeData._FullyQualifiedName;
         _Size = typeData._Size;
-        _IsEnum = typeData._IsEnum;
+        _TypeIndex = typeData._TypeIndex;
+        _Flags = typeData._Flags;
         _RegisteredByUser = typeData._RegisteredByUser;
         _Properties = typeData._Properties;
         _Methods = typeData._Methods;
@@ -92,8 +92,6 @@ namespace SimpleRTTR
         _TemplateParams = typeData._TemplateParams;
         _Values = typeData._Values;
         _Metadata = typeData._Metadata;
-        _UnsafeCopyFunc = typeData._UnsafeCopyFunc;
-        _ToAnyFunc = typeData._ToAnyFunc,
         _ToStringFunc = typeData._ToStringFunc;
         return *this;
     }
@@ -120,7 +118,17 @@ namespace SimpleRTTR
         return _Size;
     }
 
-    inline std::size_t TypeData::Hash() const
+    bool TypeData::HasFlag(TypeFlag flag) const
+    {
+        return _Flags & static_cast<std::uint32_t>(flag);
+    }
+
+    const std::type_index& TypeData::GetTypeIndex() const
+    {
+        return _TypeIndex;
+    }
+
+    std::size_t TypeData::Hash() const
     {
         std::size_t hash = 0;
         HashCombine(hash,
@@ -133,11 +141,6 @@ namespace SimpleRTTR
             _Values,
             _Metadata);
         return hash;
-    }
-
-    bool TypeData::IsEnum() const
-    {
-        return _IsEnum;
     }
 
     bool TypeData::IsRegisteredByUser() const
@@ -178,11 +181,6 @@ namespace SimpleRTTR
     const MetaContainer& TypeData::GetMetadata() const
     {
         return _Metadata;
-    }
-
-    inline const TypeData::UnsafeCopyFunction TypeData::GetUnsafeCopyFunction() const
-    {
-        return _UnsafeCopyFunc;
     }
 
     const TypeData::ToStringFunction TypeData::GetToStringFunction() const

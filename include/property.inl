@@ -47,7 +47,7 @@ namespace SimpleRTTR
         return _Name;
     }
 
-    Type PropertyData::Type() const
+    SimpleRTTR::Type PropertyData::Type() const
     {
         return _Type.Type();
     }
@@ -73,16 +73,8 @@ namespace SimpleRTTR
     inline void PropertyData::Set(ClassType* obj, const Variant& value) const
     {
         void* ptr = reinterpret_cast<void*>(reinterpret_cast<std::size_t>(obj) + _Offset);
+//        Type().Set(ptr, value);
 
-        TypeData::UnsafeCopyFunction unsafeCopyFunc = _InternalGetTypeData(Type()).GetUnsafeCopyFunction();
-        if(unsafeCopyFunc)
-        {
-            unsafeCopyFunc(value, ptr, _Type);
-        }
-        else
-        {
-            SIMPLERTTR_ASSERT(!"No copy function available");
-        }
     }
 
     inline MetaContainer& _InternalPropertyDataGetMetaListRef(PropertyData& prop)

@@ -30,7 +30,9 @@ namespace SimpleRTTR
         inline std::size_t Size() const;
         inline std::size_t Hash() const;
 
-        inline bool IsEnum() const;
+        inline bool HasFlag(TypeFlag flag) const;
+
+        inline const std::type_index& GetTypeIndex() const;
 
         inline const ConstructorContainer& Constructors() const;
         inline const PropertyContainer& Properties() const;
@@ -50,7 +52,6 @@ namespace SimpleRTTR
 
         template<typename ClassType, typename Alloc = stdrttr::custom_allocator<ClassType>>
         inline void DestroyInstance(ClassType* ptr) const;
-
         inline void DestroyInstance(void* ptr) const;
 
         inline stdrttr::string ToString(const Variant& var) const;
@@ -81,6 +82,7 @@ namespace SimpleRTTR
 
         template<typename ClassType>
         inline const TypeData& GetTypeData() const;
+        inline const TypeData& GetTypeData(const std::type_index& typeIndex) const;
         inline const TypeData& GetTypeData(const stdrttr::string& name, std::size_t size) const;
         inline const TypeData& GetTypeData(const TypeHelperBase& typeHelper) const;
 
@@ -92,7 +94,6 @@ namespace SimpleRTTR
 
         inline Iterator End() { return _Data.end(); }
         inline ConstIterator End() const { return _Data.end(); }
-
 
     protected:
         friend class TypeManager;

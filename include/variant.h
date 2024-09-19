@@ -5,12 +5,17 @@ namespace SimpleRTTR
     class Variant
     {
     public:
+        using StorageType = std::aligned_storage_t<64, alignof(std::max_align_t)>;
+
         template<typename VariantType>
         inline Variant(VariantType value);
         inline Variant(void* value, Type type);
 
         inline Variant(const Variant& var);
         inline Variant(Variant&& var);
+
+        inline ~Variant();
+
         inline Variant& operator=(const Variant& meta);
 
         inline bool operator==(const Variant& var) const;
@@ -19,10 +24,11 @@ namespace SimpleRTTR
         template<typename ObjectType>
         inline bool operator==(const ObjectType& var) const;
 
-        inline const std::any& Value() const;
-
         template<typename VariantType>
         inline VariantType GetAs() const;
+
+        // copy the value to the given pointer
+        inline void CopyTo(void* dest) const;
 
         inline const class TypeReference Type() const;
 
@@ -31,13 +37,20 @@ namespace SimpleRTTR
         inline stdrttr::string ToString() const;
 
     protected:
-        std::any _Value;
+        StorageType _storage;
 
-        using CompareFunc = std::add_pointer<bool(const std::any&, const std::any&)>::type;
-        CompareFunc _ComparatorFunc;
+        using CopyFunc = void (*)(StorageType&, const StorageType&);
+        CopyFunc _copyFunc;
 
-        using HashFunc = std::add_pointer<std::size_t(const std::any&)>::type;
-        HashFunc _HashFunc;
+        using DeleteFunc = void (*)(StorageType&);
+        DeleteFunc _deleteFunc;
+
+        using EqualityFunc = bool (*)(const StorageType&, const StorageType&);
+        EqualityFunc _equalityFunc;
+
+        std::type_index _typeIndex;
+
+        inline void Destroy();
     };
 
 
