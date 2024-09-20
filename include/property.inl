@@ -72,9 +72,16 @@ namespace SimpleRTTR
     template<typename ClassType>
     inline void PropertyData::set(ClassType* obj, const Variant& value) const
     {
-        void* ptr = reinterpret_cast<void*>(reinterpret_cast<std::size_t>(obj) + _Offset);
-//        Type().Set(ptr, value);
+        SIMPLERTTR_ASSERT_MSG(obj != nullptr, "Object is null");
+        SIMPLERTTR_ASSERT_MSG(value.type() == type(), "Type mismatch");
 
+        void* dst = reinterpret_cast<void*>(reinterpret_cast<std::size_t>(obj) + _Offset);
+        const void* src = value.ptr();
+
+        TypeFunctions::AssignmentOperatorFunction assignFunc = type().type_functions().AssignmentOperator;
+        SIMPLERTTR_ASSERT_MSG(assignFunc != nullptr, "Object does not have an assignment operator");
+
+        assignFunc(dst, src);
     }
 
     inline MetaContainer& _InternalPropertyDataGetMetaListRef(PropertyData& prop)

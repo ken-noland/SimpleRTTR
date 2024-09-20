@@ -173,11 +173,6 @@ namespace SimpleRTTR
         SIMPLERTTR_ASSERT(!"Not yet implemented");   //TODO: check inheritance!
     }
 
-    std::string Type::to_string(const Variant& var) const
-    {
-        return _TypeData.to_string_function()(var);
-    }
-
     const TypeFunctions& Type::type_functions() const
     {
         return _TypeData.type_functions();
@@ -347,8 +342,7 @@ namespace SimpleRTTR
             addedByUser,
             typeHelper.namespaces(),
             typeHelper.template_params(),
-            typeHelper.type_functions(),
-            typeHelper.to_string_func()
+            typeHelper.type_functions()
         );
 
         return register_type(data);

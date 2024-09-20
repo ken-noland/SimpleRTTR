@@ -2,21 +2,6 @@
 
 namespace SimpleRTTR
 {
-    struct TypeFunctions
-    {
-        using ConstructorFunction = void* (*)(void* objMem);
-        using DestructorFunction = void (*)(void* objMem);
-
-        using CopyConstructorFunction = void* (*)(void* dest, const void* src);
-        using MoveConstructorFunction = void* (*)(void* dest, void* src);
-
-        ConstructorFunction Constructor;
-        DestructorFunction Destructor;
-
-        CopyConstructorFunction CopyConstructor;
-        MoveConstructorFunction MoveConstructor;
-    };
-
     enum class TypeFlag : uint64_t
     {
         None                        = 0,
@@ -80,8 +65,6 @@ namespace SimpleRTTR
         using NamespaceContainer = std::vector<std::string>;
         using TemplateTypeContainer = std::vector<TypeReference>;
 
-        using ToStringFunction = std::add_pointer<std::string(const Variant&)>::type;
-
         inline TypeData(const TypeData& typeData);
         inline TypeData(TypeData&& typeData);
         inline TypeData& operator=(const TypeData& typeData);
@@ -108,8 +91,6 @@ namespace SimpleRTTR
         inline const ValueContainer& values() const;
 
         inline const MetaContainer& meta() const;
-
-        inline const ToStringFunction to_string_function() const;
 
         inline const TypeFunctions& type_functions() const;
 
@@ -139,7 +120,6 @@ namespace SimpleRTTR
 
         MetaContainer _Metadata;
 
-        ToStringFunction _ToStringFunc;
         TypeFunctions _TypeFunctions;
 
         friend class TypeStorage;
@@ -151,8 +131,7 @@ namespace SimpleRTTR
             bool registeredByUser,
             const NamespaceContainer& namespaces,
             const TemplateTypeContainer& templateParams,
-            TypeFunctions typeFunctions,
-            ToStringFunction toStringFunc
+            TypeFunctions typeFunctions
         );
 
         inline TypeData(const std::string& name,

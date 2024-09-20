@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 cmake_policy(SET CMP0135 NEW) 
 
 option(SIMPLERTTR_BUILD_TESTS "Build the tests" true)
-option(SIMPLERTTR_BUILD_EXAMPLES "Build the examples" true)
+option(SIMPLERTTR_BUILD_EXAMPLES "Build the examples" false)
 
 set(SIMPLERTTR_SRC		src/types.cpp)
 
@@ -26,6 +26,7 @@ set(SIMPLERTTR_HEADERS	include/helpers.h
 						include/typebinding.inl
 						include/typedata.h
 						include/typedata.inl
+						include/typefunctions.h
 						include/typehelpers.h
 						include/typereference.h
 						include/typereference.inl

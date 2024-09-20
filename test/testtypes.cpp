@@ -1,10 +1,6 @@
 #include <gtest/gtest.h>
 #include <gtest/gtest-spi.h>
 
-//need to include the allocator before the SimpleRTTR header file
-//#include "testallocator.h"
-//#define SIMPLERTTR_CUSTOM_ALLOCATOR CustomAllocator
-
 #include <simplerttr.h>
 
 using namespace SimpleRTTR;
@@ -160,14 +156,14 @@ TEST(RTTRType, TestExistingTemplateTypeRegistration)
 
     const Type& existingType = types().get_type<std::vector<int>>();
     registration().type(existingType)
-        .meta("test", "test");
+        .meta("test_key", "test_value");
 
     //check that the metadata was added to the existing type
     const Type& existingType2 = types().get_type<std::vector<int>>();
     const MetaContainer& metadata = existingType2.meta();
     EXPECT_EQ(metadata.size(), 1);
-    EXPECT_EQ(metadata[0].key(), "test");
-    EXPECT_EQ(metadata[0].value().to_string(), "test");
+    EXPECT_EQ(metadata[0].key(), "test_key");
+    EXPECT_EQ(metadata[0].value(), "test_value");
 }
 
 

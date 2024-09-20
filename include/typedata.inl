@@ -10,8 +10,7 @@ namespace SimpleRTTR
         bool registeredByUser,
         const NamespaceContainer& namespaces,
         const TemplateTypeContainer& templateParams,
-        TypeFunctions typeFunctions,
-        ToStringFunction toStringFunc)
+        TypeFunctions typeFunctions)
         :
         _Name(name),
         _FullyQualifiedName(fullyQualifiedName),
@@ -21,8 +20,7 @@ namespace SimpleRTTR
         _RegisteredByUser(registeredByUser),
         _Namespaces(namespaces),
         _TemplateParams(templateParams),
-        _TypeFunctions(typeFunctions),
-        _ToStringFunc(toStringFunc)
+        _TypeFunctions(typeFunctions)
     {
 
     }
@@ -58,7 +56,7 @@ namespace SimpleRTTR
         _TemplateParams(typeData._TemplateParams),
         _Values(typeData._Values),
         _Metadata(typeData._Metadata),
-        _ToStringFunc(typeData._ToStringFunc)
+        _TypeFunctions(typeData._TypeFunctions)
     {
     }
 
@@ -76,7 +74,7 @@ namespace SimpleRTTR
         _TemplateParams(std::move(typeData._TemplateParams)),
         _Values(std::move(typeData._Values)),
         _Metadata(std::move(typeData._Metadata)),
-        _ToStringFunc(std::move(typeData._ToStringFunc))
+        _TypeFunctions(std::move(typeData._TypeFunctions))
     {
     }
 
@@ -94,12 +92,14 @@ namespace SimpleRTTR
         _TemplateParams = typeData._TemplateParams;
         _Values = typeData._Values;
         _Metadata = typeData._Metadata;
-        _ToStringFunc = typeData._ToStringFunc;
+        _TypeFunctions = typeData._TypeFunctions;
         return *this;
     }
 
     bool TypeData::equals(const TypeData& typeData) const
     {
+        //TODO: use the type index instead of the FQN. However, there appears to be a bug somewhere and 
+        // an invalid type id is slipping through. Need to track that down!
         return (this == &typeData) || (
             _Size == typeData._Size &&
             _FullyQualifiedName.compare(typeData._FullyQualifiedName) == 0);
@@ -185,11 +185,6 @@ namespace SimpleRTTR
     const MetaContainer& TypeData::meta() const
     {
         return _Metadata;
-    }
-
-    const TypeData::ToStringFunction TypeData::to_string_function() const
-    {
-        return _ToStringFunc;
     }
 
     const TypeFunctions& TypeData::type_functions() const

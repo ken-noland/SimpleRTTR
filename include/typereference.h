@@ -6,6 +6,7 @@ namespace SimpleRTTR
     {
     public:
         inline TypeReference(const class Type&);
+        inline TypeReference(const std::type_index& typeIndex);
         inline TypeReference(const TypeReference&);
 
         inline bool operator==(const Type& type) const;

@@ -2,78 +2,6 @@
 
 namespace SimpleRTTR
 {
-    template<typename ClassType>
-    void* DefaultConstructorHelper(void* mem)
-    {
-        return new (mem) ClassType();
-    }
-
-    template<typename ClassType>
-    void DefaultDestructorHelper(void* mem)
-    {
-        return static_cast<ClassType*>(mem)->~ClassType();
-    }
-
-
-    template<typename ClassType>
-    void* DefaultCopyConstructorHelper(void* dest, const void* src)
-    {
-        new (dest) ClassType(*static_cast<const ClassType*>(src));
-        return dest;
-    }
-
-    template<typename ClassType>
-    void* DefaultMoveConstructorHelper(void* dest, void* src)
-    {
-        new (dest) ClassType(std::move(*static_cast<ClassType*>(src)));
-        return dest;
-    }
-
-    template<typename ClassType>
-    void* FundamentalConstructorHelper(void* mem)
-    {
-        *static_cast<ClassType*>(mem) = ClassType();
-
-        return mem;
-    }
-
-    template<typename ClassType>
-    void FundamentalDestructorHelper(void* mem)
-    {
-    }
-
-    template<typename ClassType>
-    void* FundamentalCopyHelper(void* dest, const void* src)
-    {
-        if constexpr (std::is_reference_v<ClassType>)
-        {
-            // Copy the address of the referenced object
-            using DereferencedType = std::remove_reference_t<ClassType>;
-            *reinterpret_cast<DereferencedType**>(dest) = const_cast<DereferencedType*>(*reinterpret_cast<const DereferencedType* const*>(src));
-        }
-        else
-        {
-            *static_cast<ClassType*>(dest) = *static_cast<const ClassType*>(src);
-        }
-
-        return dest;
-    }
-
-    template<typename ClassType>
-    void* FundamentalMoveHelper(void* dest, void* src)
-    {
-        if constexpr (std::is_reference_v<ClassType>)
-        {
-            // Move the address of the referred object
-            *reinterpret_cast<std::remove_reference_t<ClassType>**>(dest) = std::move(*reinterpret_cast<std::remove_reference_t<ClassType>**>(src));
-        }
-        else
-        {
-            *static_cast<ClassType*>(dest) = std::move(*static_cast<ClassType*>(src));
-        }
-
-        return dest;
-    }
 
     // Primary template for detecting the equality operator
     template <typename, typename = std::void_t<>>
@@ -97,18 +25,14 @@ namespace SimpleRTTR
         using NamespaceContainer = TypeData::NamespaceContainer;
         using TemplateTypeContainer = std::vector<TypeReference>;
 
-        typedef std::string(*ToStringFunction)(const Variant&);
-
         TypeHelperBase(const std::type_info& typeInfo, std::size_t size, std::uint64_t flags, std::type_index typeIndex,
             TypeFunctions typeFunctions,
-            ToStringFunction toStringFunc,
             QualifiedNameParseFunc parseQualifiedName = nullptr)
             :
             _Size(size),
             _Flags(flags),
             _TypeIndex(typeIndex),
-            _TypeFunctions(typeFunctions),
-            _ToStringFunc(toStringFunc)
+            _TypeFunctions(typeFunctions)
         {
             ParseName(typeInfo, parseQualifiedName);
         }
@@ -117,7 +41,6 @@ namespace SimpleRTTR
         inline const std::string& fully_qualified_name() const { return _QualifiedName; }
         inline const NamespaceContainer& namespaces() const { return _Namespaces; }
         inline const TemplateTypeContainer& template_params() const { return _TemplateParams; }
-        inline const ToStringFunction& to_string_func() const { return _ToStringFunc; }
 
         inline std::size_t size() const { return _Size; }
 
@@ -302,20 +225,53 @@ namespace SimpleRTTR
             return flags;
         }
 
+        template<typename ClassType>
+        void RegisterIntegralConversions(SimpleRTTR::TypeFunctions& typeFunctions)
+        {
+            typeFunctions.ConversionFunctions.push_back({typeid(char), &IntegralConversionHelper<char, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(short), &IntegralConversionHelper<short, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(int), &IntegralConversionHelper<int, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(long), &IntegralConversionHelper<long, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(long long), &IntegralConversionHelper<long long, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(unsigned char), &IntegralConversionHelper<unsigned char, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(unsigned short), &IntegralConversionHelper<unsigned short, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(unsigned int), &IntegralConversionHelper<unsigned int, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(unsigned long), &IntegralConversionHelper<unsigned long, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(unsigned long long), &IntegralConversionHelper<unsigned long long, ClassType>});
+        }
 
+        template<typename ClassType>
+        void RegisterEnumConversions(SimpleRTTR::TypeFunctions& typeFunctions)
+        {
+            typeFunctions.ConversionFunctions.push_back({typeid(char), &IntegralConversionHelper<char, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(short), &IntegralConversionHelper<short, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(int), &IntegralConversionHelper<int, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(long), &IntegralConversionHelper<long, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(long long), &IntegralConversionHelper<long long, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(unsigned char), &IntegralConversionHelper<unsigned char, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(unsigned short), &IntegralConversionHelper<unsigned short, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(unsigned int), &IntegralConversionHelper<unsigned int, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(unsigned long), &IntegralConversionHelper<unsigned long, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(unsigned long long), &IntegralConversionHelper<unsigned long long, ClassType>});
+        }
+
+        template<typename ClassType>
+        void RegisterFloatingPointConversions(SimpleRTTR::TypeFunctions& typeFunctions)
+        {
+            typeFunctions.ConversionFunctions.push_back({typeid(float), &FloatingPointConversionHelper<float, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(double), &FloatingPointConversionHelper<double, ClassType>});
+            typeFunctions.ConversionFunctions.push_back({typeid(long double), &FloatingPointConversionHelper<long double, ClassType>});
+        }
 
         template<typename ClassType>
         SimpleRTTR::TypeFunctions ExtractTypeFunctions()
         {
             SimpleRTTR::TypeFunctions functions;
 
-            if constexpr(std::is_fundamental_v<ClassType> || std::is_pointer_v<ClassType> || std::is_reference_v<ClassType>)
+            if constexpr(std::is_fundamental_v<ClassType> || std::is_pointer_v<ClassType>)
             {
-                if constexpr( std::is_trivially_constructible_v<ClassType> && std::is_trivially_destructible_v<ClassType> )
-                {
-                    functions.Constructor = &FundamentalConstructorHelper<ClassType>;
-                    functions.Destructor = &FundamentalDestructorHelper<ClassType>;
-                }
+                functions.Constructor = &FundamentalConstructorHelper<ClassType>;
+                functions.Destructor = &FundamentalDestructorHelper<ClassType>;
 
                 if constexpr(std::is_copy_constructible_v<ClassType>)
                 {
@@ -327,9 +283,16 @@ namespace SimpleRTTR
                     functions.MoveConstructor = &FundamentalMoveHelper<ClassType>;
                 }
             }
+            else if constexpr(std::is_reference_v<ClassType>)
+            {
+                // references can be copied, but not created
+                functions.CopyConstructor = &FundamentalCopyHelper<ClassType>;
+                functions.MoveConstructor = &FundamentalMoveHelper<ClassType>;
+            }
             else
             {
-                if constexpr( std::is_trivially_constructible_v<ClassType> && std::is_trivially_destructible_v<ClassType> )
+                if constexpr( (std::is_default_constructible_v<ClassType> && std::is_default_constructible_v<ClassType>) ||
+                    (std::is_trivially_constructible_v<ClassType> && std::is_trivially_destructible_v<ClassType>))
                 {
                     functions.Constructor = &DefaultConstructorHelper<ClassType>;
                     functions.Destructor = &DefaultDestructorHelper<ClassType>;
@@ -346,12 +309,39 @@ namespace SimpleRTTR
                 }
             }
 
+            if constexpr(has_equal_operator_v<ClassType>)
+            {
+                functions.EqualOperator = &DefaultEqualityOperator<ClassType, ClassType>;
+            }
+
+            // assignment operator
+            if constexpr(std::is_copy_assignable_v<ClassType>)
+            {
+                functions.AssignmentOperator = &DefaultAssignmentOperatorHelper<ClassType>;
+            }
+
+            // type conversions
+            if constexpr(std::is_integral_v<ClassType>)
+            {
+                RegisterIntegralConversions<ClassType>(functions);
+            }
+
+            if constexpr(std::is_enum_v<ClassType>)
+            {
+                RegisterEnumConversions<ClassType>(functions);
+            }
+
+            if constexpr(std::is_floating_point_v<ClassType>)
+            {
+                RegisterFloatingPointConversions<ClassType>(functions);
+            }
+
             return functions;
         }
 
-        std::string             _Name;
-        std::string             _TypeID;
-        std::string             _QualifiedName;
+        std::string                 _Name;
+        std::string                 _TypeID;
+        std::string                 _QualifiedName;
         NamespaceContainer          _Namespaces;
         TemplateTypeContainer       _TemplateParams;
         std::size_t                 _Size;
@@ -360,7 +350,6 @@ namespace SimpleRTTR
         std::uint64_t               _Flags;
 
         SimpleRTTR::TypeFunctions   _TypeFunctions;
-        ToStringFunction            _ToStringFunc;
     };
 
     template<typename ClassType>
@@ -403,9 +392,7 @@ namespace SimpleRTTR
     {
     public:
         TypeHelper() : TypeHelperBase(typeid(this), sizeof(ClassType), ExtractTypeFlags<ClassType>(), typeid(ClassType),
-            ExtractTypeFunctions<ClassType>(),
-            (TypeHelperBase::ToStringFunction)&VariantToString<ClassType>,
-            (TypeHelperBase::QualifiedNameParseFunc)&ParseQualifiedName)
+            ExtractTypeFunctions<ClassType>(), (TypeHelperBase::QualifiedNameParseFunc)&ParseQualifiedName)
         {
             static_assert(sizeof(ClassType) > 0, "Classes must be fully declared before extracting the type information");
         }
@@ -415,10 +402,7 @@ namespace SimpleRTTR
     class TypeHelper<void> : public TypeHelperBase, TypeHelper1
     {
     public:
-        TypeHelper<void>() : TypeHelperBase(typeid(this), 0, ExtractTypeFlags<void>(), typeid(void),
-            TypeFunctions(),
-            (ToStringFunction)&VariantToString<void>,
-            &ParseQualifiedName) {}
+        TypeHelper<void>() : TypeHelperBase(typeid(this), 0, ExtractTypeFlags<void>(), typeid(void), TypeFunctions(), &ParseQualifiedName) {}
     };
 
     template <template <typename... > class Tmpl, typename ...Args>
@@ -429,9 +413,7 @@ namespace SimpleRTTR
         TypeHelper()
             :
             TypeHelperBase(typeid(this), sizeof(ClassType), ExtractTypeFlags<ClassType>(), typeid(ClassType),
-                ExtractTypeFunctions<ClassType>(),
-                (TypeHelperBase::ToStringFunction)&VariantToString<Tmpl, Args...>,
-                (TypeHelperBase::QualifiedNameParseFunc)ParseQualifiedName)
+                ExtractTypeFunctions<ClassType>(), (TypeHelperBase::QualifiedNameParseFunc)ParseQualifiedName)
         {
             TemplateParameterHelper<Args...>(_TemplateParams);
         }

@@ -11,6 +11,12 @@ namespace SimpleRTTR
 
     }
 
+    TypeReference::TypeReference(const std::type_index& typeIndex)
+        :
+        _TypeIndex(typeIndex)
+    {
+    }
+
     TypeReference::TypeReference(const TypeReference& ref)
         :
         _TypeIndex(ref.type_index())

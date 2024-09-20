@@ -1,5 +1,6 @@
 #GoogleTest
-set(SIMPLERTTR_TEST_SRC		testallocator.cpp
+set(SIMPLERTTR_TEST_SRC		
+							testallocator.cpp
 							testconstructor.cpp
 							testenum.cpp
 							testmeta.cpp
@@ -13,7 +14,7 @@ set(SIMPLERTTR_TEST_SRC		testallocator.cpp
 							testtypehelper.cpp
 							testtypeinstance.cpp
 							testtypes.cpp
-							testvarianttostring.cpp)
+							testvariant.cpp)
 
 set(SIMPLERTTR_TEST_HEADERS testallocator.h
 							testallocator.inl)

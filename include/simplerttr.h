@@ -39,6 +39,7 @@ namespace SimpleRTTR
 #include "typereference.h"
 #include "helpers.h"
 #include "iterator.h"
+#include "typefunctions.h"
 #include "variant.h"
 #include "meta.h"
 #include "property.h"

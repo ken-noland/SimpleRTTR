@@ -3,55 +3,67 @@ namespace SimpleRTTR
     template<typename VariantType>
     Variant::Variant(VariantType value)
         :
-        _type(types().get_type<VariantType>())
+        _typeRef(typeid(VariantType))
     {
         static_assert(std::is_copy_constructible<VariantType>::value, "VariantType must be copy constructible");
         static_assert(sizeof(_storage) >= sizeof(VariantType), "Storage is not large enough for VariantType");
 
-        SIMPLERTTR_ASSERT_MSG(_type != Type::invalid_type(), "Attempting to use Variant with unknown type");
+        Type type = types().get_or_create_type<VariantType>();    //we must dynamically look up the Type since the underlying storage for all types can be invalidated
+        SIMPLERTTR_ASSERT_MSG(type != Type::invalid_type(), "Attempting to use Variant with unknown type");
+        SIMPLERTTR_ASSERT(_typeRef == type);   //sanity check in case something with type storage goes awry
 
-        TypeFunctions::CopyConstructorFunction copy = _type.type_functions().CopyConstructor;
-        SIMPLERTTR_ASSERT_MSG(copy != nullptr, "Attempting to use variant with no copy function");
+        _copyFunc = type.type_functions().CopyConstructor;   //store the copy function for later use
+        SIMPLERTTR_ASSERT_MSG(_copyFunc != nullptr, "Attempting to use Variant with no copy constructor");
+
+        _moveFunc = type.type_functions().MoveConstructor;   //store the move function for later use
+        SIMPLERTTR_ASSERT_MSG(_moveFunc != nullptr, "Attempting to use Variant with no move constructor");
+
+        _destroyFunc = type.type_functions().Destructor;    //store the destructor function for later use
+        SIMPLERTTR_ASSERT_MSG(_destroyFunc != nullptr, "Attempting to use Variant with no destructor function");
+
+        _equalFunc = type.type_functions().EqualOperator;    //store the equality function for later use
 
         //copy the value over
-        copy(&_storage, &value);
+        _copyFunc(&_storage, &value);
     }
 
     // Constructor for void pointers
     Variant::Variant(void* valuePtr, const SimpleRTTR::Type& type)
         :
-        _type(type)
+        _typeRef(type),
+        _copyFunc(type.type_functions().CopyConstructor),
+        _moveFunc(type.type_functions().MoveConstructor),
+        _destroyFunc(type.type_functions().Destructor),
+        _equalFunc(type.type_functions().EqualOperator)
     {
-        SIMPLERTTR_ASSERT_MSG(_type != Type::invalid_type(), "Attempting to use Variant with unknown type.");
-        SIMPLERTTR_ASSERT_MSG(_type.size() > sizeof(_storage), "Storage is not large enough for Variant Type");
-
-        SIMPLERTTR_ASSERT(!"Not implemented yet");
-
         // use the copy constructor pointer
+        _copyFunc(&_storage, valuePtr);
     }
 
     // Copy constructor
     Variant::Variant(const Variant& var)
         : 
-        _type(var._type)
+        _typeRef(var._typeRef),
+        _copyFunc(var._copyFunc),
+        _moveFunc(var._moveFunc),
+        _destroyFunc(var._destroyFunc),
+        _equalFunc(var._equalFunc)
     {
-        SIMPLERTTR_ASSERT_MSG(_type != Type::invalid_type(), "Attempting to use Variant with unknown type.");
-
-        SIMPLERTTR_ASSERT(!"Not implemented yet");
-
-        // use the copy constructor pointer
+        //call the copy function
+        _copyFunc(&_storage, &var._storage);
     }
 
     // Move constructor
     Variant::Variant(Variant&& var)
         : 
-        _type(var._type)
+        _typeRef(var._typeRef),
+        _copyFunc(var._copyFunc),
+        _moveFunc(var._moveFunc),
+        _destroyFunc(var._destroyFunc),
+        _equalFunc(var._equalFunc)
     {
-        SIMPLERTTR_ASSERT_MSG(_type != Type::invalid_type(), "Attempting to use Variant with unknown type.");
-
-        SIMPLERTTR_ASSERT(!"Not implemented yet");
-
         // use the move constructor pointer
+        _moveFunc(&_storage, &var._storage);
     }
 
     // Destructor
@@ -63,103 +75,86 @@ namespace SimpleRTTR
     // Copy assignment
     Variant& Variant::operator=(const Variant& var)
     {
-        SIMPLERTTR_ASSERT(!"Not implemented yet");
-        //if(this != &var)
-        //{
-        //    Destroy();
-        //    _typeIndex = var._typeIndex;
-        //    _copyFunc = var._copyFunc;
-        //    _deleteFunc = var._deleteFunc;
-        //    if(_typeIndex != typeid(void))
-        //    {
-        //        _copyFunc(_storage, var._storage);
-        //    }
-        //}
+        if(this != &var && _typeRef == var._typeRef)
+        {
+            destroy();
+            _copyFunc(&_storage, &var._storage);
+        }
+
         return *this;
     }
 
     bool Variant::operator==(const Variant& var) const
     {
-        SIMPLERTTR_ASSERT(!"Not implemented yet");
         // Ensure that the types are the same before comparing
-        //if(_typeIndex == var._typeIndex && _equalityFunc)
-        //{
-        //    return _equalityFunc(_storage, var._storage);
-        //}
-        return false;
+        if(!(_typeRef == var._typeRef))
+        {
+            return false;
+        }
+                
+        return _equalFunc(&_storage, &var._storage);
     }
 
     bool Variant::operator!=(const Variant& var) const
     {
-        SIMPLERTTR_ASSERT(!"Not implemented yet");
-        return false;
+        return !operator==(var);
     }
 
     template<typename ObjectType>
     bool Variant::operator==(const ObjectType& var) const
     {
-        SIMPLERTTR_ASSERT(!"Not implemented yet");
-        //if(_typeIndex == typeid(ObjectType) && _equalityFunc)
-        //{
-        //    return _equalityFunc(_storage, *reinterpret_cast<const StorageType*>(&var));
-        //}
-        return false;
+        // Check if we are comparing a member function pointer
+        if constexpr (std::is_member_function_pointer_v<ObjectType>)
+        {
+            // Special comparison logic for member function pointers
+            const ObjectType* storedPointer = reinterpret_cast<const ObjectType*>(&_storage);
+            return *storedPointer == var;
+        }
+        // Check if the type is an array and decay it to a pointer for comparison
+        else if constexpr (std::is_array_v<ObjectType>)
+        {
+            using DecayedType = std::decay_t<ObjectType>;  // Decay array to pointer
+            return _equalFunc(&_storage, &(DecayedType)var);
+        }
+        else
+        {
+            // Ensure that the types are the same before comparing
+            if(!(_typeRef.type_index == typeid(ObjectType)))
+            {
+                return false;
+            }
+
+            return _equalFunc(&_storage, var);
+        }
     }
 
     void Variant::destroy()
     {
-        SIMPLERTTR_ASSERT(!"Not implemented yet");
-        //if(_typeIndex != typeid(void))
-        //{
-        //    // Use the stored delete function to destroy the object
-        //    _deleteFunc(_storage);
-        //    _typeIndex = std::type_index(typeid(void));
-        //}
+        // get the type
+        _destroyFunc(&_storage);
     }
 
     template<typename VariantType>
     VariantType Variant::get_as() const
     {
-        SIMPLERTTR_ASSERT(!"Not implemented yet");
-        //// 1. Handle direct type match (if type matches exactly, return it)
-        //if(_typeIndex == std::type_index(typeid(VariantType)))
-        //{
-        //    return *reinterpret_cast<const VariantType*>(&_storage);
-        //}
+        // 1. Handle direct type match (if type matches exactly, return it)
+        if(_typeRef.type_index() == std::type_index(typeid(VariantType)))
+        {
+            return *reinterpret_cast<const VariantType*>(&_storage);
+        }
 
-        //// 2. Handle basic type conversion (char, short, int, etc.)
-        //if constexpr(std::is_arithmetic_v<VariantType>)
-        //{
-        //    if constexpr(std::is_arithmetic_v<std::decay_t<decltype(*reinterpret_cast<const VariantType*>(&_storage))>>)
-        //    {
-        //        // Convert between basic arithmetic types
-        //        return static_cast<VariantType>(*reinterpret_cast<const std::decay_t<decltype(*reinterpret_cast<const VariantType*>(&_storage))>*>(&_storage));
-        //    }
-        //}
-
-        //// Check if the stored type is an enum and the target is fundamental
-        //if constexpr(std::is_integral_v<VariantType>)
-        //{
-        //    const SimpleRTTR::Type& storedType = types().get_type(_typeIndex.name());
-        //    if(storedType.has_flag(TypeFlag::IsEnum))
-        //    {
-        //        // Cast the enum to its underlying integer type
-        //        return static_cast<VariantType>(*reinterpret_cast<const int*>(&_storage));
-        //    }
-        //}
-
-        //// Check if the stored type is fundamental (e.g., int) and the target type is an enum
-        //if constexpr(std::is_enum_v<VariantType>)
-        //{
-        //    //TODO: check the stored type
-        //    //const SimpleRTTR::Type& storedType = types().get_type(_typeIndex.name());
-
-        //    // Cast the int to an enum
-        //    return static_cast<VariantType>(*reinterpret_cast<const int*>(&_storage));
-        //}
-
-        //// 4. Handle pointer to pointer conversion(checking inheritance)
-        //// TODO!
+        // 2. Handle conversion
+        Type sourceType = _typeRef.type();
+        for(const std::pair<std::type_index, TypeFunctions::ConversionFunction>& conversion : sourceType.type_functions().ConversionFunctions)
+        {
+            if(conversion.first == std::type_index(typeid(VariantType)))
+            {
+                using DestType = std::remove_cv_t<std::remove_reference_t<VariantType>>;
+                DestType dest;
+                conversion.second(&dest, &_storage);
+                return dest;
+            }
+        }
 
         throw std::bad_cast();
     }
@@ -169,15 +164,14 @@ namespace SimpleRTTR
     template<>
     inline std::string Variant::get_as<std::string>() const
     {
-        SIMPLERTTR_ASSERT(!"Not implemented yet");
-        //if(_typeIndex == std::type_index(typeid(const char*)))
-        //{
-        //    return std::string(*reinterpret_cast<const char* const*>(&_storage));
-        //}
-        //else if(_typeIndex == std::type_index(typeid(std::string)))
-        //{
-        //    return *reinterpret_cast<const std::string*>(&_storage);
-        //}
+        if(_typeRef.type_index() == std::type_index(typeid(const char*)))
+        {
+            return std::string(*reinterpret_cast<const char* const*>(&_storage));
+        }
+        else if(_typeRef.type_index() == std::type_index(typeid(std::string)))
+        {
+            return *reinterpret_cast<const std::string*>(&_storage);
+        }
 
         throw std::bad_cast();
     }
@@ -185,15 +179,14 @@ namespace SimpleRTTR
     template<>
     inline const char* Variant::get_as<const char*>() const
     {
-        SIMPLERTTR_ASSERT(!"Not implemented yet");
-        //if(_typeIndex == std::type_index(typeid(std::string)))
-        //{
-        //    return reinterpret_cast<const std::string*>(&_storage)->c_str();
-        //}
-        //else if(_typeIndex == std::type_index(typeid(const char*)))
-        //{
-        //    return *reinterpret_cast<const char* const*>(&_storage);
-        //}
+        if(_typeRef.type_index() == std::type_index(typeid(std::string)))
+        {
+            return reinterpret_cast<const std::string*>(&_storage)->c_str();
+        }
+        else if(_typeRef.type_index() == std::type_index(typeid(const char*)))
+        {
+            return *reinterpret_cast<const char* const*>(&_storage);
+        }
 
         throw std::bad_cast();
     }
@@ -201,15 +194,14 @@ namespace SimpleRTTR
     template<>
     inline std::wstring Variant::get_as<std::wstring>() const
     {
-        SIMPLERTTR_ASSERT(!"Not implemented yet");
-        //if(_typeIndex == std::type_index(typeid(const wchar_t*)))
-        //{
-        //    return std::wstring(*reinterpret_cast<const wchar_t* const*>(&_storage));
-        //}
-        //else if(_typeIndex == std::type_index(typeid(std::wstring)))
-        //{
-        //    return *reinterpret_cast<const std::wstring*>(&_storage);
-        //}
+        if(_typeRef.type_index() == std::type_index(typeid(const wchar_t*)))
+        {
+            return std::wstring(*reinterpret_cast<const wchar_t* const*>(&_storage));
+        }
+        else if(_typeRef.type_index() == std::type_index(typeid(std::wstring)))
+        {
+            return *reinterpret_cast<const std::wstring*>(&_storage);
+        }
 
         throw std::bad_cast();
     }
@@ -217,28 +209,21 @@ namespace SimpleRTTR
     template<>
     inline const wchar_t* Variant::get_as<const wchar_t*>() const
     {
-        SIMPLERTTR_ASSERT(!"Not implemented yet");
-        //if(_typeIndex == std::type_index(typeid(std::wstring)))
-        //{
-        //    return reinterpret_cast<const std::wstring*>(&_storage)->c_str();
-        //}
-        //else if(_typeIndex == std::type_index(typeid(const wchar_t*)))
-        //{
-        //    return *reinterpret_cast<const wchar_t* const*>(&_storage);
-        //}
+        if(_typeRef.type_index() == std::type_index(typeid(std::wstring)))
+        {
+            return reinterpret_cast<const std::wstring*>(&_storage)->c_str();
+        }
+        else if(_typeRef.type_index() == std::type_index(typeid(const wchar_t*)))
+        {
+            return *reinterpret_cast<const wchar_t* const*>(&_storage);
+        }
 
         throw std::bad_cast();
     }
 
-    inline void Variant::copy_to(void* dest, const Type& destType) const
+    SimpleRTTR::Type Variant::type() const
     {
-        SIMPLERTTR_ASSERT(!"Not implemented yet");
-        //_copyFunc(*reinterpret_cast<StorageType*>(destination), _storage);
-    }
-
-    const SimpleRTTR::Type& Variant::type() const
-    {
-        return _type;
+        return _typeRef.type();
     }
 
     std::size_t Variant::hash() const
@@ -247,9 +232,14 @@ namespace SimpleRTTR
         return 0;
     }
 
-    inline std::string Variant::to_string() const
+    std::string Variant::to_string() const
     {
         SIMPLERTTR_ASSERT(!"Not implemented yet");
         return "";
+    }
+
+    const void* Variant::ptr() const
+    {
+        return reinterpret_cast<const void*>(&_storage);
     }
 }

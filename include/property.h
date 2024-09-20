@@ -23,7 +23,7 @@ namespace SimpleRTTR
         inline PropertyData(const PropertyData& data);
 
         inline const std::string& name() const;
-        inline class Type type() const;
+        inline SimpleRTTR::Type type() const;
         inline const std::size_t offset() const;
         inline const MetaContainer& meta() const;
 

@@ -55,8 +55,6 @@ namespace SimpleRTTR
 
         inline void destroy_instance(void* ptr) const;
 
-        inline std::string to_string(const Variant& var) const;
-
         inline const TypeFunctions& type_functions() const;
 
     protected:

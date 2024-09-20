@@ -5,8 +5,6 @@ namespace SimpleRTTR
     class Variant
     {
     public:
-        using StorageType = std::aligned_storage_t<64, alignof(std::max_align_t)>;
-
         template<typename VariantType>
         inline Variant(VariantType value);
         inline Variant(void* value, const SimpleRTTR::Type& type);
@@ -27,18 +25,27 @@ namespace SimpleRTTR
         template<typename VariantType>
         inline VariantType get_as() const;
 
-        // copy the value to the given pointer
-        inline void copy_to(void* dest, const Type& destType) const;
-
-        inline const SimpleRTTR::Type& type() const;
+        inline SimpleRTTR::Type type() const;
 
         inline std::size_t hash() const;
-
         inline std::string to_string() const;
 
+        inline const void* ptr() const;
+
     protected:
-        StorageType _storage;
-        const SimpleRTTR::Type& _type;
+        std::byte _storage[64];
+        TypeReference _typeRef;
+
+        // we need to store the functions here for both speed and 
+        // stability reasons(when shutting down, we might be trying 
+        // to destroy variants that have had their types already 
+        // destroyed)
+
+        TypeFunctions::CopyConstructorFunction  _copyFunc;
+        TypeFunctions::MoveConstructorFunction  _moveFunc;
+        TypeFunctions::DestructorFunction       _destroyFunc;
+
+        TypeFunctions::EqualOperatorFunction    _equalFunc;
 
         inline void destroy();
     };
