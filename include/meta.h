@@ -5,7 +5,7 @@ namespace SimpleRTTR
     class Meta
     {
     public:
-        static inline const Meta& InvalidMeta();
+        static inline const Meta& invalid_meta();
 
         template<typename MetaKey, typename MetaValue>
         inline Meta(MetaKey key, MetaValue value);
@@ -16,10 +16,10 @@ namespace SimpleRTTR
         inline bool operator==(const Meta& rhs) const;
         inline bool operator!=(const Meta& rhs) const;
 
-        inline const Variant& Key() const;
-        inline const Variant& Value() const;
+        inline const Variant& key() const;
+        inline const Variant& value() const;
 
-        inline std::size_t Hash() const;
+        inline std::size_t hash() const;
 
     protected:
         Variant _Key;
@@ -30,8 +30,8 @@ namespace SimpleRTTR
     class MetaContainer : public DefaultContainer<Meta>
     {
     public:
-        inline bool Has(Variant key) const;
-        inline const Meta& Get(Variant key) const;
+        inline bool has(Variant key) const;
+        inline const Meta& get(Variant key) const;
     private:
     };
 }

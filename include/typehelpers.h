@@ -2,9 +2,91 @@
 
 namespace SimpleRTTR
 {
-    //TODO: This whole file could use some cleaning up before posting to a live repository. It's just messy, but I did it
-    //  this way to just get it up and running.
-    // 
+    template<typename ClassType>
+    void* DefaultConstructorHelper(void* mem)
+    {
+        return new (mem) ClassType();
+    }
+
+    template<typename ClassType>
+    void DefaultDestructorHelper(void* mem)
+    {
+        return static_cast<ClassType*>(mem)->~ClassType();
+    }
+
+
+    template<typename ClassType>
+    void* DefaultCopyConstructorHelper(void* dest, const void* src)
+    {
+        new (dest) ClassType(*static_cast<const ClassType*>(src));
+        return dest;
+    }
+
+    template<typename ClassType>
+    void* DefaultMoveConstructorHelper(void* dest, void* src)
+    {
+        new (dest) ClassType(std::move(*static_cast<ClassType*>(src)));
+        return dest;
+    }
+
+    template<typename ClassType>
+    void* FundamentalConstructorHelper(void* mem)
+    {
+        *static_cast<ClassType*>(mem) = ClassType();
+
+        return mem;
+    }
+
+    template<typename ClassType>
+    void FundamentalDestructorHelper(void* mem)
+    {
+    }
+
+    template<typename ClassType>
+    void* FundamentalCopyHelper(void* dest, const void* src)
+    {
+        if constexpr (std::is_reference_v<ClassType>)
+        {
+            // Copy the address of the referenced object
+            using DereferencedType = std::remove_reference_t<ClassType>;
+            *reinterpret_cast<DereferencedType**>(dest) = const_cast<DereferencedType*>(*reinterpret_cast<const DereferencedType* const*>(src));
+        }
+        else
+        {
+            *static_cast<ClassType*>(dest) = *static_cast<const ClassType*>(src);
+        }
+
+        return dest;
+    }
+
+    template<typename ClassType>
+    void* FundamentalMoveHelper(void* dest, void* src)
+    {
+        if constexpr (std::is_reference_v<ClassType>)
+        {
+            // Move the address of the referred object
+            *reinterpret_cast<std::remove_reference_t<ClassType>**>(dest) = std::move(*reinterpret_cast<std::remove_reference_t<ClassType>**>(src));
+        }
+        else
+        {
+            *static_cast<ClassType*>(dest) = std::move(*static_cast<ClassType*>(src));
+        }
+
+        return dest;
+    }
+
+    // Primary template for detecting the equality operator
+    template <typename, typename = std::void_t<>>
+    struct has_equal_operator : std::false_type {};
+
+    // Specialization that will be enabled if the type has `==` operator
+    template <typename T>
+    struct has_equal_operator<T, std::void_t<decltype(std::declval<T>() == std::declval<T>())>> : std::true_type {};
+
+    // Convenience variable template (C++17)
+    template <typename T>
+    inline constexpr bool has_equal_operator_v = has_equal_operator<T>::value;
+
     //used as a base class for the type information. The subsequent child classes are mainly template specializations and
     //  template metaprogramming to extract the type information we need.
     class TypeHelperBase
@@ -13,39 +95,43 @@ namespace SimpleRTTR
         typedef void(*QualifiedNameParseFunc)(char* name);
 
         using NamespaceContainer = TypeData::NamespaceContainer;
-        using TemplateTypeContainer = stdrttr::vector<TypeReference>;
+        using TemplateTypeContainer = std::vector<TypeReference>;
 
-        typedef stdrttr::string(*ToStringFunction)(const Variant&);
+        typedef std::string(*ToStringFunction)(const Variant&);
 
-        TypeHelperBase(const std::type_info& typeInfo, std::size_t size, std::type_index typeIndex, std::uint64_t flags,
+        TypeHelperBase(const std::type_info& typeInfo, std::size_t size, std::uint64_t flags, std::type_index typeIndex,
+            TypeFunctions typeFunctions,
             ToStringFunction toStringFunc,
             QualifiedNameParseFunc parseQualifiedName = nullptr)
             :
             _Size(size),
             _Flags(flags),
             _TypeIndex(typeIndex),
+            _TypeFunctions(typeFunctions),
             _ToStringFunc(toStringFunc)
         {
             ParseName(typeInfo, parseQualifiedName);
         }
 
-        inline const stdrttr::string& Name() const { return _Name; };
-        inline const stdrttr::string& QualifiedName() const { return _QualifiedName; }
-        inline const NamespaceContainer& Namespaces() const { return _Namespaces; }
-        inline const TemplateTypeContainer& TemplateParams() const { return _TemplateParams; }
-        inline const ToStringFunction& ToStringFunc() const { return _ToStringFunc; }
+        inline const std::string& name() const { return _Name; };
+        inline const std::string& fully_qualified_name() const { return _QualifiedName; }
+        inline const NamespaceContainer& namespaces() const { return _Namespaces; }
+        inline const TemplateTypeContainer& template_params() const { return _TemplateParams; }
+        inline const ToStringFunction& to_string_func() const { return _ToStringFunc; }
 
-        inline std::size_t Size() const { return _Size; }
+        inline std::size_t size() const { return _Size; }
 
-        inline std::uint64_t Flags() const { return _Flags; }
+        inline std::uint64_t flags() const { return _Flags; }
 
-        inline std::type_index TypeIndex() const { return _TypeIndex; }
+        inline std::type_index type_index() const { return _TypeIndex; }
+
+        inline const TypeFunctions& type_functions() const { return _TypeFunctions; }
 
     protected:
-        inline stdrttr::string RemoveTemplateArguments(const stdrttr::string str, std::size_t offset = 0)
+        inline std::string RemoveTemplateArguments(const std::string str, std::size_t offset = 0)
         {
             //TODO: this whole thing can be done in-place instead of allocating new strings all the time.
-            stdrttr::string retString(str);
+            std::string retString(str);
             std::size_t startPos = retString.npos;
             for (std::size_t i = offset; i < retString.length(); i++)
             {
@@ -71,7 +157,7 @@ namespace SimpleRTTR
             return retString;
         }
 
-        inline stdrttr::string ParseFullyQualifiedName(const char* typeName, QualifiedNameParseFunc parseQualifiedName)
+        inline std::string ParseFullyQualifiedName(const char* typeName, QualifiedNameParseFunc parseQualifiedName)
         {
 #           if defined(__GNUC__) || defined(__GNUG__)
             int status = -1;
@@ -94,15 +180,15 @@ namespace SimpleRTTR
                 parseQualifiedName(charQualifiedName);
             }
 
-            return stdrttr::string(charQualifiedName);
+            return std::string(charQualifiedName);
         }
 
         inline void ParseName(const std::type_info& typeInfo, QualifiedNameParseFunc parseQualifiedName)
         {
-            stdrttr::string qualifiedName = ParseFullyQualifiedName(typeInfo.name(), parseQualifiedName);
+            std::string qualifiedName = ParseFullyQualifiedName(typeInfo.name(), parseQualifiedName);
             _QualifiedName = trim(qualifiedName);
 
-            stdrttr::string name = _QualifiedName;
+            std::string name = _QualifiedName;
 #       if defined(_MSC_VER)
             //remove the preceding "class " bit
             if (name.find("class ", 0) == 0)
@@ -216,17 +302,65 @@ namespace SimpleRTTR
             return flags;
         }
 
-        stdrttr::string         _Name;
-        stdrttr::string         _TypeID;
-        stdrttr::string         _QualifiedName;
-        NamespaceContainer      _Namespaces;
-        TemplateTypeContainer   _TemplateParams;
-        std::size_t             _Size;
-        std::type_index         _TypeIndex;
 
-        std::uint64_t           _Flags;
 
-        ToStringFunction        _ToStringFunc;
+        template<typename ClassType>
+        SimpleRTTR::TypeFunctions ExtractTypeFunctions()
+        {
+            SimpleRTTR::TypeFunctions functions;
+
+            if constexpr(std::is_fundamental_v<ClassType> || std::is_pointer_v<ClassType> || std::is_reference_v<ClassType>)
+            {
+                if constexpr( std::is_trivially_constructible_v<ClassType> && std::is_trivially_destructible_v<ClassType> )
+                {
+                    functions.Constructor = &FundamentalConstructorHelper<ClassType>;
+                    functions.Destructor = &FundamentalDestructorHelper<ClassType>;
+                }
+
+                if constexpr(std::is_copy_constructible_v<ClassType>)
+                {
+                    functions.CopyConstructor = &FundamentalCopyHelper<ClassType>;
+                }
+
+                if constexpr(std::is_move_constructible_v<ClassType>)
+                {
+                    functions.MoveConstructor = &FundamentalMoveHelper<ClassType>;
+                }
+            }
+            else
+            {
+                if constexpr( std::is_trivially_constructible_v<ClassType> && std::is_trivially_destructible_v<ClassType> )
+                {
+                    functions.Constructor = &DefaultConstructorHelper<ClassType>;
+                    functions.Destructor = &DefaultDestructorHelper<ClassType>;
+                }
+
+                if constexpr(std::is_copy_constructible_v<ClassType>)
+                {
+                    functions.CopyConstructor = &DefaultCopyConstructorHelper<ClassType>;
+                }
+
+                if constexpr(std::is_move_constructible_v<ClassType>)
+                {
+                    functions.MoveConstructor = &DefaultMoveConstructorHelper<ClassType>;
+                }
+            }
+
+            return functions;
+        }
+
+        std::string             _Name;
+        std::string             _TypeID;
+        std::string             _QualifiedName;
+        NamespaceContainer          _Namespaces;
+        TemplateTypeContainer       _TemplateParams;
+        std::size_t                 _Size;
+        std::type_index             _TypeIndex;
+
+        std::uint64_t               _Flags;
+
+        SimpleRTTR::TypeFunctions   _TypeFunctions;
+        ToStringFunction            _ToStringFunc;
     };
 
     template<typename ClassType>
@@ -268,7 +402,8 @@ namespace SimpleRTTR
     class TypeHelper : public TypeHelperBase, TypeHelper1
     {
     public:
-        TypeHelper() : TypeHelperBase(typeid(this), sizeof(ClassType), typeid(ClassType), std::is_enum_v<ClassType>,
+        TypeHelper() : TypeHelperBase(typeid(this), sizeof(ClassType), ExtractTypeFlags<ClassType>(), typeid(ClassType),
+            ExtractTypeFunctions<ClassType>(),
             (TypeHelperBase::ToStringFunction)&VariantToString<ClassType>,
             (TypeHelperBase::QualifiedNameParseFunc)&ParseQualifiedName)
         {
@@ -280,7 +415,8 @@ namespace SimpleRTTR
     class TypeHelper<void> : public TypeHelperBase, TypeHelper1
     {
     public:
-        TypeHelper<void>() : TypeHelperBase(typeid(this), 0, typeid(void), (uint64_t)ExtractTypeFlags<void>(),
+        TypeHelper<void>() : TypeHelperBase(typeid(this), 0, ExtractTypeFlags<void>(), typeid(void),
+            TypeFunctions(),
             (ToStringFunction)&VariantToString<void>,
             &ParseQualifiedName) {}
     };
@@ -289,9 +425,11 @@ namespace SimpleRTTR
     class TypeHelper<Tmpl<Args...>> : public TypeHelperBase, TypeHelper1
     {
     public:
+        using ClassType = Tmpl<Args...>;
         TypeHelper()
             :
-            TypeHelperBase(typeid(this), sizeof(Tmpl<Args...>), typeid(Tmpl<Args...>), (uint64_t)ExtractTypeFlags<Tmpl<Args...>>(),
+            TypeHelperBase(typeid(this), sizeof(ClassType), ExtractTypeFlags<ClassType>(), typeid(ClassType),
+                ExtractTypeFunctions<ClassType>(),
                 (TypeHelperBase::ToStringFunction)&VariantToString<Tmpl, Args...>,
                 (TypeHelperBase::QualifiedNameParseFunc)ParseQualifiedName)
         {
@@ -304,7 +442,7 @@ namespace SimpleRTTR
     {
         //it's worth noting that this creates a pointer from a reference to a unique_ptr buried in 
         //  the TypeStorage vector... not something that should EVER be done under normal circumstances
-        outParams.push_back(TypeReference(Types().GetOrCreateType<ClassType>()));
+        outParams.push_back(TypeReference(types().get_or_create_type<ClassType>()));
     };
 
     template<typename ClassType, typename... TemplateArgs >
@@ -316,30 +454,30 @@ namespace SimpleRTTR
     };
 
     template<typename ParameterType>
-    inline void ParameterHelper(ParameterContainer& outTypes, std::initializer_list<stdrttr::string>::const_iterator nameIter, std::initializer_list<stdrttr::string>::const_iterator endIter)
+    inline void ParameterHelper(ParameterContainer& outTypes, std::initializer_list<std::string>::const_iterator nameIter, std::initializer_list<std::string>::const_iterator endIter)
     {
         SIMPLERTTR_ASSERT_MSG(nameIter != endIter, "Not enough names specified in the method declaration. You must have a name for each function parameter.");
 
-        Parameter param(*nameIter, Types().GetOrCreateType<ParameterType>());
-        outTypes.Add(param);
+        Parameter param(*nameIter, types().get_or_create_type<ParameterType>());
+        outTypes.add(param);
     }
 
     template<typename ClassType, typename... Parameters>
     typename std::enable_if<sizeof...(Parameters) != 0, void>::type
-        ParameterHelper(ParameterContainer& outTypes, std::initializer_list<stdrttr::string>::const_iterator nameIter, std::initializer_list<stdrttr::string>::const_iterator endIter)
+        ParameterHelper(ParameterContainer& outTypes, std::initializer_list<std::string>::const_iterator nameIter, std::initializer_list<std::string>::const_iterator endIter)
     {
         ParameterHelper<ClassType>(outTypes, nameIter, endIter);
         ParameterHelper<Parameters...>(outTypes, ++nameIter, endIter);
     }
 
     template<typename RetType, typename ClassType, class... ParameterTypes>
-    inline Method MethodHelper(RetType(ClassType::*)(ParameterTypes...), const stdrttr::string& name, const std::initializer_list<stdrttr::string>& paramNames)
+    inline Method MethodHelper(RetType(ClassType::*)(ParameterTypes...), const std::string& name, const std::initializer_list<std::string>& paramNames)
     {
-        using NameIter = std::initializer_list<stdrttr::string>::const_iterator;
+        using NameIter = std::initializer_list<std::string>::const_iterator;
         NameIter paramNameIter = paramNames.begin();
         NameIter paramNameEnd = paramNames.end();
 
-        Type returnType = Types().GetOrCreateType<RetType>();
+        Type returnType = types().get_or_create_type<RetType>();
         ParameterContainer params;
         ParameterHelper<ParameterTypes...>(params, paramNameIter, paramNameEnd);
 
@@ -347,11 +485,11 @@ namespace SimpleRTTR
     }
 
     template<typename RetType, typename ClassType>
-    inline Method MethodHelper(RetType(ClassType::*)(void), const stdrttr::string& name, const std::initializer_list<stdrttr::string>& paramNames)
+    inline Method MethodHelper(RetType(ClassType::*)(void), const std::string& name, const std::initializer_list<std::string>& paramNames)
     {
         SIMPLERTTR_ASSERT_MSG(paramNames.size() == 0, "No need to specify parameters names on method that have 0 parameters");
 
-        Type returnType = Types().GetOrCreateType<RetType>();
+        Type returnType = types().get_or_create_type<RetType>();
         return Method(name, returnType, {});
     }
 
@@ -359,19 +497,19 @@ namespace SimpleRTTR
     inline Method ConstructorHelper()
     {
         ParameterContainer params;
-        return Method("Constructor", Types().GetOrCreateType<ClassType>(), params);
+        return Method("Constructor", types().get_or_create_type<ClassType>(), params);
     }
 
     template<typename ClassType, typename... ConstructorArgs>
-    inline Method ConstructorHelper(const std::initializer_list<stdrttr::string>& paramNames)
+    inline Method ConstructorHelper(const std::initializer_list<std::string>& paramNames)
     {
-        using NameIter = std::initializer_list<stdrttr::string>::const_iterator;
+        using NameIter = std::initializer_list<std::string>::const_iterator;
         NameIter paramNameIter = paramNames.begin();
         NameIter paramNameEnd = paramNames.end();
 
         ParameterContainer params;
         ParameterHelper<ConstructorArgs...>(params, paramNameIter, paramNameEnd);
 
-        return Method("Constructor", Types().GetOrCreateType<ClassType>(), params);
+        return Method("Constructor", types().get_or_create_type<ClassType>(), params);
     }
 }

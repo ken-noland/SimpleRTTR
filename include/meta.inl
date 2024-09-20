@@ -2,10 +2,10 @@
 
 namespace SimpleRTTR
 {
-    const Meta& Meta::InvalidMeta()
+    const Meta& Meta::invalid_meta()
     {
-        static Meta InvalidMeta(nullptr, nullptr);
-        return InvalidMeta;
+        static Meta invalid_meta(nullptr, nullptr);
+        return invalid_meta;
     }
 
 
@@ -15,8 +15,6 @@ namespace SimpleRTTR
         _Key(key),
         _Value(value)
     {
-        Types().GetOrCreateType<MetaKey>();
-        Types().GetOrCreateType<MetaValue>();
     }
 
     Meta::Meta(const Meta& meta)
@@ -51,28 +49,28 @@ namespace SimpleRTTR
     }
 
 
-    const Variant& Meta::Key() const {
+    const Variant& Meta::key() const {
         return _Key;
     }
 
-    const Variant& Meta::Value() const 
+    const Variant& Meta::value() const 
     {
         return _Value;
     }
 
-    std::size_t Meta::Hash() const
+    std::size_t Meta::hash() const
     {
         std::size_t seed = 0;
-        HashCombine(seed, _Key, _Value);
+        hash_combine(seed, _Key, _Value);
         return seed;
     }
 
 
-    bool MetaContainer::Has(Variant key) const
+    bool MetaContainer::has(Variant key) const
     {
         for (const Meta& meta : _Data)
         {
-            if (key == meta.Key())
+            if (key == meta.key())
             {
                 return true;
             }
@@ -80,16 +78,16 @@ namespace SimpleRTTR
         return false;
     }
 
-    inline const Meta& MetaContainer::Get(Variant key) const
+    inline const Meta& MetaContainer::get(Variant key) const
     {
         for (const Meta& meta : _Data)
         {
-            if (key == meta.Key())
+            if (key == meta.key())
             {
                 return meta;
             }
         }
-        return Meta::InvalidMeta();
+        return Meta::invalid_meta();
     }
 
 }

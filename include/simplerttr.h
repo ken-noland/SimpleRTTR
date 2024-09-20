@@ -30,12 +30,11 @@ namespace SimpleRTTR
     class TypeHelperBase;
     class TypeManager;
 
-    inline TypeManager& Types();
+    inline TypeManager& types();
 }
 
 //definitions
 #include "simplerttrassert.h"
-#include "stdtypes.h"
 #include "hash.h"
 #include "typereference.h"
 #include "helpers.h"

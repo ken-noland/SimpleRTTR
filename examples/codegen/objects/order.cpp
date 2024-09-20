@@ -4,11 +4,11 @@ using namespace Test;
 
 SIMPLERTTR
 {
-    SimpleRTTR::Registration().Type<Order>()
-        .Meta("description", "A simple order class")
-        .Constructor<const std::string&, const std::string&, int>({"CustomerName", "ProductName", "Quantity"})
+    SimpleRTTR::registration().type<Order>()
+        .meta("description", "A simple order class")
+        .constructor<const std::string&, const std::string&, int>({"CustomerName", "ProductName", "Quantity"})
 
-        .Property(&Order::CustomerName, "CustomerName")
-        .Property(&Order::ProductName, "ProductName")
-        .Property(&Order::Quantity, "Quantity");
+        .property(&Order::CustomerName, "CustomerName")
+        .property(&Order::ProductName, "ProductName")
+        .property(&Order::Quantity, "Quantity");
 }

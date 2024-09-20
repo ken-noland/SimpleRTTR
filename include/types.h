@@ -17,46 +17,47 @@ namespace SimpleRTTR
 
         inline bool operator==(const Type& type) const;
         inline bool operator!=(const Type& type) const;
-        inline bool Equals(const Type& type) const;
+        inline bool equals(const Type& type) const;
 
         inline bool operator==(const std::type_info& info) const;
         inline bool operator!=(const std::type_info& info) const;
-        inline bool Equals(const std::type_info& typeData) const;
+        inline bool equals(const std::type_info& typeData) const;
 
-        static inline const Type& InvalidType();
+        static inline const Type& invalid_type();
 
-        inline const stdrttr::string& Name() const;
-        inline const stdrttr::string& FullyQualifiedName() const;
-        inline std::size_t Size() const;
-        inline std::size_t Hash() const;
+        inline const std::string& name() const;
+        inline const std::string& fully_qualified_name() const;
+        inline std::size_t size() const;
+        inline std::size_t hash() const;
 
-        inline bool HasFlag(TypeFlag flag) const;
+        inline bool has_flag(TypeFlag flag) const;
 
-        inline const std::type_index& GetTypeIndex() const;
+        inline const std::type_index& type_index() const;
 
-        inline const ConstructorContainer& Constructors() const;
-        inline const PropertyContainer& Properties() const;
-        inline const MethodContainer& Methods() const;
-        inline const ValueContainer& Values() const;
+        inline const ConstructorContainer& constructors() const;
+        inline const PropertyContainer& properties() const;
+        inline const MethodContainer& methods() const;
+        inline const NamespaceList& namespaces() const;
+        inline const TemplateTypeList& template_params() const;
+        inline const ValueContainer& values() const;
 
-        inline const MetaContainer& Meta() const;
+        inline const MetaContainer& meta() const;
 
-        inline const NamespaceList& Namespaces() const;
-        inline const TemplateTypeList& TemplateParams() const;
 
-        template<typename ClassType, typename Alloc = stdrttr::custom_allocator<ClassType>, typename... Params>
-        inline ClassType* CreateInstance(Params...) const;
+        template<typename ClassType, typename Alloc = std::allocator<ClassType>, typename... Params>
+        inline ClassType* create_instance(Params...) const;
 
         template<typename... Params>
-        inline void* CreateInstance(Params...) const;
+        inline void* create_instance(Params...) const;
 
-        template<typename ClassType, typename Alloc = stdrttr::custom_allocator<ClassType>>
-        inline void DestroyInstance(ClassType* ptr) const;
-        inline void DestroyInstance(void* ptr) const;
+        template<typename ClassType, typename Alloc = std::allocator<ClassType>>
+        inline void destroy_instance(ClassType* ptr) const;
 
-        inline stdrttr::string ToString(const Variant& var) const;
+        inline void destroy_instance(void* ptr) const;
 
-        inline const stdrttr::string& GetFullyQualifiedName() const;
+        inline std::string to_string(const Variant& var) const;
+
+        inline const TypeFunctions& type_functions() const;
 
     protected:
         friend TypeData& _InternalGetTypeData(const Type& type);
@@ -67,33 +68,36 @@ namespace SimpleRTTR
     {
     public:
         using TypePointer = std::unique_ptr<TypeData>;
-        using TypeList = stdrttr::vector<TypePointer>;
+        using TypeList = std::vector<TypePointer>;
 
-        using Iterator = TypeList::iterator;
-        using ConstIterator = TypeList::const_iterator;
+        using iterator = TypeList::iterator;
+        using const_iterator = TypeList::const_iterator;
 
-        static inline const TypeData& InvalidTypeData();
-        static inline constexpr std::size_t InvalidTypeSize();
-
-        template<typename ClassType>
-        inline bool HasTypeData() const;
-        inline bool HasTypeData(const stdrttr::string& name, std::size_t size) const;
-        inline bool HasTypeData(const TypeHelperBase& typeHelper) const;
+        static inline const TypeData& invalid_type_data();
+        static inline constexpr std::size_t invalid_type_size();
 
         template<typename ClassType>
-        inline const TypeData& GetTypeData() const;
-        inline const TypeData& GetTypeData(const std::type_index& typeIndex) const;
-        inline const TypeData& GetTypeData(const stdrttr::string& name, std::size_t size) const;
-        inline const TypeData& GetTypeData(const TypeHelperBase& typeHelper) const;
+        inline bool has_type_data() const;
+        inline bool has_type_data(const std::type_info& typeInfo) const;
+        inline bool has_type_data(const std::type_index& typeInfo) const;
+        inline bool has_type_data(const std::string& name, std::size_t size) const;
+        inline bool has_type_data(const TypeHelperBase& typeHelper) const;
 
         template<typename ClassType>
-        inline TypeData& GetOrCreateType(bool _addedByUser);
+        inline const TypeData& get_type_data() const;
+        inline const TypeData& get_type_data(const std::type_info& typeInfo) const;
+        inline const TypeData& get_type_data(const std::type_index& typeIndex) const;
+        inline const TypeData& get_type_data(const std::string& name, std::size_t size) const;
+        inline const TypeData& get_type_data(const TypeHelperBase& typeHelper) const;
 
-        inline Iterator Begin() { return _Data.begin(); }
-        inline ConstIterator Begin() const { return _Data.begin(); }
+        template<typename ClassType>
+        inline TypeData& get_or_create_type(bool _addedByUser);
 
-        inline Iterator End() { return _Data.end(); }
-        inline ConstIterator End() const { return _Data.end(); }
+        inline iterator begin() { return _Data.begin(); }
+        inline const_iterator begin() const { return _Data.begin(); }
+
+        inline iterator end() { return _Data.end(); }
+        inline const_iterator end() const { return _Data.end(); }
 
     protected:
         friend class TypeManager;
@@ -101,100 +105,158 @@ namespace SimpleRTTR
         //only the TypeManager can create a TypeStorage
         inline TypeStorage(std::function<void(class TypeData&)> OnRegisterTypeCallback);
 
-        inline TypeData& GetOrUpdateTypeData(const TypeHelperBase& typeHelper, bool addedByUser);
-        inline TypeData& RegisterType(const TypeHelperBase& typeHelper, bool addedByUser);
-        inline TypeData& RegisterType(const TypeData& typeData);
-
+        inline TypeData& get_or_update_type_data(const TypeHelperBase& typeHelper, bool addedByUser);
+        inline TypeData& register_type(const TypeHelperBase& typeHelper, bool addedByUser);
+        inline TypeData& register_type(const TypeData& typeData);
 
         TypeList _Data;
 
         std::function<void(class TypeData&)> _OnRegisterTypeCallback;
     };
 
-    //Since we store types in TypeData but we need to convert it to Type, this is done in a special iterator.
-    template<typename TypeMgr>
-    class TypeIterable
-    {
-    public:
-
-        class TypeIteratorProxy : public IteratorProxyBase<TypeStorage::TypeList::iterator>
-        {
-        public:
-            TypeIteratorProxy(iterator iter) : IteratorProxyBase(iter) {}
-            value_type operator*() const { return *(*_Iter); }  //Notice we use value_type instead of reference here. This converts TypeData to Type.
-            pointer operator->() { return *_Iter; }
-        };
-
-        class ConstTypeIteratorProxy : public IteratorProxyBase<TypeStorage::TypeList::const_iterator>
-        {
-        public:
-            ConstTypeIteratorProxy(const_iterator iter) : IteratorProxyBase(iter) {}
-            const value_type operator*() const { return *(*_Iter); } //Notice we use value_type instead of reference here. This converts TypeData to Type.
-            const pointer operator->() const { return *_Iter; }
-        };
-
-        //std implementations
-        using iterator = TypeIteratorProxy;
-        using const_iterator = ConstTypeIteratorProxy;
-
-        inline iterator begin() { return static_cast<TypeMgr*>(this)->Begin(); }
-        inline const_iterator begin() const { return static_cast<TypeMgr*>(this)->Begin(); }
-        inline iterator end() { return static_cast<TypeMgr*>(this)->End(); }
-        inline const_iterator end() const { return static_cast<TypeMgr*>(this)->End(); }
-    };
-
-    class TypeManager;
-    inline TypeManager& Types();
-
-    class TypeManager : public
-        TypeIterable<TypeManager>
+    class TypeManager
     {
     public:
         inline TypeManager();
         inline ~TypeManager();
 
-        static inline TypeManager& GetInstance();
+        static inline TypeManager& instance();
 
         template<class ClassType>
-        inline bool HasType() const;
-        inline bool HasType(const std::type_info& typeInfo) const;
-        inline bool HasType(const stdrttr::string& name, std::size_t size = TypeStorage::InvalidTypeSize()) const;
+        inline bool has_type() const;
+        inline bool has_type(const std::type_info& typeInfo) const;
+        inline bool has_type(const std::type_index& typeInfo) const;
+        inline [[deprecated("Use std::find_if if you need to search for a type by name")]] bool has_type(const std::string& name, std::size_t size = TypeStorage::invalid_type_size()) const;
 
         template<class ClassType>
-        inline const Type GetType() const;
-        inline const Type GetType(const std::type_info& typeInfo) const;
-        inline const Type GetType(const stdrttr::string& name, std::size_t size = TypeStorage::InvalidTypeSize()) const;
+        inline const Type get_type() const;
+        inline const Type get_type(const std::type_info& typeInfo) const;
+        inline const Type get_type(const std::type_index& typeIndex) const;
+        inline [[deprecated("Use std::find_if if you need to search for a type by name")]] const Type get_type(const std::string& name, std::size_t size = TypeStorage::invalid_type_size()) const;
 
         template<class ClassType>
-        inline const Type GetOrCreateType();
+        inline const Type get_or_create_type();
 
-        inline TypeIteratorProxy Begin();
-        inline ConstTypeIteratorProxy Begin() const;
+        // iterators
+    public:
 
-        inline TypeIteratorProxy End();
-        inline ConstTypeIteratorProxy End() const;
+        // Custom iterator that wraps TypeData iterator but returns Type
+        class TypeIterator {
+        private:
+            typename TypeStorage::iterator dataIterator;
+
+        public:
+            using iterator_category = std::forward_iterator_tag;
+            using value_type = Type;
+            using difference_type = std::ptrdiff_t;
+            using pointer = Type*;
+            using reference = Type;
+
+            // Constructor
+            TypeIterator(typename TypeStorage::iterator it) : dataIterator(it) {}
+
+            // Dereference: Convert TypeData to Type
+            Type operator*() const {
+                return SimpleRTTR::Type(*(*dataIterator).get());  // Convert TypeData to Type
+            }
+
+            // Pre-increment
+            TypeIterator& operator++() {
+                ++dataIterator;
+                return *this;
+            }
+
+            // Post-increment
+            TypeIterator operator++(int) {
+                TypeIterator tmp = *this;
+                ++(*this);
+                return tmp;
+            }
+
+            // Comparison operators
+            bool operator==(const TypeIterator& other) const {
+                return dataIterator == other.dataIterator;
+            }
+
+            bool operator!=(const TypeIterator& other) const {
+                return dataIterator != other.dataIterator;
+            }
+        };
+
+        // Const iterator that wraps TypeData const_iterator but returns Type
+        class ConstTypeIterator {
+        private:
+            typename TypeStorage::const_iterator dataIterator;
+
+        public:
+            using iterator_category = std::forward_iterator_tag;
+            using value_type = Type;
+            using difference_type = std::ptrdiff_t;
+            using pointer = const Type*;
+            using reference = const Type;
+
+            ConstTypeIterator(typename TypeStorage::const_iterator it) : dataIterator(it) {}
+
+            Type operator*() const {
+                return SimpleRTTR::Type(*(*dataIterator).get());
+            }
+
+            ConstTypeIterator& operator++() {
+                ++dataIterator;
+                return *this;
+            }
+
+            ConstTypeIterator operator++(int) {
+                ConstTypeIterator tmp = *this;
+                ++(*this);
+                return tmp;
+            }
+
+            bool operator==(const ConstTypeIterator& other) const {
+                return dataIterator == other.dataIterator;
+            }
+
+            bool operator!=(const ConstTypeIterator& other) const {
+                return dataIterator != other.dataIterator;
+            }
+        };
+
+        using iterator = TypeIterator;
+        using const_iterator = ConstTypeIterator;
+
+        inline iterator begin();
+        inline const_iterator begin() const;
+
+        inline iterator end();
+        inline const_iterator end() const;
 
     protected:
         friend class TypeBindingBase;
         friend class RegistrationManager;
 
-        inline void BeginRegistration(const char* filename);
-        inline void EndRegistration();
+        inline void begin_registration(const char* filename);
+        inline void end_registration();
 
-        inline TypeStorage& GetStorage();  //only accessible from TypeBinding
-        inline const TypeStorage& GetStorage() const;  //only accessible from TypeBinding
+        inline TypeStorage& get_storage();              //only accessible from TypeBinding
+        inline const TypeStorage& get_storage() const;  //only accessible from TypeBinding
 
-        inline bool HasType(const TypeHelperBase& typeHelper) const;
-        inline const Type GetType(const TypeHelperBase& typeHelper) const;
+        inline bool has_type(const TypeHelperBase& typeHelper) const;
+        inline const Type get_type(const TypeHelperBase& typeHelper) const;
 
-        inline void RegisterType(const TypeData& data);
+        inline void register_type(const TypeData& data);
 
         //called once the type has been registered
-        inline void OnTypeRegistered(TypeData& data);
+        inline void on_type_registered(TypeData& data);
 
     private:
         TypeStorage _TypeDataStorage;
 
         std::vector<Meta> _UserTypeMetadata;
     };
+
+    //singleton accessor for all types
+    inline TypeManager& types() 
+    { 
+        return TypeManager::instance(); 
+    }
 }

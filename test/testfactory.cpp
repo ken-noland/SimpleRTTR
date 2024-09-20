@@ -33,14 +33,14 @@ public:
         FactoryClass1* instance = new FactoryClass1();
 
         // read into the type properties and find any default values specified in the meta data
-        Type type = Types().GetType<FactoryClass1>();
-        for (const Property& prop : type.Properties())
+        Type type = types().get_type<FactoryClass1>();
+        for (const Property& prop : type.properties())
         {
-            if (prop.Meta().Has("Default"))
+            if (prop.meta().has("Default"))
             {
                 //get the default value from the meta data and set the property on the class instance
-                Variant var = prop.Meta().Get("Default").Value();
-                prop.Set(instance, var);
+                Variant var = prop.meta().get("Default").value();
+                prop.set(instance, var);
             }
         }
 
@@ -51,25 +51,25 @@ public:
 
 SIMPLERTTR
 {
-    Registration().Type<FactoryClass1>()
-        .Property(&FactoryClass1::SomeValue, "SomeValue")
-            .Meta("Default", 5)
-        .Property(&FactoryClass1::SomeOtherValue, "SomeOtherValue")
-            .Meta("Default", 2)
-        .Property(&FactoryClass1::SomeDescription, "SomeDescription")
-            .Meta("Default", "Some Text");
+    registration().type<FactoryClass1>()
+        .property(&FactoryClass1::SomeValue, "SomeValue")
+            .meta("Default", 5)
+        .property(&FactoryClass1::SomeOtherValue, "SomeOtherValue")
+            .meta("Default", 2)
+        .property(&FactoryClass1::SomeDescription, "SomeDescription")
+            .meta("Default", "Some Text");
 }
 
 TEST(RTTRType, TestTypeCreation)
 {
     GTEST_SKIP_("The ability to copy variants from one value type(const char*) to another (std::string) is not supported at this time, so skipping this test.");
 
-    Type type = Types().GetType<FactoryClass1>();
+    Type type = types().get_type<FactoryClass1>();
 
-    EXPECT_EQ(type.Name(), "FactoryClass1");
-    EXPECT_EQ(type.Size(), sizeof(FactoryClass1));
+    EXPECT_EQ(type.name(), "FactoryClass1");
+    EXPECT_EQ(type.size(), sizeof(FactoryClass1));
 
-    EXPECT_EQ(type.Properties().Size(), 3);
+    EXPECT_EQ(type.properties().size(), 3);
 
     Factory factory;
 

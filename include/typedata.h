@@ -4,10 +4,17 @@ namespace SimpleRTTR
 {
     struct TypeFunctions
     {
-        using DefaultConstructorFunction = void* (*)();
-        using CopyConstructorFunction = void* (*)(void*);
-        using MoveConstructorFunction = void* (*)(void*);
-        using DestructorFunction = void (*)(void*);
+        using ConstructorFunction = void* (*)(void* objMem);
+        using DestructorFunction = void (*)(void* objMem);
+
+        using CopyConstructorFunction = void* (*)(void* dest, const void* src);
+        using MoveConstructorFunction = void* (*)(void* dest, void* src);
+
+        ConstructorFunction Constructor;
+        DestructorFunction Destructor;
+
+        CopyConstructorFunction CopyConstructor;
+        MoveConstructorFunction MoveConstructor;
     };
 
     enum class TypeFlag : uint64_t
@@ -70,43 +77,45 @@ namespace SimpleRTTR
     class TypeData
     {
     public:
-        using NamespaceContainer = stdrttr::vector<stdrttr::string>;
-        using TemplateTypeContainer = stdrttr::vector<TypeReference>;
+        using NamespaceContainer = std::vector<std::string>;
+        using TemplateTypeContainer = std::vector<TypeReference>;
 
-        using ToStringFunction = std::add_pointer<stdrttr::string(const Variant&)>::type;
+        using ToStringFunction = std::add_pointer<std::string(const Variant&)>::type;
 
         inline TypeData(const TypeData& typeData);
         inline TypeData(TypeData&& typeData);
         inline TypeData& operator=(const TypeData& typeData);
 
-        inline bool Equals(const TypeData& typeData) const;
+        inline bool equals(const TypeData& typeData) const;
 
-        inline const stdrttr::string& GetName() const;
-        inline const stdrttr::string& GetFullyQualifiedName() const;
-        inline std::size_t GetSize() const;
-        inline std::size_t Hash() const;
+        inline const std::string& name() const;
+        inline const std::string& fully_qualified_name() const;
+        inline std::size_t size() const;
+        inline std::size_t hash() const;
 
-        inline bool HasFlag(TypeFlag flag) const;
+        inline bool has_flag(TypeFlag flag) const;
 
-        inline const std::type_index& GetTypeIndex() const;
+        inline const std::type_index& type_index() const;
 
         //TODO: Remove this function. It's only used in the TypeStorage class.
-        inline bool IsRegisteredByUser() const;
+        inline bool is_registered_by_user() const;
 
-        inline const ConstructorContainer& GetConstructors() const;
-        inline const PropertyContainer& GetProperties() const;
-        inline const MethodContainer& GetMethods() const;
-        inline const NamespaceContainer& GetNamespaces() const;
-        inline const TemplateTypeContainer& GetTemplateParams() const;
-        inline const ValueContainer& GetValues() const;
+        inline const ConstructorContainer& constructors() const;
+        inline const PropertyContainer& properties() const;
+        inline const MethodContainer& methods() const;
+        inline const NamespaceContainer& namespaces() const;
+        inline const TemplateTypeContainer& template_params() const;
+        inline const ValueContainer& values() const;
 
-        inline const MetaContainer& GetMetadata() const;
+        inline const MetaContainer& meta() const;
 
-        inline const ToStringFunction GetToStringFunction() const;
+        inline const ToStringFunction to_string_function() const;
+
+        inline const TypeFunctions& type_functions() const;
 
     protected:
-        stdrttr::string _Name;
-        stdrttr::string _FullyQualifiedName;
+        std::string _Name;
+        std::string _FullyQualifiedName;
         std::size_t _Size;
         std::type_index _TypeIndex;
 
@@ -131,23 +140,23 @@ namespace SimpleRTTR
         MetaContainer _Metadata;
 
         ToStringFunction _ToStringFunc;
-
-        friend class Variant;   //needs access to _ToAnyFunc
+        TypeFunctions _TypeFunctions;
 
         friend class TypeStorage;
-        inline TypeData(const stdrttr::string& name,
-            const stdrttr::string& fullyQualifiedName,
+        inline TypeData(const std::string& name,
+            const std::string& fullyQualifiedName,
             std::size_t size,
             std::uint64_t flags,
             std::type_index typeIndex,
             bool registeredByUser,
             const NamespaceContainer& namespaces,
             const TemplateTypeContainer& templateParams,
+            TypeFunctions typeFunctions,
             ToStringFunction toStringFunc
         );
 
-        inline TypeData(const stdrttr::string& name,
-            const stdrttr::string& fqn,
+        inline TypeData(const std::string& name,
+            const std::string& fqn,
             std::size_t size, 
             std::uint64_t flags, 
             std::type_index typeIndex);

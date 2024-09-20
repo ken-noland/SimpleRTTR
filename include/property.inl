@@ -2,7 +2,7 @@ namespace SimpleRTTR
 {
     inline PropertyData& _InternalPropertyGetPropertyDataRef(Property& prop);
 
-    PropertyData::PropertyData(const stdrttr::string& name, const TypeReference& type, std::size_t offset)
+    PropertyData::PropertyData(const std::string& name, const TypeReference& type, std::size_t offset)
         :
         _Name(name),
         _Type(type),
@@ -33,44 +33,44 @@ namespace SimpleRTTR
 
     bool PropertyData::operator==(const PropertyData& data) const
     {
-        return Equals(data);
+        return equals(data);
     }
 
-    bool PropertyData::Equals(const PropertyData& data) const
+    bool PropertyData::equals(const PropertyData& data) const
     {
         //TODO: add type
         return (_Name.compare(data._Name) == 0) && _Offset == data._Offset;
     }
 
-    const stdrttr::string& PropertyData::Name() const
+    const std::string& PropertyData::name() const
     {
         return _Name;
     }
 
-    SimpleRTTR::Type PropertyData::Type() const
+    SimpleRTTR::Type PropertyData::type() const
     {
-        return _Type.Type();
+        return _Type.type();
     }
 
-    const std::size_t PropertyData::Offset() const
+    const std::size_t PropertyData::offset() const
     {
         return _Offset;
     }
 
-    const MetaContainer& PropertyData::Meta() const
+    const MetaContainer& PropertyData::meta() const
     {
         return _Meta;
     }
 
-    std::size_t PropertyData::Hash() const
+    std::size_t PropertyData::hash() const
     {
         std::size_t seed = 0;
-        HashCombine(seed, _Name, _Type, _Offset, _Flags);
+        SimpleRTTR::hash_combine(seed, _Name, _Type, _Offset, _Flags);
         return seed;
     }
 
     template<typename ClassType>
-    inline void PropertyData::Set(ClassType* obj, const Variant& value) const
+    inline void PropertyData::set(ClassType* obj, const Variant& value) const
     {
         void* ptr = reinterpret_cast<void*>(reinterpret_cast<std::size_t>(obj) + _Offset);
 //        Type().Set(ptr, value);
@@ -82,18 +82,17 @@ namespace SimpleRTTR
         return prop._Meta;
     }
 
-    Property::Property(Property&& prop)
+    Property::Property(Property&& prop) noexcept
         :
         _PropData(prop._PropData)
     {
 
     }
 
-
-    const Property& Property::InvalidProperty()
+    const Property& Property::invalid_property()
     {
-        static Property InvalidProperty(PropertyData("invalid", Type::InvalidType(), (std::size_t) - 1));
-        return InvalidProperty;
+        static Property invalid_property(PropertyData("invalid", Type::invalid_type(), (std::size_t) - 1));
+        return invalid_property;
     }
 
 
@@ -120,73 +119,61 @@ namespace SimpleRTTR
 
     bool Property::operator==(const Property& data) const
     {
-        return Equals(data);
+        return equals(data);
     }
 
     bool Property::operator!=(const Property& data) const
     {
-        return !Equals(data);
+        return !equals(data);
     }
 
-    bool Property::Equals(const Property& data) const
+    bool Property::equals(const Property& data) const
     {
-        return _PropData.Equals(data._PropData);
+        return _PropData.equals(data._PropData);
     }
 
-    const stdrttr::string& Property::Name() const
+    const std::string& Property::name() const
     {
-        return _PropData.Name();
+        return _PropData.name();
     }
 
-    const std::size_t Property::Offset() const
+    const std::size_t Property::offset() const
     {
-        return _PropData.Offset();
+        return _PropData.offset();
     }
 
-    const class Type Property::Type() const
+    const SimpleRTTR::Type Property::type() const
     {
-        return _PropData.Type();
+        return _PropData.type();
     }
 
-    const MetaContainer& Property::Meta() const
+    const MetaContainer& Property::meta() const
     {
-        return _PropData.Meta();
+        return _PropData.meta();
     }
 
     template<typename ClassType>
-    void Property::Set(ClassType* obj, const Variant& value) const
+    void Property::set(ClassType* obj, const Variant& value) const
     {
-        _PropData.Set(obj, value);
+        _PropData.set(obj, value);
     }
 
-    Variant Property::Get(void* obj) const
+    Variant Property::get(void* obj) const
 	{
-		void* ptr = reinterpret_cast<void*>(reinterpret_cast<std::size_t>(obj) + Offset());
-		return Variant(ptr, Type());
+		void* ptr = reinterpret_cast<void*>(reinterpret_cast<std::size_t>(obj) + offset());
+		return Variant(ptr, type());
 	}
 
 	template <typename ClassType>
-	ClassType Property::Get(void* obj) const
+	ClassType Property::get(void* obj) const
 	{
-		void* ptr = reinterpret_cast<void*>(reinterpret_cast<std::size_t>(obj) + Offset());
+		void* ptr = reinterpret_cast<void*>(reinterpret_cast<std::size_t>(obj) + offset());
 		return *reinterpret_cast<ClassType*>(ptr);
 	}
 
-    bool Property::IsConst()
+    inline std::size_t Property::hash() const
     {
-        //TODO
-        return false;
-    }
-
-    bool Property::IsPointer()
-    {
-        //TODO
-        return false;
-    }
-
-    inline std::size_t Property::Hash() const
-    {
-        return _PropData.Hash();
+        return _PropData.hash();
     }
 
 
@@ -195,22 +182,22 @@ namespace SimpleRTTR
         return prop._PropData;
     }
 
-    bool PropertyContainer::Has(const stdrttr::string& key) const
+    bool PropertyContainer::has(const std::string& key) const
     {
-        ConstIterator found = std::find_if(Begin(), End(), [&key](const Property& prop) { return prop.Name().compare(key) == 0; });
-        return found != End();
+        ConstIterator found = std::find_if(begin(), end(), [&key](const Property& prop) { return prop.name().compare(key) == 0; });
+        return found != end();
     }
 
-    const Property& PropertyContainer::Get(const stdrttr::string& key) const
+    const Property& PropertyContainer::get(const std::string& key) const
     {
-        ConstIterator found = std::find_if(Begin(), End(), [&key](const Property& prop) { return prop.Name().compare(key) == 0; });
-        if (found != End())
+        ConstIterator found = std::find_if(begin(), end(), [&key](const Property& prop) { return prop.name().compare(key) == 0; });
+        if (found != end())
         {
             return *found;
         }
         else
         {
-            throw std::runtime_error("Property not found");
+            SIMPLERTTR_ASSERT_MSG(false, "Property not found");
         }
     }
 }

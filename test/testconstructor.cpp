@@ -40,36 +40,36 @@ protected:
 
 SIMPLERTTR
 {
-    Registration().Type<SimpleRTTRTestConstructor1>()
-        .Constructor()
-        .Property(&SimpleRTTRTestConstructor1::_x, "x")
-        .Property(&SimpleRTTRTestConstructor1::_y, "y");
+    registration().type<SimpleRTTRTestConstructor1>()
+        .constructor()
+        .property(&SimpleRTTRTestConstructor1::_x, "x")
+        .property(&SimpleRTTRTestConstructor1::_y, "y");
 
-    Registration().Type<SimpleRTTRTestConstructor2>()
-        .Constructor<int, int>({ "x", "y" })
-        .Property(&SimpleRTTRTestConstructor2::_x, "x")
-        .Property(&SimpleRTTRTestConstructor2::_y, "y");
+    registration().type<SimpleRTTRTestConstructor2>()
+        .constructor<int, int>({ "x", "y" })
+        .property(&SimpleRTTRTestConstructor2::_x, "x")
+        .property(&SimpleRTTRTestConstructor2::_y, "y");
 }
 
 TEST(RTTRConstructor, TestNoArguments)
 {
-    Type type = Types().GetType<SimpleRTTRTestConstructor1>();
+    Type type = types().get_type<SimpleRTTRTestConstructor1>();
 
-    const ConstructorContainer& constructors = type.Constructors();
-    ASSERT_EQ(constructors.Size(), 1);
+    const ConstructorContainer& constructors = type.constructors();
+    ASSERT_EQ(constructors.size(), 1);
 
     Method constructor = constructors[0];
-    ASSERT_EQ(constructor.Parameters().Size(), 0);
+    ASSERT_EQ(constructor.parameters().size(), 0);
 }
 
 
 TEST(RTTRConstructor, Test2Arguments)
 {
-    Type type = Types().GetType<SimpleRTTRTestConstructor2>();
+    Type type = types().get_type<SimpleRTTRTestConstructor2>();
 
-    const ConstructorContainer& constructors = type.Constructors();
-    ASSERT_EQ(constructors.Size(), 1);
+    const ConstructorContainer& constructors = type.constructors();
+    ASSERT_EQ(constructors.size(), 1);
 
     Method constructor = constructors[0];
-    ASSERT_EQ(constructor.Parameters().Size(), 2);
+    ASSERT_EQ(constructor.parameters().size(), 2);
 }

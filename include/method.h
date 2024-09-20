@@ -7,18 +7,18 @@ namespace SimpleRTTR
     class Parameter
     {
     public:
-        inline Parameter(const stdrttr::string& name, const TypeReference& type);
+        inline Parameter(const std::string& name, const TypeReference& type);
         inline Parameter(Parameter&& param);
         inline Parameter(const Parameter& param);
         inline Parameter& operator=(const Parameter& param);
 
-        inline const stdrttr::string& Name() const;
-        inline const class Type Type() const;
+        inline const std::string& name() const;
+        inline SimpleRTTR::Type type() const;
 
-        inline std::size_t Hash() const;
+        inline std::size_t hash() const;
 
     protected:
-        stdrttr::string _Name;
+        std::string _Name;
         TypeReference _Type;
     };
 
@@ -29,9 +29,9 @@ namespace SimpleRTTR
     class Method
     {
     public:
-        static inline const Method& InvalidMethod();
+        static inline const Method& invalid_method();
 
-        inline Method(const stdrttr::string& name, const TypeReference& retType, const ParameterContainer& params);
+        inline Method(const std::string& name, const TypeReference& retType, const ParameterContainer& params);
         inline Method(Method&& method);
         inline Method(const Method& method);
         inline Method& operator=(const Method& method);
@@ -39,22 +39,22 @@ namespace SimpleRTTR
         inline bool operator==(const Method& method) const;
         inline bool operator!=(const Method& method) const;
 
-        inline bool Equals(const Method& method) const;
+        inline bool equals(const Method& method) const;
 
-        inline std::size_t Hash() const;
+        inline std::size_t hash() const;
 
-        inline const stdrttr::string& Name() const;
-        inline const Type ReturnType() const;
-        inline const ParameterContainer& Parameters() const;
+        inline const std::string& name() const;
+        inline const Type return_type() const;
+        inline const ParameterContainer& parameters() const;
 
-        inline const MetaContainer& Meta() const;
+        inline const MetaContainer& meta() const;
 
 
     protected:
 
         friend MetaContainer& _InternalGetMetadata(Method& method);
 
-        stdrttr::string _Name;
+        std::string _Name;
         TypeReference _RetType;
         ParameterContainer   _Params;
         MetaContainer _Meta;
@@ -64,8 +64,8 @@ namespace SimpleRTTR
     class MethodContainer : public DefaultContainer<Method>
     {
     public:
-        inline bool Has(const stdrttr::string& key) const;
-        inline const Method& Get(const stdrttr::string& key) const;
+        inline bool has(const std::string& key) const;
+        inline const Method& get(const std::string& key) const;
     };
 
     class ConstructorContainer : public DefaultContainer<Method>

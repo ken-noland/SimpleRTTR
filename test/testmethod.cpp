@@ -23,41 +23,41 @@ public:
 
 TEST(RTTRMethod, TestIncorrectArgumentsThrowsException)
 {
-    EXPECT_THROW(Registration().Type<SimpleRTTRTestMethod1>().Method(&SimpleRTTRTestMethod1::AddXPlusY, "AddXPlusY", { "X" }), std::runtime_error);
+    EXPECT_THROW(registration().type<SimpleRTTRTestMethod1>().method(&SimpleRTTRTestMethod1::AddXPlusY, "AddXPlusY", { "X" }), std::runtime_error);
 }
 
 TEST(RTTRMethod, TestNoArgumentsThrowsException)
 {
-    EXPECT_THROW(Registration().Type<SimpleRTTRTestMethod1>().Method(&SimpleRTTRTestMethod1::AddXPlusY, "AddXPlusY"), std::runtime_error);
+    EXPECT_THROW(registration().type<SimpleRTTRTestMethod1>().method(&SimpleRTTRTestMethod1::AddXPlusY, "AddXPlusY"), std::runtime_error);
 }
 
 TEST(RTTRMethod, TestNoArguments)
 {
-    Registration().Type<SimpleRTTRTestMethod1>().Method(&SimpleRTTRTestMethod1::AddTwoPlusTwo, "AddTwoPlusTwo");
+    registration().type<SimpleRTTRTestMethod1>().method(&SimpleRTTRTestMethod1::AddTwoPlusTwo, "AddTwoPlusTwo");
 
-    Type type = Types().GetType<SimpleRTTRTestMethod2>();
+    Type type = types().get_type<SimpleRTTRTestMethod2>();
     
 }
 
 TEST(RTTRMethod, TestArgumentNames)
 {
-    Registration().Type<SimpleRTTRTestMethod2>().Method(&SimpleRTTRTestMethod2::AddXPlusY, "AddXPlusY", { "X", "Y" });
+    registration().type<SimpleRTTRTestMethod2>().method(&SimpleRTTRTestMethod2::AddXPlusY, "AddXPlusY", { "X", "Y" });
 
-    Type type = Types().GetType<SimpleRTTRTestMethod2>();
+    Type type = types().get_type<SimpleRTTRTestMethod2>();
 
-    MethodContainer::ConstIterator found = std::find_if(type.Methods().begin(), type.Methods().end(), 
-        [](const Method& method) { return (method.Name() == "AddXPlusY") && (method.Parameters().Size() == 2); });
+    MethodContainer::ConstIterator found = std::find_if(type.methods().begin(), type.methods().end(), 
+        [](const Method& method) { return (method.name() == "AddXPlusY") && (method.parameters().size() == 2); });
 
-    EXPECT_NE(found, type.Methods().end());
+    EXPECT_NE(found, type.methods().end());
 
     const Method& method = *found;
-    EXPECT_EQ(method.Parameters().Size(), 2);
+    EXPECT_EQ(method.parameters().size(), 2);
 
-    Parameter param1 = method.Parameters()[0];
-    EXPECT_EQ(param1.Name(), "X");
-    EXPECT_EQ(param1.Type(), Types().GetType<int>());
+    Parameter param1 = method.parameters()[0];
+    EXPECT_EQ(param1.name(), "X");
+    EXPECT_EQ(param1.type(), types().get_type<int>());
 
-    Parameter param2 = method.Parameters()[1];
-    EXPECT_EQ(param2.Name(), "Y");
-    EXPECT_EQ(param2.Type(), Types().GetType<int>());
+    Parameter param2 = method.parameters()[1];
+    EXPECT_EQ(param2.name(), "Y");
+    EXPECT_EQ(param2.type(), types().get_type<int>());
 }

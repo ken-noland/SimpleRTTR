@@ -81,27 +81,27 @@ namespace SimpleRTTR
         using Iterator = typename ContainerType::iterator;
         using ConstIterator = typename ContainerType::const_iterator;
 
-        Iterator Begin() { return _Data.begin(); }
-        Iterator End() { return _Data.end(); }
-        ConstIterator Begin() const { return _Data.begin(); }
-        ConstIterator End() const { return _Data.end(); }
+        Iterator begin() { return _Data.begin(); }
+        Iterator end() { return _Data.end(); }
+        ConstIterator begin() const { return _Data.begin(); }
+        ConstIterator end() const { return _Data.end(); }
 
         inline ClassType& operator[](std::size_t index) { return _Data[index]; }
         inline const ClassType& operator[](std::size_t index) const { return _Data[index]; }
 
-        void Add(const ClassType& value) { _Data.push_back(value); }
-        void Add(ClassType&& value) { _Data.push_back(value); }
+        void add(const ClassType& value) { _Data.push_back(value); }
+        void add(ClassType&& value) { _Data.push_back(value); }
 
-        void Clear() { _Data.clear(); }
+        void clear() { _Data.clear(); }
 
-        size_t Size() const { return _Data.size(); }
+        size_t size() const { return _Data.size(); }
 
-        const ClassType& Back() const { return _Data.back(); }
-        ClassType& Back() { return _Data.back(); }
+        const ClassType& back() const { return _Data.back(); }
+        ClassType& back() { return _Data.back(); }
 
-        void Reserve(size_t size) { _Data.reserve(size); }
+        void reserve(size_t size) { _Data.reserve(size); }
 
-        std::size_t Hash() const
+        std::size_t hash() const
         {
             std::size_t seed = 0;
             for (const ClassType& value : _Data)

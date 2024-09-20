@@ -2,14 +2,15 @@ namespace SimpleRTTR
 {
     //---
     // Type Data
-    TypeData::TypeData(const stdrttr::string& name,
-        const stdrttr::string& fullyQualifiedName,
+    TypeData::TypeData(const std::string& name,
+        const std::string& fullyQualifiedName,
         std::size_t size,
         std::uint64_t flags,
         std::type_index typeIndex,
         bool registeredByUser,
         const NamespaceContainer& namespaces,
         const TemplateTypeContainer& templateParams,
+        TypeFunctions typeFunctions,
         ToStringFunction toStringFunc)
         :
         _Name(name),
@@ -20,13 +21,14 @@ namespace SimpleRTTR
         _RegisteredByUser(registeredByUser),
         _Namespaces(namespaces),
         _TemplateParams(templateParams),
+        _TypeFunctions(typeFunctions),
         _ToStringFunc(toStringFunc)
     {
 
     }
 
-    TypeData::TypeData(const stdrttr::string& name,
-        const stdrttr::string& fqn,
+    TypeData::TypeData(const std::string& name,
+        const std::string& fqn,
         std::size_t size, 
         std::uint64_t flags, 
         std::type_index typeIndex)
@@ -96,44 +98,35 @@ namespace SimpleRTTR
         return *this;
     }
 
-    bool TypeData::Equals(const TypeData& typeData) const
+    bool TypeData::equals(const TypeData& typeData) const
     {
         return (this == &typeData) || (
             _Size == typeData._Size &&
             _FullyQualifiedName.compare(typeData._FullyQualifiedName) == 0);
     }
 
-    const stdrttr::string& TypeData::GetName() const
+    const std::string& TypeData::name() const
     {
         return _Name;
     }
 
-    const stdrttr::string& TypeData::GetFullyQualifiedName() const
+    const std::string& TypeData::fully_qualified_name() const
     {
         return _FullyQualifiedName;
     }
 
-    std::size_t TypeData::GetSize() const
+    std::size_t TypeData::size() const
     {
         return _Size;
     }
 
-    bool TypeData::HasFlag(TypeFlag flag) const
-    {
-        return _Flags & static_cast<std::uint32_t>(flag);
-    }
-
-    const std::type_index& TypeData::GetTypeIndex() const
-    {
-        return _TypeIndex;
-    }
-
-    std::size_t TypeData::Hash() const
+    std::size_t TypeData::hash() const
     {
         std::size_t hash = 0;
-        HashCombine(hash,
+        hash_combine(hash,
             _FullyQualifiedName,
             _Size,
+            _Flags,
             _Properties,
             _Methods,
             _Namespaces,
@@ -143,49 +136,65 @@ namespace SimpleRTTR
         return hash;
     }
 
-    bool TypeData::IsRegisteredByUser() const
+    bool TypeData::has_flag(TypeFlag flag) const
+    {
+        return _Flags & static_cast<std::uint64_t>(flag);
+    }
+
+    const std::type_index& TypeData::type_index() const
+    {
+        return _TypeIndex;
+    }
+
+
+    bool TypeData::is_registered_by_user() const
     {
         return _RegisteredByUser;
     }
 
-    const ConstructorContainer& TypeData::GetConstructors() const
+    const ConstructorContainer& TypeData::constructors() const
     {
         return _Constructors;
     }
 
-    const PropertyContainer& TypeData::GetProperties() const
+    const PropertyContainer& TypeData::properties() const
     {
         return _Properties;
     }
 
-    const MethodContainer& TypeData::GetMethods() const
+    const MethodContainer& TypeData::methods() const
     {
         return _Methods;
     }
 
-    const TypeData::NamespaceContainer& TypeData::GetNamespaces() const
+    const TypeData::NamespaceContainer& TypeData::namespaces() const
     {
         return _Namespaces;
     }
 
-    const TypeData::TemplateTypeContainer& TypeData::GetTemplateParams() const
+    const TypeData::TemplateTypeContainer& TypeData::template_params() const
     {
         return _TemplateParams;
     }
 
-    const ValueContainer& TypeData::GetValues() const
+    const ValueContainer& TypeData::values() const
     {
         return _Values;
     }
 
-    const MetaContainer& TypeData::GetMetadata() const
+    const MetaContainer& TypeData::meta() const
     {
         return _Metadata;
     }
 
-    const TypeData::ToStringFunction TypeData::GetToStringFunction() const
+    const TypeData::ToStringFunction TypeData::to_string_function() const
     {
         return _ToStringFunc;
+    }
+
+    const TypeFunctions& TypeData::type_functions() const
+    {
+        return _TypeFunctions;
     }
 
     inline ConstructorContainer& _InternalGetConstructors(TypeData& typeData)

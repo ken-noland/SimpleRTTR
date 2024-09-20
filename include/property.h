@@ -16,25 +16,25 @@ namespace SimpleRTTR
 
         inline bool operator==(const PropertyData& data) const;
 
-        inline bool Equals(const PropertyData& data) const;
+        inline bool equals(const PropertyData& data) const;
 
-        inline PropertyData(const stdrttr::string& name, const TypeReference& type, std::size_t offset);
+        inline PropertyData(const std::string& name, const TypeReference& type, std::size_t offset);
         inline PropertyData(PropertyData&& data);
         inline PropertyData(const PropertyData& data);
 
-        inline const stdrttr::string& Name() const;
-        inline class Type Type() const;
-        inline const std::size_t Offset() const;
-        inline const MetaContainer& Meta() const;
+        inline const std::string& name() const;
+        inline class Type type() const;
+        inline const std::size_t offset() const;
+        inline const MetaContainer& meta() const;
 
-        inline std::size_t Hash() const;
+        inline std::size_t hash() const;
 
         template<typename ClassType>
-        inline void Set(ClassType* obj, const Variant& value) const;
+        inline void set(ClassType* obj, const Variant& value) const;
 
 
     protected:
-        stdrttr::string _Name;
+        std::string _Name;
         TypeReference _Type;
         std::size_t _Offset;
         PropertyFlagsBits _Flags;
@@ -47,9 +47,9 @@ namespace SimpleRTTR
     class Property
     {
     public:
-        static inline const Property& InvalidProperty();
+        static inline const Property& invalid_property();
 
-        inline Property(Property&& data);
+        inline Property(Property&& data)  noexcept;
         inline Property(const Property& data);
         inline Property(const PropertyData& data);
         inline Property& operator=(const Property& prop);
@@ -57,27 +57,25 @@ namespace SimpleRTTR
         inline bool operator==(const Property& data) const;
         inline bool operator!=(const Property& data) const;
 
-        inline bool Equals(const Property& data) const;
+        inline bool equals(const Property& data) const;
 
-        inline const stdrttr::string& Name() const;
-        inline const class Type Type() const;
-        inline const std::size_t Offset() const;
-        inline const MetaContainer& Meta() const;
+        inline const std::string& name() const;
+        inline const SimpleRTTR::Type type() const;
+        inline const std::size_t offset() const;
+
+        inline const SimpleRTTR::MetaContainer& meta() const;
 
         // Set a value given an instance of the class
         template<typename ClassType>
-        inline void Set(ClassType* obj, const Variant& value) const;
+        inline void set(ClassType* obj, const Variant& value) const;
 
         // Get a value given an instance of the class
-        inline Variant Get(void* obj) const;
+        inline Variant get(void* obj) const;
 
         template <typename ClassType>
-		inline ClassType Get(void* obj) const;
+		inline ClassType get(void* obj) const;
 
-        inline bool IsConst();
-        inline bool IsPointer();
-
-        inline std::size_t Hash() const;
+        inline std::size_t hash() const;
 
     protected:
         friend PropertyData& _InternalPropertyGetPropertyDataRef(Property& prop);
@@ -88,7 +86,7 @@ namespace SimpleRTTR
     class PropertyContainer : public DefaultContainer<Property>
     {
     public:
-        inline bool Has(const stdrttr::string& key) const;
-        inline const Property& Get(const stdrttr::string& key) const;
+        inline bool has(const std::string& key) const;
+        inline const Property& get(const std::string& key) const;
     };
 }

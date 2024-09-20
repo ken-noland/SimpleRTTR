@@ -4,24 +4,24 @@ namespace SimpleRTTR
 {
     class RegistrationManager;
 
-    inline RegistrationManager& Registration();
+    inline RegistrationManager& registration();
 
     class RegistrationManager
     {
     public:
         template<typename ClassType>
-        inline TypeBinding<ClassType> Type();
+        inline TypeBinding<ClassType> type();
 
-        inline TypeBinding<SimpleRTTR::Type> Type(const SimpleRTTR::Type& type);
+        inline TypeBinding<SimpleRTTR::Type> type(const SimpleRTTR::Type& type);
 
-        static inline RegistrationManager& GetInstance();
+        static inline RegistrationManager& instance();
 
     protected:
         friend void _InternalBeginRegistration(const char* filename);
         friend void _InternalEndRegistration();
 
-        inline void BeginRegistration(const char* filename);
-        inline void EndRegistration();
+        inline void begin_registration(const char* filename);
+        inline void end_registration();
 
         inline RegistrationManager();  //should only be used by the root registration manager
     };

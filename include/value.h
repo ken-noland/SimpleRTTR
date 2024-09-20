@@ -5,21 +5,21 @@ namespace SimpleRTTR
     class Value
     {
     public:
-        inline Value(stdrttr::string name, class Variant value);
+        inline Value(std::string name, class Variant value);
 
-        inline const stdrttr::string& Name() const;
-        inline const Variant& Variant() const;
+        inline const std::string& name() const;
+        inline const Variant& value() const;
 
-        inline const MetaContainer& Meta() const;
+        inline const MetaContainer& meta() const;
 
-        inline std::size_t Hash() const;
+        inline std::size_t hash() const;
 
         inline bool operator==(const Value& other) const;
 
     protected:
         friend MetaContainer& _InternalGetMetadata(class Value& value);
 
-        stdrttr::string _Name;
+        std::string _Name;
         class Variant _Value;
         MetaContainer _Meta;
     };

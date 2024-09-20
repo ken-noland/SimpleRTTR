@@ -22,7 +22,6 @@ set(SIMPLERTTR_HEADERS	include/helpers.h
 						include/simplerttr.h
 						include/simplerttr.inl
 						include/simplerttrassert.h
-						include/stdtypes.h
 						include/typebinding.h
 						include/typebinding.inl
 						include/typedata.h

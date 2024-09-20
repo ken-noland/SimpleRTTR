@@ -99,10 +99,10 @@ public:
         std::ofstream file(CACHED_TYPES_FILE);
         if (file.is_open())
         {
-            //iterate through the types in Types() and save the hash
-            for (Type type : Types())
+            //iterate through the types in types() and save the hash
+            for (Type type : types())
             {
-                file << type.FullyQualifiedName() << ":" << type.Hash() << std::endl;
+                file << type.fully_qualified_name() << ":" << type.hash() << std::endl;
             }
 
             file.close();
@@ -177,7 +177,7 @@ std::string GetCMakePath(const std::string& input) {
 bool FilterTypes(const Type& type)
 {
     //we don't want to generate source files for types that are not user defined.
-    if (type.Meta().Has("source_filename"))
+    if (type.meta().has("source_filename"))
     {
         return true;
     }
@@ -192,10 +192,10 @@ bool RunDiff(CodeGenExportData& exportData, const CachedTypes& cachedTypes, cons
     exportData.hasRemoved = false;
 
     //go through the find all types that have been added, or changed
-    for (Type type : Types())
+    for (Type type : types())
     {
-        std::size_t typeHash = type.Hash();
-        std::size_t cachedHash = cachedTypes.GetTypeHash(type.FullyQualifiedName());
+        std::size_t typeHash = type.hash();
+        std::size_t cachedHash = cachedTypes.GetTypeHash(type.fully_qualified_name());
 
         if (!FilterTypes(type))
         {
@@ -206,20 +206,20 @@ bool RunDiff(CodeGenExportData& exportData, const CachedTypes& cachedTypes, cons
         std::filesystem::path relativePath = "";
         std::vector<std::filesystem::path> exportFilenames;
 
-        if (type.Meta().Has("source_filename"))
+        if (type.meta().has("source_filename"))
         {
-            sourceFilename = type.Meta().Get("source_filename").Value().GetAs<const char*>();
+            sourceFilename = type.meta().get("source_filename").value().get_as<const char*>();
             relativePath = std::filesystem::relative(sourceFilename.parent_path(), PROJECT_DIR);
             for (TemplateDefinition templateDefinition : templateDefinitions)
             {
-                exportFilenames.push_back(GetFilenameForTemplate(type.Name(), relativePath, templateDefinition));
+                exportFilenames.push_back(GetFilenameForTemplate(type.name(), relativePath, templateDefinition));
             }
             exportData.sourceFiles.insert(sourceFilename);
         }
 
         TypeExportData typeExportData{
             TypeReference(type),
-            type.Name(),
+            type.name(),
             TypeExportAction::None,
             sourceFilename,
             relativePath,
@@ -228,16 +228,16 @@ bool RunDiff(CodeGenExportData& exportData, const CachedTypes& cachedTypes, cons
 
         if (cachedHash == -1)
         {
-            //std::cout << "Type: \"" << type.FullyQualifiedName() << "\" has been added." << std::endl;
+            //std::cout << "Type: \"" << type.fully_qualified_name() << "\" has been added." << std::endl;
             typeExportData.action = TypeExportAction::Add;
             exportData.hasAdded = true;
         }
         else if (typeHash != cachedHash)
         {
-            //std::cout << "Type: \"" << type.FullyQualifiedName() << "\" has changed." << std::endl;
-            if (type.Meta().Has("source_filename"))
+            //std::cout << "Type: \"" << type.fully_qualified_name() << "\" has changed." << std::endl;
+            if (type.meta().has("source_filename"))
             {
-                exportData.sourceFiles.insert(type.Meta().Get("source_filename").Value().GetAs<const char*>());
+                exportData.sourceFiles.insert(type.meta().get("source_filename").value().get_as<const char*>());
             }
             typeExportData.action = TypeExportAction::Change;
             exportData.hasChanged = true;
@@ -249,11 +249,11 @@ bool RunDiff(CodeGenExportData& exportData, const CachedTypes& cachedTypes, cons
     //go through the find all types that have been removed
     for (CachedTypes::TypeMapIterator it = cachedTypes.begin(); it != cachedTypes.end(); ++it)
     {
-        const Type& type = Types().GetType(it->first);
-        if (type == Type::InvalidType())
+        const Type& type = types().get_type(it->first);
+        if (type == Type::invalid_type())
         {
             //std::cout << "Type: \"" << it->first << "\" has been removed." << std::endl;
-            exportData.typeExportData.push_back({ TypeReference(Type::InvalidType()), it->first, TypeExportAction::Remove, "" });
+            exportData.typeExportData.push_back({ TypeReference(Type::invalid_type()), it->first, TypeExportAction::Remove, "" });
             exportData.hasRemoved = true;
         }
     }
@@ -398,13 +398,13 @@ void ProcessSourceFiles(std::unordered_map<std::filesystem::path, std::string>& 
 
 bool GatherPropertyData(data& propertyData, const Property& property)
 {
-    propertyData.set("name", property.Name());
-    propertyData.set("offset", std::to_string(property.Offset()));
+    propertyData.set("name", property.name());
+    propertyData.set("offset", std::to_string(property.offset()));
 
     data typeData{ data::type::object };
-    Type type = property.Type();
-    typeData.set("name", type.Name());
-    typeData.set("fullyQualifiedName", type.FullyQualifiedName());
+    Type type = property.type();
+    typeData.set("name", type.name());
+    typeData.set("fullyQualifiedName", type.fully_qualified_name());
 
     propertyData.set("type", typeData);
 
@@ -415,47 +415,47 @@ bool GatherPropertyData(data& propertyData, const Property& property)
 
 bool GatherTypeData(data& typeData, const TypeExportData& typeExportData)
 {
-    const Type& type = typeExportData.type.Type();
+    const Type& type = typeExportData.type.type();
 
-    typeData.set("name", type.Name());
-    typeData.set("fullyQualifiedName", type.FullyQualifiedName());
+    typeData.set("name", type.name());
+    typeData.set("fullyQualifiedName", type.fully_qualified_name());
     typeData.set("sourceFilename", typeExportData.sourceFilename.string());
     typeData.set("relativePath", typeExportData.relativePath.string());
 
     //TODO: deal with metadata
     //data meta{ data::type::list };
-    //for (const Meta& meta : type.Meta())
+    //for (const Meta& meta : type.meta())
     //{
-    //    if(meta.Key().Type() == )
+    //    if(meta.key().type() == )
     //    data metaItem;
     //    metaItem.set("key", key);
-    //    metaItem.set("value", value.Value().GetAs<const char*>());
+    //    metaItem.set("value", value.value().get_as<const char*>());
     //    meta << metaItem;
     //}
 
     data namespaces{ data::type::list };
-    for (const std::string& ns : type.Namespaces())
+    for (const std::string& ns : type.namespaces())
     {
         namespaces << ns;
     }
     typeData.set("namespaces", namespaces);
 
     data templateParams{ data::type::list };
-    for (const TypeReference& templateParam : type.TemplateParams())
+    for (const TypeReference& templateParam : type.template_params())
     {
-        Type templateType = templateParam.Type();
+        Type templateType = templateParam.type();
 
         data templateParamData;
-        templateParamData.set("name", templateType.Name());
-        templateParamData.set("fullyQualifiedName", templateType.FullyQualifiedName());
-        templateParamData.set("hash", templateType.Hash());
+        templateParamData.set("name", templateType.name());
+        templateParamData.set("fullyQualifiedName", templateType.fully_qualified_name());
+        templateParamData.set("hash", templateType.hash());
 
         templateParamData << templateParamData;
     }
     typeData.set("templateParams", templateParams);
 
     data properties{ data::type::list };
-    for(const Property& property : type.Properties())
+    for(const Property& property : type.properties())
     { 
         data propertyData;
         GatherPropertyData(propertyData, property);
@@ -510,7 +510,7 @@ int main(int arc, char** argv)
         //  TODO: detect when template has been modified
         if (typeExportData.action == TypeExportAction::Add || typeExportData.action == TypeExportAction::Change)
         {
-            const Type& type = typeExportData.type.Type();
+            const Type& type = typeExportData.type.type();
 
             //construct the data from the type information
             data typeData;

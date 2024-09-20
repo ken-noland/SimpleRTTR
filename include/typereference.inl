@@ -6,43 +6,48 @@ namespace SimpleRTTR
     //Type Reference
     TypeReference::TypeReference(const class Type& type)
         :
-        _FullyQualifiedName(type.GetFullyQualifiedName())
+        _TypeIndex(type.type_index())
     {
 
     }
 
     TypeReference::TypeReference(const TypeReference& ref)
         :
-        _FullyQualifiedName(ref._FullyQualifiedName)
+        _TypeIndex(ref.type_index())
     {
 
     }
 
     inline bool TypeReference::operator==(const class Type& type) const
     {
-        return Type() == type;
+        // TODO: maybe check the Type equality rather than the type index
+        return _TypeIndex == type.type_index();
     }
 
     inline bool TypeReference::operator==(const TypeReference& type) const
     {
-        return _FullyQualifiedName == type._FullyQualifiedName;
+        // TODO: maybe check the Type equality rather than the type index
+        return _TypeIndex == type.type_index();
     }
 
-    class Type TypeReference::Type() const
+    class Type TypeReference::type() const
     {
-        return Types().GetType(GetFullyQualifiedName());
+        return SimpleRTTR::types().get_type(_TypeIndex);
     }
 
-    inline const stdrttr::string& TypeReference::GetFullyQualifiedName() const
+    const std::type_index& TypeReference::type_index() const
     {
-        return _FullyQualifiedName;
+        return _TypeIndex;
     }
 
-    inline std::size_t TypeReference::Hash() const
+    inline const std::string& TypeReference::fully_qualified_name() const
     {
-        //TODO: the type reference should use the hash value from the type to begin with(sd in, we should remove the _FullyQualifiedName member and replace it with an ID), 
-        // but at the moment I don't have time to move this around and the performance impact is minimal.
-        return Type().Hash();
+        return type().fully_qualified_name();
+    }
+
+    inline std::size_t TypeReference::hash() const
+    {
+        return type().hash();
     }
 
 }

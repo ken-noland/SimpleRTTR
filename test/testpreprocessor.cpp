@@ -13,19 +13,19 @@ public:
 
 SIMPLERTTR
 {
-    Registration().Type<SimpleRTTRTestPreprocessor>()
-        .Property(&SimpleRTTRTestPreprocessor::property1, "property1")
-        .Property(&SimpleRTTRTestPreprocessor::property2, "property2")
-        .Property(&SimpleRTTRTestPreprocessor::property3, "property3");
+    registration().type<SimpleRTTRTestPreprocessor>()
+        .property(&SimpleRTTRTestPreprocessor::property1, "property1")
+        .property(&SimpleRTTRTestPreprocessor::property2, "property2")
+        .property(&SimpleRTTRTestPreprocessor::property3, "property3");
 }
 
 TEST(RTTRPreprocessor, TestPreprocessorWorks)
 {
-    Type type = Types().GetType<SimpleRTTRTestPreprocessor>();
-    const Meta& file = type.Meta().Get("source_filename");
-    ASSERT_NE(file, Meta::InvalidMeta());
+    Type type = types().get_type<SimpleRTTRTestPreprocessor>();
+    const Meta& file = type.meta().get("source_filename");
+    ASSERT_NE(file, Meta::invalid_meta());
 
-    const char* filename = file.Value().GetAs<const char*>();
+    const char* filename = file.value().get_as<const char*>();
     EXPECT_STREQ(filename, __FILE__);
 }
 
@@ -33,13 +33,13 @@ TEST(RTTRPreprocessor, TestPreprocessorJustTheRegisteredType)
 {
     //test that the type registered is the ONLY type registered with the metadata
     int count = 0;
-    for (Type type : Types())
+    for (Type type : types())
     {
-        const Meta& meta = type.Meta().Get("source_filename");
-        if(meta != Meta::InvalidMeta())
+        const Meta& meta = type.meta().get("source_filename");
+        if(meta != Meta::invalid_meta())
         {
-            const char* strFilename = meta.Value().GetAs<const char*>();
-            //std::cout << "Type " << type.Name() << " declared in " << strFilename << std::endl;
+            const char* strFilename = meta.value().get_as<const char*>();
+            //std::cout << "Type " << type.name() << " declared in " << strFilename << std::endl;
             if (std::strcmp(strFilename, __FILE__) == 0)
             {
                 count++;

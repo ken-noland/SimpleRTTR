@@ -1,6 +1,6 @@
 namespace SimpleRTTR
 {
-    Parameter::Parameter(const stdrttr::string& name, const TypeReference& type)
+    Parameter::Parameter(const std::string& name, const TypeReference& type)
         :
         _Name(name),
         _Type(type)
@@ -32,32 +32,32 @@ namespace SimpleRTTR
     }
 
 
-    const stdrttr::string& Parameter::Name() const
+    const std::string& Parameter::name() const
     {
         return _Name;
     }
 
-    const Type Parameter::Type() const
+    SimpleRTTR::Type Parameter::type() const
     {
-        return _Type.Type();
+        return _Type.type();
     }
 
-    std::size_t Parameter::Hash() const
+    std::size_t Parameter::hash() const
     {
         std::size_t seed = 0;
-        HashCombine(seed, _Name, _Type);
+        hash_combine(seed, _Name, _Type);
         return seed;
     }
 
 
-    const Method& Method::InvalidMethod()
+    const Method& Method::invalid_method()
     {
-        static Method InvalidMethod("invalid", Type::InvalidType(), {});
-        return InvalidMethod;
+        static Method invalid_method("invalid", Type::invalid_type(), {});
+        return invalid_method;
     }
 
 
-    Method::Method(const stdrttr::string& name, const TypeReference& retType, const ParameterContainer& params)
+    Method::Method(const std::string& name, const TypeReference& retType, const ParameterContainer& params)
         :
         _Name(name),
         _RetType(retType),
@@ -97,53 +97,53 @@ namespace SimpleRTTR
 
     bool Method::operator==(const Method& method) const
     {
-        return Equals(method);
+        return equals(method);
     }
 
     bool Method::operator!=(const Method& method) const
     {
-        return !Equals(method);
+        return !equals(method);
     }
 
-    bool Method::Equals(const Method& method) const
+    bool Method::equals(const Method& method) const
     {
         //TODO: probably need to compare parameters, meta, and return type as well
         return _Name == method._Name;
     }
 
-    std::size_t Method::Hash() const
+    std::size_t Method::hash() const
     {
         std::size_t seed = 0;
-        HashCombine(seed, _Name, _RetType, _Params, _Meta);
+        hash_combine(seed, _Name, _RetType, _Params, _Meta);
         return seed;
     }
 
 
-    const stdrttr::string& Method::Name() const
+    const std::string& Method::name() const
     {
         return _Name;
     }
 
-    const Type Method::ReturnType() const
+    const Type Method::return_type() const
     {
-        return _RetType.Type();
+        return _RetType.type();
     }
 
-    const ParameterContainer& Method::Parameters() const
+    const ParameterContainer& Method::parameters() const
     {
         return _Params;
     }
 
-    const MetaContainer& Method::Meta() const
+    const MetaContainer& Method::meta() const
     {
         return _Meta;
     }
 
-    bool MethodContainer::Has(const stdrttr::string& name) const
+    bool MethodContainer::has(const std::string& name) const
     {
         for (const Method& method : _Data)
         {
-            if (name == method.Name())
+            if (name == method.name())
             {
                 return true;
             }
@@ -151,16 +151,16 @@ namespace SimpleRTTR
         return false;
     }
 
-    const Method& MethodContainer::Get(const stdrttr::string& name) const
+    const Method& MethodContainer::get(const std::string& name) const
     {
         for (const Method& method : _Data)
         {
-            if (name == method.Name())
+            if (name == method.name())
             {
                 return method;
             }
         }
-        return Method::InvalidMethod();
+        return Method::invalid_method();
     }
 
     inline MetaContainer& _InternalGetMetadata(Method& method)

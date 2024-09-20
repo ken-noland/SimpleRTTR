@@ -6,7 +6,7 @@ namespace SimpleRTTR
   //      VariantCopyHelper(const Variant& src, void* dest, const TypeReference& destType)
   //  {
   //      VariantType* destPtr = reinterpret_cast<VariantType*>(dest);
-  //      *destPtr = src.GetAs<VariantType>();
+  //      *destPtr = src.get_as<VariantType>();
   //      return;
   //  }
 
@@ -20,14 +20,14 @@ namespace SimpleRTTR
 
 
   //      std::string* destPtr = reinterpret_cast<std::string*>(dest);
-  //      Type srcType = src.Type().Type();
-  //      if (srcType == Types().GetType<std::string>())
+  //      Type srcType = src.type().type();
+  //      if (srcType == types().get_type<std::string>())
   //      {
-  //          *destPtr = src.GetAs<std::string>();
+  //          *destPtr = src.get_as<std::string>();
   //      }
-  //      else if (srcType == Types().GetType<char*>() || srcType == Types().GetType<const char*>())
+  //      else if (srcType == types().get_type<char*>() || srcType == types().get_type<const char*>())
   //      {
-  //          *destPtr = src.GetAs<const char*>();
+  //          *destPtr = src.get_as<const char*>();
   //      }
   //      else
   //      {
@@ -43,7 +43,7 @@ namespace SimpleRTTR
   //  {
   //      if constexpr (std::is_trivially_copyable_v<VariantType> == true)
   //      {
-  //          std::memcpy(dest, &src, src.Type().Size());
+  //          std::memcpy(dest, &src, src.type().size());
   //      }
   //      else
   //      {

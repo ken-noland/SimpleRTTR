@@ -9,7 +9,7 @@ namespace SimpleRTTR
 
         template<typename VariantType>
         inline Variant(VariantType value);
-        inline Variant(void* value, Type type);
+        inline Variant(void* value, const SimpleRTTR::Type& type);
 
         inline Variant(const Variant& var);
         inline Variant(Variant&& var);
@@ -25,32 +25,22 @@ namespace SimpleRTTR
         inline bool operator==(const ObjectType& var) const;
 
         template<typename VariantType>
-        inline VariantType GetAs() const;
+        inline VariantType get_as() const;
 
         // copy the value to the given pointer
-        inline void CopyTo(void* dest) const;
+        inline void copy_to(void* dest, const Type& destType) const;
 
-        inline const class TypeReference Type() const;
+        inline const SimpleRTTR::Type& type() const;
 
-        inline std::size_t Hash() const;
+        inline std::size_t hash() const;
 
-        inline stdrttr::string ToString() const;
+        inline std::string to_string() const;
 
     protected:
         StorageType _storage;
+        const SimpleRTTR::Type& _type;
 
-        using CopyFunc = void (*)(StorageType&, const StorageType&);
-        CopyFunc _copyFunc;
-
-        using DeleteFunc = void (*)(StorageType&);
-        DeleteFunc _deleteFunc;
-
-        using EqualityFunc = bool (*)(const StorageType&, const StorageType&);
-        EqualityFunc _equalityFunc;
-
-        std::type_index _typeIndex;
-
-        inline void Destroy();
+        inline void destroy();
     };
 
 
@@ -67,8 +57,8 @@ namespace SimpleRTTR
     inline std::any PtrToAny(const void*);
 
     template<typename VariantType>
-    inline stdrttr::string VariantToString(const Variant& var);
+    inline std::string VariantToString(const Variant& var);
 
     template<template <typename... > class Tmpl, typename ...Args>
-    inline stdrttr::string VariantToString(const Variant& var);
+    inline std::string VariantToString(const Variant& var);
 }

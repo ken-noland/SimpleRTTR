@@ -1,6 +1,6 @@
 namespace SimpleRTTR
 {
-    Value::Value(stdrttr::string name, class Variant value)
+    Value::Value(std::string name, class Variant value)
         :
         _Name(name),
         _Value(value),
@@ -9,20 +9,20 @@ namespace SimpleRTTR
 
     }
 
-    const stdrttr::string& Value::Name() const
+    const std::string& Value::name() const
     {
         return _Name;
     }
 
-    const class Variant& Value::Variant() const
+    const class Variant& Value::value() const
     {
         return _Value;
     }
 
-    std::size_t Value::Hash() const
+    std::size_t Value::hash() const
     {
         std::size_t seed = 0;
-        HashCombine(seed, _Name, _Value, _Meta);
+        hash_combine(seed, _Name, _Value, _Meta);
         return seed;
     }
 

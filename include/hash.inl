@@ -5,91 +5,91 @@ namespace std {
     template <>
     struct hash<SimpleRTTR::Type> {
         inline std::size_t operator()(const SimpleRTTR::Type& type) const {
-            return type.Hash();
+            return type.hash();
         }
     };
 
     template <>
         struct hash<SimpleRTTR::TypeReference> {
         inline std::size_t operator()(const SimpleRTTR::TypeReference& typeRef) const {
-            return typeRef.Hash();
+            return typeRef.hash();
         }
     };
     
     template <>
     struct hash<SimpleRTTR::Property> {
         inline std::size_t operator()(const SimpleRTTR::Property& property) const {
-            return property.Hash();
+            return property.hash();
         }
     };
 
     template <>
     struct hash<SimpleRTTR::PropertyContainer> {
         inline std::size_t operator()(const SimpleRTTR::PropertyContainer& properties) const {
-            return properties.Hash();
+            return properties.hash();
         }
     };
 
     template <>
     struct hash<SimpleRTTR::Method> {
         inline std::size_t operator()(const SimpleRTTR::Method& method) const {
-            return method.Hash();
+            return method.hash();
         }
     };
 
     template <>
     struct hash<SimpleRTTR::MethodContainer> {
         inline std::size_t operator()(const SimpleRTTR::MethodContainer& methods) const {
-            return methods.Hash();
+            return methods.hash();
         }
     };
 
     template <>
     struct hash<SimpleRTTR::Parameter> {
         inline std::size_t operator()(const SimpleRTTR::Parameter& parameter) const {
-            return parameter.Hash();
+            return parameter.hash();
         }
     };
 
     template <>
     struct hash<SimpleRTTR::ParameterContainer> {
         inline std::size_t operator()(const SimpleRTTR::ParameterContainer& parameters) const {
-            return parameters.Hash();
+            return parameters.hash();
         }
     };
 
     template <>
     struct hash<SimpleRTTR::Meta> {
         inline std::size_t operator()(const SimpleRTTR::Meta& meta) const {
-            return meta.Hash();
+            return meta.hash();
         }
     };
 
     template <>
     struct hash<SimpleRTTR::MetaContainer> {
         inline std::size_t operator()(const SimpleRTTR::MetaContainer& meta) const {
-            return meta.Hash();
+            return meta.hash();
         }
     };
 
     template <>
     struct hash<SimpleRTTR::Value> {
         inline std::size_t operator()(const SimpleRTTR::Value& value) const {
-            return value.Hash();
+            return value.hash();
         }
     };
 
     template <>
     struct hash<SimpleRTTR::ValueContainer> {
         inline std::size_t operator()(const SimpleRTTR::ValueContainer& values) const {
-            return values.Hash();
+            return values.hash();
         }
     };
 
     template <>
     struct hash<SimpleRTTR::Variant> {
         inline std::size_t operator()(const SimpleRTTR::Variant& var) const {
-            return var.Hash();
+            return var.hash();
         }
     };
 
@@ -99,9 +99,9 @@ namespace std {
     struct hash<SimpleRTTR::TypeData::NamespaceContainer> {
         inline std::size_t operator()(const SimpleRTTR::TypeData::NamespaceContainer& namespaces) const {
             std::size_t seed = 0;
-            for (const SimpleRTTR::stdrttr::string& value : namespaces)
+            for (const std::string& value : namespaces)
             {
-                seed ^= std::hash<SimpleRTTR::stdrttr::string>()(value) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+                seed ^= std::hash<std::string>()(value) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
             }
             return seed;
         }
@@ -113,7 +113,7 @@ namespace std {
             std::size_t seed = 0;
             for (const SimpleRTTR::TypeReference& typeRef : templateParams)
             {
-                seed ^= typeRef.Hash() + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+                seed ^= typeRef.hash() + 0x9e3779b9 + (seed << 6) + (seed >> 2);
             }
             return seed;
         }

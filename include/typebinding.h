@@ -6,8 +6,8 @@ namespace SimpleRTTR
     {
     protected:
         //friendly accessors for protected function
-        inline TypeStorage& GetStorage();
-        inline void RegisterType(const TypeData& typeData);
+        inline TypeStorage& get_storage();
+        inline void register_type(const TypeData& typeData);
     };
 
     template<typename ClassType>
@@ -27,28 +27,28 @@ namespace SimpleRTTR
         inline ~TypeBinding();
 
         template <typename MetaKey, typename MetaValue>
-        inline TypeBinding& Meta(MetaKey key, MetaValue value);
+        inline TypeBinding& meta(MetaKey key, MetaValue value);
 
         template <typename MetaKey, typename MetaValue>
-        inline TypeBinding& Meta(MetaKey key, const std::initializer_list<MetaValue>& value);
+        inline TypeBinding& meta(MetaKey key, const std::initializer_list<MetaValue>& value);
 
         template <typename MemberType>
-        inline PropertyBinding<ClassType> Property(MemberType memberPtr, const stdrttr::string& name);
+        inline PropertyBinding<ClassType> property(MemberType memberPtr, const std::string& name);
 
         template <typename MethodType>
-        inline MethodBinding<ClassType> Method(MethodType methodPtr, const stdrttr::string& name);
+        inline MethodBinding<ClassType> method(MethodType methodPtr, const std::string& name);
 
         template <typename MethodType>
-        inline MethodBinding<ClassType> Method(MethodType methodPtr, const stdrttr::string& name, const std::initializer_list<stdrttr::string>& paramNames);
+        inline MethodBinding<ClassType> method(MethodType methodPtr, const std::string& name, const std::initializer_list<std::string>& paramNames);
 
-        inline MethodBinding<ClassType> Constructor();
+        inline MethodBinding<ClassType> constructor();
 
         // constructors are a bit annoying since they have limitations around them which prevent them from being introspected
         template<typename... ConstructorArgs>
-        inline MethodBinding<ClassType> Constructor(const std::initializer_list<stdrttr::string>& paramNames);
+        inline MethodBinding<ClassType> constructor(const std::initializer_list<std::string>& paramNames);
 
         template <typename EnumType>
-        inline ValueBinding<ClassType> Value(EnumType value, const stdrttr::string& name);
+        inline ValueBinding<ClassType> value(EnumType value, const std::string& name);
 
     protected:
         inline TypeBinding();
@@ -63,10 +63,10 @@ namespace SimpleRTTR
         inline PropertyBinding(class Property& property, TypeData& typeData);
 
         template <typename MetaKey, typename MetaValue>
-        inline PropertyBinding& Meta(MetaKey key, MetaValue value);
+        inline PropertyBinding& meta(MetaKey key, MetaValue value);
 
         template <typename MetaKey, typename MetaValue>
-        inline PropertyBinding& Meta(MetaKey key, const std::initializer_list<MetaValue>& value);
+        inline PropertyBinding& meta(MetaKey key, const std::initializer_list<MetaValue>& value);
 
     protected:
         class PropertyData& _PropertyData;
@@ -79,10 +79,10 @@ namespace SimpleRTTR
         inline MethodBinding(class Method& method, TypeData& typeData);
 
         template <typename MetaKey, typename MetaValue>
-        inline MethodBinding& Meta(MetaKey key, MetaValue value);
+        inline MethodBinding& meta(MetaKey key, MetaValue value);
 
         template <typename MetaKey, typename MetaValue>
-        inline MethodBinding& Meta(MetaKey key, const std::initializer_list<MetaValue>& value);
+        inline MethodBinding& meta(MetaKey key, const std::initializer_list<MetaValue>& value);
 
     protected:
         class Method& _Method;
@@ -95,10 +95,10 @@ namespace SimpleRTTR
         inline ValueBinding(class Value& value, TypeData& typeData);
 
         template <typename MetaKey, typename MetaValue>
-        inline ValueBinding& Meta(MetaKey key, MetaValue value);
+        inline ValueBinding& meta(MetaKey key, MetaValue value);
 
         template <typename MetaKey, typename MetaValue>
-        inline ValueBinding& Meta(MetaKey key, const std::initializer_list<MetaValue>& value);
+        inline ValueBinding& meta(MetaKey key, const std::initializer_list<MetaValue>& value);
 
     protected:
         class Value& _Value;

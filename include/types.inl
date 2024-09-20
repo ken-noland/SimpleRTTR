@@ -40,109 +40,109 @@ namespace SimpleRTTR
 
     bool Type::operator==(const Type& type) const
     {
-        return Equals(type);
+        return equals(type);
     }
 
     bool Type::operator!=(const Type& type) const
     {
-        return !Equals(type);
+        return !equals(type);
     }
 
-    bool Type::Equals(const Type& type) const
+    bool Type::equals(const Type& type) const
     {
-        return this == &type || _TypeData.Equals(type._TypeData);
+        return this == &type || _TypeData.equals(type._TypeData);
     }
 
     bool Type::operator==(const std::type_info& info) const
     {
-        return Equals(info);
+        return equals(info);
     }
 
     bool Type::operator!=(const std::type_info& info) const
     {
-        return !Equals(info);
+        return !equals(info);
     }
 
-    bool Type::Equals(const std::type_info& typeData) const
+    bool Type::equals(const std::type_info& typeData) const
     {
-        return GetTypeIndex() == typeData;
+        return type_index() == typeData;
     }
 
-    const Type& Type::InvalidType()
+    const Type& Type::invalid_type()
     {
-        static Type invalidType(TypeStorage::InvalidTypeData());
+        static Type invalidType(TypeStorage::invalid_type_data());
         return invalidType;
     }
 
-    const stdrttr::string& Type::Name() const
+    const std::string& Type::name() const
     {
-        return _TypeData.GetName();
+        return _TypeData.name();
     }
 
-    const stdrttr::string& Type::FullyQualifiedName() const
+    const std::string& Type::fully_qualified_name() const
     {
-        return _TypeData.GetFullyQualifiedName();
+        return _TypeData.fully_qualified_name();
     }
 
-    std::size_t Type::Size() const
+    std::size_t Type::size() const
     {
-        return _TypeData.GetSize();
+        return _TypeData.size();
     }
 
-    std::size_t Type::Hash() const
+    std::size_t Type::hash() const
     {
-        return _TypeData.Hash();
+        return _TypeData.hash();
     }
 
-    bool Type::HasFlag(TypeFlag flag) const
+    bool Type::has_flag(TypeFlag flag) const
     {
-        return _TypeData.HasFlag(flag);
+        return _TypeData.has_flag(flag);
     }
 
-    const std::type_index& Type::GetTypeIndex() const
+    const std::type_index& Type::type_index() const
     {
-        return _TypeData.GetTypeIndex();
+        return _TypeData.type_index();
     }
 
-    const ConstructorContainer& Type::Constructors() const
+    const ConstructorContainer& Type::constructors() const
     {
-        return _TypeData.GetConstructors();
+        return _TypeData.constructors();
     }
 
-    const PropertyContainer& Type::Properties() const
+    const PropertyContainer& Type::properties() const
     {
-        return _TypeData.GetProperties();
+        return _TypeData.properties();
     }
 
-    const MethodContainer& Type::Methods() const
+    const MethodContainer& Type::methods() const
     {
-        return _TypeData.GetMethods();
+        return _TypeData.methods();
     }
 
-    const ValueContainer& Type::Values() const
+    const Type::NamespaceList& Type::namespaces() const
     {
-        return _TypeData.GetValues();
+        return _TypeData.namespaces();
     }
 
-    const MetaContainer& Type::Meta() const
+    const Type::TemplateTypeList& Type::template_params() const
     {
-        return _TypeData.GetMetadata();
+        return _TypeData.template_params();
     }
 
-    const Type::NamespaceList& Type::Namespaces() const
+    const ValueContainer& Type::values() const
     {
-        return _TypeData.GetNamespaces();
+        return _TypeData.values();
     }
 
-    const Type::TemplateTypeList& Type::TemplateParams() const
+    const MetaContainer& Type::meta() const
     {
-        return _TypeData.GetTemplateParams();
+        return _TypeData.meta();
     }
 
     template<typename ClassType, typename Alloc, typename... Params>
-    ClassType* Type::CreateInstance(Params... params) const
+    ClassType* Type::create_instance(Params... params) const
     {
-        SIMPLERTTR_ASSERT(FullyQualifiedName() == TypeHelper<ClassType>().QualifiedName());   //TODO: check inheritance!
+        SIMPLERTTR_ASSERT(type_index() == typeid(ClassType));   //TODO: check inheritance!
         Alloc alloc; ClassType* pointer = alloc.allocate(1);
         //TODO: store the function pointer for the constructor/destructor and use that. It will help in cases
         //  where we don't have the headers to compile/link against.
@@ -150,9 +150,9 @@ namespace SimpleRTTR
     }
 
     template<typename... Params>
-    void* Type::CreateInstance(Params...) const
+    void* Type::create_instance(Params...) const
     {
-        //SIMPLERTTR_ASSERT(FullyQualifiedName() == TypeHelper<ClassType>().QualifiedName());   //TODO: check inheritance!
+        //SIMPLERTTR_ASSERT(fully_qualified_name() == TypeHelper<ClassType>().QualifiedName());   //TODO: check inheritance!
         //Alloc alloc; void* pointer = alloc.allocate(1);
         ////TODO: we really need to call the constructor here!
         //return pointer;   //TODO: use a user defined constructor(one that takes parameters)
@@ -160,34 +160,33 @@ namespace SimpleRTTR
     }
 
     template<typename ClassType, typename Alloc>
-    void Type::DestroyInstance(ClassType* ptr) const
+    void Type::destroy_instance(ClassType* ptr) const
     {
-        SIMPLERTTR_ASSERT(FullyQualifiedName() == TypeHelper<ClassType>().QualifiedName());   //TODO: check inheritance!
+        SIMPLERTTR_ASSERT(type_index() == typeid(ClassType));   //TODO: check inheritance!
         Alloc alloc; ptr->~ClassType();
         alloc.deallocate(ptr, 1);
     }
 
-    void Type::DestroyInstance(void* ptr) const
+    void Type::destroy_instance(void* ptr) const
     {
         (void)ptr;
         SIMPLERTTR_ASSERT(!"Not yet implemented");   //TODO: check inheritance!
     }
 
-    stdrttr::string Type::ToString(const Variant& var) const
+    std::string Type::to_string(const Variant& var) const
     {
-        return _TypeData.GetToStringFunction()(var);
+        return _TypeData.to_string_function()(var);
     }
 
-    const stdrttr::string& Type::GetFullyQualifiedName() const
+    const TypeFunctions& Type::type_functions() const
     {
-        return _TypeData.GetFullyQualifiedName();
+        return _TypeData.type_functions();
     }
 
     inline TypeData& _InternalGetTypeData(const Type& type)
     {
         return const_cast<TypeData&>(type._TypeData);
     }
-
 
     //--
     //Type Storage
@@ -199,140 +198,163 @@ namespace SimpleRTTR
     }
 
 
-    const TypeData& TypeStorage::InvalidTypeData()
+    const TypeData& TypeStorage::invalid_type_data()
     {
         static TypeData invalidTypeData("<invalid>","<invalid>",(std::size_t)-1, 0, typeid(void));
         return invalidTypeData;
     }
 
-    constexpr std::size_t TypeStorage::InvalidTypeSize()
+    constexpr std::size_t TypeStorage::invalid_type_size()
     {
         return (std::size_t)-1;
     }
 
     template<typename ClassType>
-    bool TypeStorage::HasTypeData() const
+    bool TypeStorage::has_type_data() const
     {
         TypeHelper<ClassType> typeHelper;
         return HasTypeData(typeHelper);
     }
 
-    bool TypeStorage::HasTypeData(const stdrttr::string& name, std::size_t size) const
+    bool TypeStorage::has_type_data(const std::type_info& typeInfo) const
     {
-        if (size != InvalidTypeSize())
+        return has_type_data(std::type_index(typeInfo));
+    }
+
+    bool TypeStorage::has_type_data(const std::type_index& typeInfo) const
+    {
+        return std::find_if(_Data.begin(), _Data.end(), [&](const TypePointer& typeData) {
+            return typeInfo == typeData->type_index();
+            }) != _Data.end();
+    }
+
+    bool TypeStorage::has_type_data(const std::string& name, std::size_t size) const
+    {
+        // search by name and size, and if not found, then attempt to find just by name
+        if (size != invalid_type_size())
         {
             return std::find_if(_Data.begin(), _Data.end(), [&](const TypePointer& typeData) {
-                return size == typeData->GetSize() && name == typeData->GetName();
+                return size == typeData->size() && name == typeData->name();
                 }) != _Data.end();
         }
         else
         {
             return std::find_if(_Data.begin(), _Data.end(), [&](const TypePointer& typeData) {
-                return name == typeData->GetName();
+                return name == typeData->name();
                 }) != _Data.end();
         }
     }
 
-    inline bool TypeStorage::HasTypeData(const TypeHelperBase& typeHelper) const
+    bool TypeStorage::has_type_data(const TypeHelperBase& typeHelper) const
     {
         return std::find_if(_Data.begin(), _Data.end(), [&](const TypePointer& typeData) {
-            return typeHelper.Size() == typeData->GetSize() && typeHelper.QualifiedName() == typeData->GetFullyQualifiedName();
+            return typeHelper.type_index() == typeData->type_index();
             }) != _Data.end();
     }
 
     template<typename ClassType>
-    const TypeData& TypeStorage::GetTypeData() const
+    const TypeData& TypeStorage::get_type_data() const
     {
-        return GetTypeData(typeid(ClassType));
+        return get_type_data(typeid(ClassType));
     }
 
-    const TypeData& TypeStorage::GetTypeData(const std::type_index& typeIndex) const
+    const TypeData& TypeStorage::get_type_data(const std::type_info& typeInfo) const
+    {
+        return get_type_data(std::type_index(typeInfo));
+    }
+
+    const TypeData& TypeStorage::get_type_data(const std::type_index& typeIndex) const
     {
         TypeList::const_iterator found = std::find_if(_Data.begin(), _Data.end(), [&](const TypePointer& typeData) {
-            return typeIndex == typeData->GetTypeIndex();
+            return typeIndex == typeData->type_index();
             });
-        if(found == _Data.end()) { return InvalidTypeData(); }
+        if(found == _Data.end()) { return invalid_type_data(); }
         return *(*found).get();
     }
 
-    const TypeData& TypeStorage::GetTypeData(const stdrttr::string& name, std::size_t size) const
+    const TypeData& TypeStorage::get_type_data(const std::string& name, std::size_t size) const
     {
+        //TODO: yeah, this funciton is all over the place. Searching by name and fully_qualified_name is just... wrong.
+        //  instead, users should iterate over the types themselves using std::find_if rather then relying on this function.
+        // 
+        //  I've deprecated the function in TypeManager for now.
         TypeList::const_iterator found = _Data.end();
-        if (size != InvalidTypeSize())
+        if (size != invalid_type_size())
         {
             found = std::find_if(_Data.begin(), _Data.end(), [&](const TypePointer& typeData) {
-                return size == typeData->GetSize() && (name.compare(typeData->GetFullyQualifiedName()) == 0 || name.compare(typeData->GetName()) == 0);
+                return size == typeData->size() && (name.compare(typeData->fully_qualified_name()) == 0 || name.compare(typeData->name()) == 0);
                 });
         }
         else
         {
             found = std::find_if(_Data.begin(), _Data.end(), [&](const TypePointer& typeData) {
-                return name.compare(typeData->GetFullyQualifiedName()) == 0 || name.compare(typeData->GetName()) == 0;
+                return name.compare(typeData->fully_qualified_name()) == 0 || name.compare(typeData->name()) == 0;
                 });
         }
-        if(found == _Data.end()) { return InvalidTypeData(); }
+        if(found == _Data.end()) { return invalid_type_data(); }
         return *(*found).get();
     }
 
-    const TypeData& TypeStorage::GetTypeData(const TypeHelperBase& typeHelper) const
+    const TypeData& TypeStorage::get_type_data(const TypeHelperBase& typeHelper) const
     {
         TypeList::const_iterator found = std::find_if(_Data.begin(), _Data.end(), [&](const std::unique_ptr<TypeData>& typeData) {
-            return typeHelper.QualifiedName() == typeData->GetFullyQualifiedName();
+            return typeHelper.type_index() == typeData->type_index();
             });
-        if (found == _Data.end()) { return InvalidTypeData(); }
+        if (found == _Data.end()) { return invalid_type_data(); }
         return *(*found).get();
     }
 
-    TypeData& TypeStorage::GetOrUpdateTypeData(const TypeHelperBase& typeHelper, bool addedByUser)
+    TypeData& TypeStorage::get_or_update_type_data(const TypeHelperBase& typeHelper, bool addedByUser)
     {
         TypeList::iterator typeIter = std::find_if(_Data.begin(), _Data.end(), [&](const std::unique_ptr<TypeData>& typeData) {
-            return typeHelper.QualifiedName() == typeData->GetFullyQualifiedName();
+            return typeHelper.type_index() == typeData->type_index();
             });
 
         TypeData* type = (*typeIter).get();
-        if (!type->IsRegisteredByUser() && addedByUser)
+        if (!type->is_registered_by_user() && addedByUser)
         {
             //well, we have a type that was auto-registered before, but now is being added by the user. Easiest way to 
             // deal with it is to remove the entry and simply re-register it. 
             _Data.erase(typeIter);
-            return RegisterType(typeHelper, addedByUser);
+            return register_type(typeHelper, addedByUser);
         }
         return *type;
     }
 
 
     template<typename ClassType>
-    TypeData& TypeStorage::GetOrCreateType(bool addedByUser)
+    TypeData& TypeStorage::get_or_create_type(bool addedByUser)
     {
         TypeHelper<ClassType> typeHelper;
-        if (HasTypeData(typeHelper))
+        if (has_type_data(typeHelper))
         {
-            return GetOrUpdateTypeData(typeHelper, addedByUser);
+            return get_or_update_type_data(typeHelper, addedByUser);
         }
         else
         {
-            return RegisterType(typeHelper, addedByUser);
+            return register_type(typeHelper, addedByUser);
         }
     }
 
-    TypeData& TypeStorage::RegisterType(const TypeHelperBase& typeHelper, bool addedByUser)
+    TypeData& TypeStorage::register_type(const TypeHelperBase& typeHelper, bool addedByUser)
     {
         TypeData data(
-            typeHelper.Name(),
-            typeHelper.QualifiedName(),
-            typeHelper.Size(),
-            typeHelper.Flags(),
-            typeHelper.TypeIndex(),
+            typeHelper.name(),
+            typeHelper.fully_qualified_name(),
+            typeHelper.size(),
+            typeHelper.flags(),
+            typeHelper.type_index(),
             addedByUser,
-            typeHelper.Namespaces(),
-            typeHelper.TemplateParams(),
-            typeHelper.ToStringFunc()
+            typeHelper.namespaces(),
+            typeHelper.template_params(),
+            typeHelper.type_functions(),
+            typeHelper.to_string_func()
         );
 
-        return RegisterType(data);
+        return register_type(data);
     }
 
-    TypeData& TypeStorage::RegisterType(const TypeData& typeData)
+    TypeData& TypeStorage::register_type(const TypeData& typeData)
     {
         _Data.push_back(std::make_unique<TypeData>(typeData));
 
@@ -344,14 +366,9 @@ namespace SimpleRTTR
         return newTypeData;
     }
 
-    TypeManager& Types() 
-    { 
-        return TypeManager::GetInstance(); 
-    }
-
     TypeManager::TypeManager()
         :
-        _TypeDataStorage([this](TypeData& typeData) { OnTypeRegistered(typeData); })
+        _TypeDataStorage([this](TypeData& typeData) { on_type_registered(typeData); })
     {
 
     }
@@ -361,119 +378,134 @@ namespace SimpleRTTR
 
     }
 
-    TypeManager& TypeManager::GetInstance()
+    TypeManager& TypeManager::instance()
     {
         static TypeManager instance;
         return instance;
     }
 
     template<class ClassType>
-    bool TypeManager::HasType() const
+    bool TypeManager::has_type() const
     {
-        TypeHelper<ClassType> helper;
-        return HasType(helper);
+        return get_storage().has_type_data(typeid(ClassType));
     }
 
-    bool TypeManager::HasType(const stdrttr::string& name, std::size_t size) const
+    bool TypeManager::has_type(const std::type_info& typeInfo) const
     {
-        return GetStorage().HasTypeData(name, size);
+        return get_storage().has_type_data(typeInfo);
     }
 
-    bool TypeManager::HasType(const TypeHelperBase& typeHelper) const
+    bool TypeManager::has_type(const std::type_index& typeIndex) const
     {
-        return GetStorage().HasTypeData(typeHelper);
+        return get_storage().has_type_data(typeIndex);
     }
 
-    template<class ClassType>
-    const Type TypeManager::GetType() const
+    bool TypeManager::has_type(const std::string& name, std::size_t size) const
     {
-        return GetStorage().GetTypeData<ClassType>();
+        return get_storage().has_type_data(name, size);
     }
 
-    const Type TypeManager::GetType(const std::type_info& typeInfo) const
+    bool TypeManager::has_type(const TypeHelperBase& typeHelper) const
     {
-        return GetStorage().GetTypeData(typeInfo);
-    }
-
-    const Type TypeManager::GetType(const stdrttr::string& name, std::size_t size) const
-    {
-        return GetStorage().GetTypeData(name, size);
-    }
-
-    const Type TypeManager::GetType(const TypeHelperBase& typeHelper) const
-    {
-        return GetStorage().GetTypeData(typeHelper);
+        return get_storage().has_type_data(typeHelper.type_index());
     }
 
     template<class ClassType>
-    const Type TypeManager::GetOrCreateType()
+    const Type TypeManager::get_type() const
+    {
+        return get_storage().get_type_data<ClassType>();
+    }
+
+    const Type TypeManager::get_type(const std::type_info& typeInfo) const
+    {
+        return get_storage().get_type_data(typeInfo);
+    }
+
+    const Type TypeManager::get_type(const std::type_index& typeIndex) const
+    {
+        return get_storage().get_type_data(typeIndex);
+    }
+
+    const Type TypeManager::get_type(const std::string& name, std::size_t size) const
+    {
+        return get_storage().get_type_data(name, size);
+    }
+
+    const Type TypeManager::get_type(const TypeHelperBase& typeHelper) const
+    {
+        return get_storage().get_type_data(typeHelper);
+    }
+
+    template<class ClassType>
+    const Type TypeManager::get_or_create_type()
     {
         TypeHelper<ClassType> helper;
-        if (HasType(helper))
+        if (has_type(helper))
         {
-            return GetType(helper);
+            return get_type(helper);
         }
         else
         {
-            Type type(GetStorage().GetOrCreateType<ClassType>(false));
+            Type type(get_storage().get_or_create_type<ClassType>(false));
             return type;
         }
     }
-
-    TypeManager::TypeIteratorProxy TypeManager::Begin()
+        
+    TypeManager::iterator TypeManager::begin()
     {
-        return TypeIteratorProxy(GetStorage().Begin());
+        return get_storage().begin();
     }
 
-    TypeManager::ConstTypeIteratorProxy TypeManager::Begin() const
+    TypeManager::const_iterator TypeManager::begin() const
     {
-        return ConstTypeIteratorProxy(GetStorage().Begin());
+        return get_storage().begin();
     }
 
-    TypeManager::TypeIteratorProxy TypeManager::End()
+    TypeManager::iterator TypeManager::end()
     {
-        return TypeIteratorProxy(GetStorage().End());
+        return get_storage().end();
     }
 
-    TypeManager::ConstTypeIteratorProxy TypeManager::End() const
+    TypeManager::const_iterator TypeManager::end() const
     {
-        return ConstTypeIteratorProxy(GetStorage().End());
+        return get_storage().end();
     }
 
-    void TypeManager::BeginRegistration(const char* filename)
+
+    void TypeManager::begin_registration(const char* filename)
     {
         Meta source_filename("source_filename", filename);
         _UserTypeMetadata.push_back(source_filename);
     }
 
-    void TypeManager::EndRegistration()
+    void TypeManager::end_registration()
     {
         _UserTypeMetadata.clear();
     }
 
-    TypeStorage& TypeManager::GetStorage()
+    TypeStorage& TypeManager::get_storage()
     {
         return _TypeDataStorage;
     }
 
-    const TypeStorage& TypeManager::GetStorage() const
+    const TypeStorage& TypeManager::get_storage() const
     {
         return _TypeDataStorage;
     }
 
-    void TypeManager::RegisterType(const TypeData& data)
+    void TypeManager::register_type(const TypeData& data)
     {
-        GetStorage().RegisterType(data);
+        get_storage().register_type(data);
     }
 
-    void TypeManager::OnTypeRegistered(TypeData& data)
+    void TypeManager::on_type_registered(TypeData& data)
     {
-        if (data.IsRegisteredByUser())
+        if (data.is_registered_by_user())
         {
             //copy over the metadata in the user type meta section
             for (const Meta& meta : _UserTypeMetadata)
             {
-                _InternalGetMetadata(data).Add(meta);
+                _InternalGetMetadata(data).add(meta);
             }
         }
     }

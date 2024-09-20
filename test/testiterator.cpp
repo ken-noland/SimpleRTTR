@@ -31,40 +31,40 @@ using namespace SimpleRTTR;
 
 SIMPLERTTR
 {
-    Registration().Type<TestIterator::SimpleRTTRTestIterator<int>>()
-        .Meta("This is a key", "and this is the value")
-        .Meta(42, "here is an int as a key")
-        .Meta("here is an int as a value", 32)
-        .Meta("this should resolve to std::vector<int>", { 1, 2, 3, 4 })
-        .Meta("and here's a function pointer", &TestIterator::SimpleRTTRTestIterator<int>::someFunc1)
+    registration().type<TestIterator::SimpleRTTRTestIterator<int>>()
+        .meta("This is a key", "and this is the value")
+        .meta(42, "here is an int as a key")
+        .meta("here is an int as a value", 32)
+        .meta("this should resolve to std::vector<int>", { 1, 2, 3, 4 })
+        .meta("and here's a function pointer", &TestIterator::SimpleRTTRTestIterator<int>::someFunc1)
 
-        .Property(&TestIterator::SimpleRTTRTestIterator<int>::property1, "property1")
-            .Meta("This is a key", "and this is the value")
-            .Meta(42, "here is an int as a key")
-            .Meta("here is an int as a value", 32)
-            .Meta("this should resolve to std::vector<int>", { 1, 2, 3, 4 })
-        .Property(&TestIterator::SimpleRTTRTestIterator<int>::property2, "property2")
-        .Property(&TestIterator::SimpleRTTRTestIterator<int>::property3, "property3")
-        .Property(&TestIterator::SimpleRTTRTestIterator<int>::property4, "property4")
-        .Method(&TestIterator::SimpleRTTRTestIterator<int>::someFunc1, "someFunc1", {"p1", "p2"})
-            .Meta("description", "this function does something")
-        .Method(&TestIterator::SimpleRTTRTestIterator<int>::someFunc2, "someFunc2", {"p1", "p2"})
-            .Meta("description", "this function does nothing")
-        .Method(&TestIterator::SimpleRTTRTestIterator<int>::someFunc3, "someFunc3", {"p1", "p2"})
-            .Meta("description", "this function does everything")
+        .property(&TestIterator::SimpleRTTRTestIterator<int>::property1, "property1")
+            .meta("This is a key", "and this is the value")
+            .meta(42, "here is an int as a key")
+            .meta("here is an int as a value", 32)
+            .meta("this should resolve to std::vector<int>", { 1, 2, 3, 4 })
+        .property(&TestIterator::SimpleRTTRTestIterator<int>::property2, "property2")
+        .property(&TestIterator::SimpleRTTRTestIterator<int>::property3, "property3")
+        .property(&TestIterator::SimpleRTTRTestIterator<int>::property4, "property4")
+        .method(&TestIterator::SimpleRTTRTestIterator<int>::someFunc1, "someFunc1", {"p1", "p2"})
+            .meta("description", "this function does something")
+        .method(&TestIterator::SimpleRTTRTestIterator<int>::someFunc2, "someFunc2", {"p1", "p2"})
+            .meta("description", "this function does nothing")
+        .method(&TestIterator::SimpleRTTRTestIterator<int>::someFunc3, "someFunc3", {"p1", "p2"})
+            .meta("description", "this function does everything")
         ;
 
-    Registration().Type<TestIterator::SimpleRTTRTestIterator<int>::Enum>()
-        .Value(TestIterator::SimpleRTTRTestIterator<int>::Enum::Value1, "Value1")
-        .Value(TestIterator::SimpleRTTRTestIterator<int>::Enum::Value2, "Value2")
-        .Value(TestIterator::SimpleRTTRTestIterator<int>::Enum::Value3, "Value3");
+    registration().type<TestIterator::SimpleRTTRTestIterator<int>::Enum>()
+        .value(TestIterator::SimpleRTTRTestIterator<int>::Enum::Value1, "Value1")
+        .value(TestIterator::SimpleRTTRTestIterator<int>::Enum::Value2, "Value2")
+        .value(TestIterator::SimpleRTTRTestIterator<int>::Enum::Value3, "Value3");
 }
 
 TEST(RTTRIterator, TestAllTypes)
 {
     // iterate over all types, and just check that there are more than 2 types
     int count = 0;
-    for (Type type : Types())
+    for (Type type : types())
     {
         count++;
     }
@@ -74,11 +74,11 @@ TEST(RTTRIterator, TestAllTypes)
 
 TEST(RTTRIterator, TestTypeMeta)
 {
-    Type testIteratorType = Types().GetType<TestIterator::SimpleRTTRTestIterator<int>>();
-    EXPECT_NE(testIteratorType, Type::InvalidType());
+    Type testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
+    EXPECT_NE(testIteratorType, Type::invalid_type());
 
     int count = 0;
-    for (const Meta& meta : testIteratorType.Meta())
+    for (const Meta& meta : testIteratorType.meta())
     {
         count++;
     }
@@ -90,11 +90,11 @@ TEST(RTTRIterator, TestTypeMeta)
 
 TEST(RTTRIterator, TestTypeProperties)
 {
-    Type testIteratorType = Types().GetType<TestIterator::SimpleRTTRTestIterator<int>>();
-    EXPECT_NE(testIteratorType, Type::InvalidType());
+    Type testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
+    EXPECT_NE(testIteratorType, Type::invalid_type());
 
     int count = 0;
-    for(const Property& property : testIteratorType.Properties())
+    for(const Property& property : testIteratorType.properties())
     {
         count++;
     }
@@ -104,14 +104,14 @@ TEST(RTTRIterator, TestTypeProperties)
 
 TEST(RTTRIterator, TestPropertiesMeta)
 {
-    Type testIteratorType = Types().GetType<TestIterator::SimpleRTTRTestIterator<int>>();
-    EXPECT_NE(testIteratorType, Type::InvalidType());
+    Type testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
+    EXPECT_NE(testIteratorType, Type::invalid_type());
 
-    Property prop = testIteratorType.Properties().Get("property1");
-    ASSERT_NE(prop, Property::InvalidProperty());
+    Property prop = testIteratorType.properties().get("property1");
+    ASSERT_NE(prop, Property::invalid_property());
 
     int count = 0;
-    for (const Meta& meta : prop.Meta())
+    for (const Meta& meta : prop.meta())
     {
         count++;
     }
@@ -121,11 +121,11 @@ TEST(RTTRIterator, TestPropertiesMeta)
 
 TEST(RTTRIterator, TestTypeMethods)
 {
-    Type testIteratorType = Types().GetType<TestIterator::SimpleRTTRTestIterator<int>>();
-    EXPECT_NE(testIteratorType, Type::InvalidType());
+    Type testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
+    EXPECT_NE(testIteratorType, Type::invalid_type());
 
     int count = 0;
-    for (const Method& method : testIteratorType.Methods())
+    for (const Method& method : testIteratorType.methods())
     {
         count++;
     }
@@ -135,14 +135,14 @@ TEST(RTTRIterator, TestTypeMethods)
 
 TEST(RTTRIterator, TestMethodsMeta)
 {
-    const Type& testIteratorType = Types().GetType<TestIterator::SimpleRTTRTestIterator<int>>();
-    EXPECT_NE(testIteratorType, Type::InvalidType());
+    const Type& testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
+    EXPECT_NE(testIteratorType, Type::invalid_type());
 
-    const Method& method = testIteratorType.Methods().Get("someFunc1");
-    ASSERT_NE(method, Method::InvalidMethod());
+    const Method& method = testIteratorType.methods().get("someFunc1");
+    ASSERT_NE(method, Method::invalid_method());
 
     int count = 0;
-    for (const Meta& meta : method.Meta())
+    for (const Meta& meta : method.meta())
     {
         count++;
     }
@@ -152,14 +152,14 @@ TEST(RTTRIterator, TestMethodsMeta)
 
 TEST(RTTRIterator, TestMethodsParameters)
 {
-    const Type& testIteratorType = Types().GetType<TestIterator::SimpleRTTRTestIterator<int>>();
-    EXPECT_NE(testIteratorType, Type::InvalidType());
+    const Type& testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
+    EXPECT_NE(testIteratorType, Type::invalid_type());
 
-    const Method& method = testIteratorType.Methods().Get("someFunc1");
-    ASSERT_NE(method, Method::InvalidMethod());
+    const Method& method = testIteratorType.methods().get("someFunc1");
+    ASSERT_NE(method, Method::invalid_method());
 
     int count = 0;
-    for (const Parameter& param : method.Parameters())
+    for (const Parameter& param : method.parameters())
     {
         count++;
     }
@@ -169,11 +169,11 @@ TEST(RTTRIterator, TestMethodsParameters)
 
 TEST(RTTRIterator, TestNamespaces)
 {
-    const Type& testIteratorType = Types().GetType<TestIterator::SimpleRTTRTestIterator<int>>();
-    EXPECT_NE(testIteratorType, Type::InvalidType());
+    const Type& testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
+    EXPECT_NE(testIteratorType, Type::invalid_type());
 
     int count = 0;
-    for (const std::string& namesp : testIteratorType.Namespaces())
+    for (const std::string& namesp : testIteratorType.namespaces())
     {
         count++;
         EXPECT_EQ(namesp, "TestIterator");
@@ -183,11 +183,11 @@ TEST(RTTRIterator, TestNamespaces)
 
 TEST(RTTRIterator, TestTemplateParameters)
 {
-    const Type& testIteratorType = Types().GetType<TestIterator::SimpleRTTRTestIterator<int>>();
-    EXPECT_NE(testIteratorType, Type::InvalidType());
+    const Type& testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
+    EXPECT_NE(testIteratorType, Type::invalid_type());
 
     int count = 0;
-    for(const TypeReference& typeRef : testIteratorType.TemplateParams())
+    for(const TypeReference& typeRef : testIteratorType.template_params())
     {
         count++;
     }

@@ -4,13 +4,13 @@ using namespace Test;
 
 SIMPLERTTR
 {
-    SimpleRTTR::Registration().Type<Point>()
-        .Meta("description", "A simple point class")
-        .Constructor()
-        .Constructor<int, int>({"X", "Y"})
+    SimpleRTTR::registration().type<Point>()
+        .meta("description", "A simple point class")
+        .constructor()
+        .constructor<int, int>({"X", "Y"})
 
-        .Property(&Point::X, "X")
-            .Meta("description", "The x coordinate of the point")
-        .Property(&Point::Y, "Y")
-            .Meta("description", "The y coordinate of the point");
+        .property(&Point::X, "X")
+            .meta("description", "The x coordinate of the point")
+        .property(&Point::Y, "Y")
+            .meta("description", "The y coordinate of the point");
 }

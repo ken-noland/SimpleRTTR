@@ -11,13 +11,13 @@ namespace SimpleRTTR
         inline bool operator==(const Type& type) const;
         inline bool operator==(const TypeReference& type) const;
 
-        inline class Type Type() const;
+        inline class Type type() const;
+        inline const std::type_index& type_index() const;
 
-        inline const stdrttr::string& GetFullyQualifiedName() const;
-        inline std::size_t Hash() const;
+        inline const std::string& fully_qualified_name() const;
+        inline std::size_t hash() const;
 
     protected:
-        //TODO: Instead of a string, use a hash of the whole data type
-        stdrttr::string _FullyQualifiedName;
+        std::type_index _TypeIndex;
     };
 }

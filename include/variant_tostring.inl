@@ -1,45 +1,45 @@
 namespace SimpleRTTR
 {
-    template<typename VariantType> inline stdrttr::string VariantToString(const Variant& var)
+    template<typename VariantType> inline std::string VariantToString(const Variant& var)
     {
         SIMPLERTTR_ASSERT(!"Not yet implemented");
-        return stdrttr::string();
+        return std::string();
     }
 
-    template<> inline stdrttr::string VariantToString<char>(const Variant& var)
+    template<> inline std::string VariantToString<char>(const Variant& var)
     {
-        return stdrttr::string(1, var.GetAs<char>());
+        return std::string(1, var.get_as<char>());
     }
 
-    template<> inline stdrttr::string VariantToString<short>(const Variant& var)
+    template<> inline std::string VariantToString<short>(const Variant& var)
     {
-        return stdrttr::string(std::to_string(var.GetAs<short>()));
+        return std::string(std::to_string(var.get_as<short>()));
     }
 
-    template<> inline stdrttr::string VariantToString<int>(const Variant& var)
+    template<> inline std::string VariantToString<int>(const Variant& var)
     {
-        return stdrttr::string(std::to_string(var.GetAs<int>()));
+        return std::string(std::to_string(var.get_as<int>()));
     }
 
-    template<> inline stdrttr::string VariantToString<const char*>(const Variant& var)
+    template<> inline std::string VariantToString<const char*>(const Variant& var)
     {
-        return stdrttr::string(var.GetAs<const char*>());
+        return std::string(var.get_as<const char*>());
     }
 
     template<template <typename... > class Tmpl, typename ...Args>
     class SimpleContainerVariantToStringHelper { 
     public:
-        inline stdrttr::string ToString(const Variant& var) const
+        inline std::string to_string(const Variant& var) const
         {
             using container_type = Tmpl<Args...>;
             using iterator_type = typename container_type::const_iterator;
             using value_type = typename container_type::value_type;
 
-            stdrttr::stringstream stringStream;
+            std::stringstream stringStream;
 
             stringStream << "{ ";
 
-            container_type vec = var.GetAs<container_type>();
+            container_type vec = var.get_as<container_type>();
             iterator_type iter = vec.begin();
             while (true)
             {
@@ -64,20 +64,20 @@ namespace SimpleRTTR
     template<template <typename... > class Tmpl, typename ...Args>
     class ContainerVariantToStringHelper {
     public:
-        inline stdrttr::string ToString(const Variant& var) const
+        inline std::string to_string(const Variant& var) const
         {
             SIMPLERTTR_ASSERT(!"Not yet implemented");
-            return stdrttr::string();
+            return std::string();
         }
     };
 
     template<typename ...Args>
     class ContainerVariantToStringHelper<std::vector, Args...> {
     public:
-        inline stdrttr::string ToString(const Variant& var) const
+        inline std::string to_string(const Variant& var) const
         {
             SimpleContainerVariantToStringHelper<std::vector, Args...> helper;
-            return helper.ToString(var);
+            return helper.to_string(var);
         }
     };
 
@@ -85,18 +85,18 @@ namespace SimpleRTTR
     template<typename ...Args>
     class ContainerVariantToStringHelper<std::initializer_list, Args...> {
     public:
-        inline stdrttr::string ToString(const Variant& var) const
+        inline std::string to_string(const Variant& var) const
         {
             SimpleContainerVariantToStringHelper<std::initializer_list, Args...> helper;
-            return helper.ToString(var);
+            return helper.to_string(var);
         }
     };
 
     template<template <typename... > class Tmpl, typename ...Args> 
-    inline stdrttr::string VariantToString(const Variant& var)
+    inline std::string VariantToString(const Variant& var)
     {
         ContainerVariantToStringHelper<Tmpl, Args...> helper;
-        return helper.ToString(var);
+        return helper.to_string(var);
     }
 }
 

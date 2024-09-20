@@ -22,31 +22,31 @@ enum class Direction : std::uint8_t //scoped enum
 
 SIMPLERTTR
 {
-    Registration().Type<Color>()
-        .Meta("description", "specific photon wavelengths of the visible spectrum")
-        .Value(RED, "RED")
-            .Meta("description", "it's RED")
-        .Value(GREEN, "GREEN")
-            .Meta("description", "it's GREEN")
-        .Value(BLUE, "BLUE")
-            .Meta("description", "it's BLUE")
-        .Value(ALPHA, "ALPHA")
-            .Meta("description", "it's ALPHA");
+    registration().type<Color>()
+        .meta("description", "specific photon wavelengths of the visible spectrum")
+        .value(RED, "RED")
+            .meta("description", "it's RED")
+        .value(GREEN, "GREEN")
+            .meta("description", "it's GREEN")
+        .value(BLUE, "BLUE")
+            .meta("description", "it's BLUE")
+        .value(ALPHA, "ALPHA")
+            .meta("description", "it's ALPHA");
 }
 
 TEST(RTTREnum, TestBasicEnum)
 {
-    Type enumType = Types().GetType<Color>();
+    Type enumType = types().get_type<Color>();
 
-    EXPECT_EQ(enumType.Name(), "Color");
-    EXPECT_TRUE(enumType.HasFlag(TypeFlag::IsEnum));
+    EXPECT_EQ(enumType.name(), "Color");
+    EXPECT_TRUE(enumType.has_flag(TypeFlag::IsEnum));
 
-    auto exists = [enumType](const stdrttr::string name) 
+    auto exists = [enumType](const std::string name) 
         { 
-            return std::find_if(enumType.Values().begin(), enumType.Values().end(), [name](const Value& value) 
+            return std::find_if(enumType.values().begin(), enumType.values().end(), [name](const Value& value) 
                 { 
-                    return value.Name() == name; 
-                }) != enumType.Values().end(); 
+                    return value.name() == name; 
+                }) != enumType.values().end(); 
         };
 
     EXPECT_EQ(exists("RED"), true);
@@ -54,12 +54,12 @@ TEST(RTTREnum, TestBasicEnum)
     EXPECT_EQ(exists("BLUE"), true);
     EXPECT_EQ(exists("ALPHA"), true);
 
-    auto value = [enumType](const stdrttr::string name) 
+    auto value = [enumType](const std::string name) 
         { 
-        return std::find_if(enumType.Values().begin(), enumType.Values().end(), [name](const Value& value) 
+        return std::find_if(enumType.values().begin(), enumType.values().end(), [name](const Value& value) 
             { 
-                return value.Name() == name; 
-            })->Variant().GetAs<Color>(); 
+                return value.name() == name; 
+            })->value().get_as<Color>(); 
         };
 
     EXPECT_EQ(value("RED"), Color::RED);
@@ -70,25 +70,25 @@ TEST(RTTREnum, TestBasicEnum)
 
 TEST(RTTREnum, TestEnumValueDoesNotExist)
 {
-    Type enumType = Types().GetType<Color>();
+    Type enumType = types().get_type<Color>();
 
-    EXPECT_EQ(enumType.Name(), "Color");
+    EXPECT_EQ(enumType.name(), "Color");
 
-    EXPECT_EQ(std::find_if(enumType.Values().begin(), enumType.Values().end(), [](const Value& value) { return value.Name() == "X"; }), enumType.Values().end());
+    EXPECT_EQ(std::find_if(enumType.values().begin(), enumType.values().end(), [](const Value& value) { return value.name() == "X"; }), enumType.values().end());
 }
 
 TEST(RTTREnum, TestEnumConvertedToInt)
 {
-    Type enumType = Types().GetType<Color>();
+    Type enumType = types().get_type<Color>();
 
-    EXPECT_EQ(enumType.Name(), "Color");
+    EXPECT_EQ(enumType.name(), "Color");
 
-    auto exists = [enumType](const stdrttr::string name) 
+    auto exists = [enumType](const std::string name) 
         { 
-            return std::find_if(enumType.Values().begin(), enumType.Values().end(), [name](const Value& value) 
+            return std::find_if(enumType.values().begin(), enumType.values().end(), [name](const Value& value) 
                 { 
-                    return value.Name() == name; 
-                }) != enumType.Values().end(); 
+                    return value.name() == name; 
+                }) != enumType.values().end(); 
         };
 
     EXPECT_EQ(exists("RED"), true);
@@ -96,12 +96,12 @@ TEST(RTTREnum, TestEnumConvertedToInt)
     EXPECT_EQ(exists("BLUE"), true);
     EXPECT_EQ(exists("ALPHA"), true);
 
-    auto value = [enumType](const stdrttr::string name) 
+    auto value = [enumType](const std::string name) 
         { 
-        return std::find_if(enumType.Values().begin(), enumType.Values().end(), [name](const Value& value) 
+        return std::find_if(enumType.values().begin(), enumType.values().end(), [name](const Value& value) 
             { 
-                return value.Name() == name; 
-            })->Variant().GetAs<int>(); 
+                return value.name() == name; 
+            })->value().get_as<int>(); 
         };
 
     EXPECT_EQ(value("RED"), Color::RED);
