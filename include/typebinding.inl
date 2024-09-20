@@ -242,7 +242,7 @@ namespace SimpleRTTR
     inline ValueBinding<ClassType>& ValueBinding<ClassType>::meta(MetaKey key, const std::initializer_list<MetaValue>& value)
     {
         //need to copy the contents of value to vector since initializer_list only stores stack pointers
-        _InternalGetMetadata(_Value).add(CLASS_SPECIFIER Meta(key, std::vector<MetaValue>(value)));
+        _InternalGetMetadata(_Value).add(SimpleRTTR::Meta(key, std::vector<MetaValue>(value)));
         return *this;
     }
 }
