@@ -208,7 +208,7 @@ namespace SimpleRTTR
             if (std::is_trivial_v<T>) flags |= (uint64_t)TypeFlag::IsTrivial;
             if (std::is_polymorphic_v<T>) flags |= (uint64_t)TypeFlag::IsPolymorphic;
             if (std::is_standard_layout_v<T>) flags |= (uint64_t)TypeFlag::IsStandardLayout;
-            if (std::is_pod_v<T>) flags |= (uint64_t)TypeFlag::IsPOD;
+//            if (std::is_pod_v<T>) flags |= (uint64_t)TypeFlag::IsPOD;
             if (std::is_aggregate_v<T>) flags |= (uint64_t)TypeFlag::IsAggregate;
 //            if (std::is_literal_type_v<T>) flags |= (uint64_t)TypeFlag::IsLiteral;
             if (std::is_signed_v<T>) flags |= (uint64_t)TypeFlag::IsSigned;
