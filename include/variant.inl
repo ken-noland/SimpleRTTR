@@ -110,16 +110,16 @@ namespace SimpleRTTR
             const ObjectType* storedPointer = reinterpret_cast<const ObjectType*>(&_storage);
             return *storedPointer == var;
         }
-        // Check if the type is an array and decay it to a pointer for comparison
         else if constexpr (std::is_array_v<ObjectType>)
         {
             using DecayedType = std::decay_t<ObjectType>;  // Decay array to pointer
-            return _equalFunc(&_storage, &(DecayedType)var);
+            DecayedType temp = const_cast<DecayedType>(&var[0]); // Explicitly decay array to pointer
+            return _equalFunc(&_storage, &temp); // Compare using the address of temp
         }
         else
         {
             // Ensure that the types are the same before comparing
-            if(!(_typeRef.type_index() == typeid(ObjectType)))
+            if(!(_typeRef.type_index() == typeid(ObjectType)))  //TODO: we probably want to check if the types can be converted
             {
                 return false;
             }

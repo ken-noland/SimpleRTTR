@@ -60,11 +60,11 @@ TEST(RTTRMeta, TestMetaStringKeyStringValue)
     const Meta& meta = type.meta().get("This is a key");
     ASSERT_NE(meta, Meta::invalid_meta());
 
-    EXPECT_EQ(meta.key().type().name(), "char const *");
+    EXPECT_EQ(meta.key().type().name(), "char const*");
     EXPECT_EQ(meta.key().type(), types().get_type<char const *>());
     ASSERT_NO_THROW(stringKey = meta.key().get_as<const char*>());
 
-    EXPECT_EQ(meta.value().type().name(), "char const *");
+    EXPECT_EQ(meta.value().type().name(), "char const*");
     EXPECT_EQ(meta.value().type(), types().get_type<char const*>());
     ASSERT_NO_THROW(stringValue = meta.value().get_as<const char*>());
 
@@ -86,7 +86,7 @@ TEST(RTTRMeta, TestMetaIntKeyStringValue)
     EXPECT_EQ(meta.key().type(), types().get_type<int>());
     ASSERT_NO_THROW(intKey = meta.key().get_as<int>());
 
-    EXPECT_EQ(meta.value().type().name(), "char const *");
+    EXPECT_EQ(meta.value().type().name(), "char const*");
     EXPECT_EQ(meta.value().type(), types().get_type<char const*>());
     ASSERT_NO_THROW(stringValue = meta.value().get_as<const char*>());
 
@@ -104,7 +104,7 @@ TEST(RTTRMeta, TestMetaStringKeyIntValue)
     const Meta& meta = type.meta().get("here is an int as a value");
     ASSERT_NE(meta, Meta::invalid_meta());
 
-    EXPECT_EQ(meta.key().type().name(), "char const *");
+    EXPECT_EQ(meta.key().type().name(), "char const*");
     EXPECT_EQ(meta.key().type(), types().get_type<char const*>());
     ASSERT_NO_THROW(stringKey = meta.key().get_as<const char*>());
 
@@ -127,7 +127,7 @@ TEST(RTTRMeta, TestMetaStringKeyListValue)
 
     const std::vector<int>& vectorValue = meta.value().get_as<const std::vector<int>>();
 
-    EXPECT_EQ(meta.key().type().name(), "char const *");
+    EXPECT_EQ(meta.key().type().name(), "char const*");
     EXPECT_EQ(meta.key().type(), types().get_type<char const*>());
     ASSERT_NO_THROW(stringKey = meta.key().get_as<const char*>());
 

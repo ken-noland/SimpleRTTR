@@ -157,7 +157,7 @@ TEST(RTTRRegistration, TestVoidPointerMember)
     Property voidpointerMember = test.properties()[8];
     EXPECT_EQ(voidpointerMember.name(), "voidpointerMember");
     EXPECT_EQ(voidpointerMember.offset(), offsetof(SimpleRTTRTestClass1, voidpointerMember));
-    EXPECT_EQ(voidpointerMember.type().name(), "void *");
+    EXPECT_EQ(voidpointerMember.type().name(), "void*");
     EXPECT_EQ(voidpointerMember.type().size(), sizeof(void*));
 }
 

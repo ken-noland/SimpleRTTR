@@ -15,6 +15,188 @@ namespace SimpleRTTR
     template <typename T>
     inline constexpr bool has_equal_operator_v = has_equal_operator<T>::value;
 
+    // Helper to check if a type is iterable
+    template <typename T>
+    class IsIterableHelper {
+    private:
+        template <typename U>
+        static auto test(int) -> decltype(std::begin(std::declval<U&>()) != std::end(std::declval<U&>()), std::true_type{});
+
+        template <typename U>
+        static std::false_type test(...);
+
+    public:
+        static constexpr bool value = decltype(test<T>(0))::value;
+    };
+
+    template <typename T>
+    constexpr uint64_t ExtractTypeFlags() {
+        uint64_t flags = (uint64_t)TypeFlag::None;
+
+        if (std::is_empty_v<T>) flags |= (uint64_t)TypeFlag::IsEmpty;
+        if (std::is_void_v<T>) flags |= (uint64_t)TypeFlag::IsVoid;
+        if (std::is_null_pointer_v<T>) flags |= (uint64_t)TypeFlag::IsNullPointer;
+        if (std::is_integral_v<T>) flags |= (uint64_t)TypeFlag::IsIntegral;
+        if (std::is_floating_point_v<T>) flags |= (uint64_t)TypeFlag::IsFloatingPoint;
+        if (std::is_array_v<T>) flags |= (uint64_t)TypeFlag::IsArray;
+        if (std::is_enum_v<T>) flags |= (uint64_t)TypeFlag::IsEnum;
+        if (std::is_union_v<T>) flags |= (uint64_t)TypeFlag::IsUnion;
+        if (std::is_class_v<T>) flags |= (uint64_t)TypeFlag::IsClass;
+        if (std::is_function_v<T>) flags |= (uint64_t)TypeFlag::IsFunction;
+        if (std::is_pointer_v<T>) flags |= (uint64_t)TypeFlag::IsPointer;
+        if (std::is_reference_v<T>) flags |= (uint64_t)TypeFlag::IsReference;
+        if (std::is_member_pointer_v<T>) flags |= (uint64_t)TypeFlag::IsMemberPointer;
+        if (std::is_member_object_pointer_v<T>) flags |= (uint64_t)TypeFlag::IsMemberObject;
+        if (std::is_member_function_pointer_v<T>) flags |= (uint64_t)TypeFlag::IsMemberFunction;
+        if (std::is_trivially_constructible_v<T>) flags |= (uint64_t)TypeFlag::IsTriviallyConstructible;
+        if (std::is_trivially_copyable_v<T>) flags |= (uint64_t)TypeFlag::IsTriviallyCopyable;
+        //            if (std::is_trivially_assignable_v<T>) flags |= (uint64_t)TypeFlag::IsTriviallyAssignable;
+        if (std::is_nothrow_constructible_v<T>) flags |= (uint64_t)TypeFlag::IsNoThrowConstructible;
+        //            if (std::is_nothrow_copyable_v<T>) flags |= (uint64_t)TypeFlag::IsNoThrowCopyable;
+        //            if (std::is_nothrow_assignable_v<T>) flags |= (uint64_t)TypeFlag::IsNoThrowAssignable;
+        if (std::is_move_constructible_v<T>) flags |= (uint64_t)TypeFlag::IsMoveConstructible;
+        if (std::is_move_assignable_v<T>) flags |= (uint64_t)TypeFlag::IsMoveAssignable;
+        if (std::is_destructible_v<T>) flags |= (uint64_t)TypeFlag::IsDestructible;
+
+        // Check if the type is iterable (has begin() and end())
+        if (IsIterableHelper<T>::value) flags |= (uint64_t)TypeFlag::IsIterable;
+
+        if (std::is_const_v<T>) flags |= (uint64_t)TypeFlag::IsConst;
+        if (std::is_volatile_v<T>) flags |= (uint64_t)TypeFlag::IsVolatile;
+        if (std::is_trivial_v<T>) flags |= (uint64_t)TypeFlag::IsTrivial;
+        if (std::is_polymorphic_v<T>) flags |= (uint64_t)TypeFlag::IsPolymorphic;
+        if (std::is_standard_layout_v<T>) flags |= (uint64_t)TypeFlag::IsStandardLayout;
+        //            if (std::is_pod_v<T>) flags |= (uint64_t)TypeFlag::IsPOD;
+        if (std::is_aggregate_v<T>) flags |= (uint64_t)TypeFlag::IsAggregate;
+        //            if (std::is_literal_type_v<T>) flags |= (uint64_t)TypeFlag::IsLiteral;
+        if (std::is_signed_v<T>) flags |= (uint64_t)TypeFlag::IsSigned;
+        if (std::is_unsigned_v<T>) flags |= (uint64_t)TypeFlag::IsUnsigned;
+        if (std::is_arithmetic_v<T>) flags |= (uint64_t)TypeFlag::IsArithmetic;
+        if (std::is_fundamental_v<T>) flags |= (uint64_t)TypeFlag::IsFundamental;
+        if (std::is_object_v<T>) flags |= (uint64_t)TypeFlag::IsObject;
+        if (std::is_scalar_v<T>) flags |= (uint64_t)TypeFlag::IsScalar;
+        if (std::is_compound_v<T>) flags |= (uint64_t)TypeFlag::IsCompound;
+
+        if (std::is_abstract_v<T>) flags |= (uint64_t)TypeFlag::IsAbstract;
+        if (std::is_final_v<T>) flags |= (uint64_t)TypeFlag::IsFinal;
+
+        return flags;
+    }
+
+    template<typename ClassType>
+    void RegisterIntegralConversions(SimpleRTTR::TypeFunctions& typeFunctions)
+    {
+        typeFunctions.ConversionFunctions.push_back({typeid(char), &IntegralConversionHelper<char, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(short), &IntegralConversionHelper<short, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(int), &IntegralConversionHelper<int, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(long), &IntegralConversionHelper<long, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(long long), &IntegralConversionHelper<long long, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(unsigned char), &IntegralConversionHelper<unsigned char, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(unsigned short), &IntegralConversionHelper<unsigned short, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(unsigned int), &IntegralConversionHelper<unsigned int, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(unsigned long), &IntegralConversionHelper<unsigned long, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(unsigned long long), &IntegralConversionHelper<unsigned long long, ClassType>});
+    }
+
+    template<typename ClassType>
+    void RegisterEnumConversions(SimpleRTTR::TypeFunctions& typeFunctions)
+    {
+        typeFunctions.ConversionFunctions.push_back({typeid(char), &IntegralConversionHelper<char, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(short), &IntegralConversionHelper<short, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(int), &IntegralConversionHelper<int, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(long), &IntegralConversionHelper<long, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(long long), &IntegralConversionHelper<long long, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(unsigned char), &IntegralConversionHelper<unsigned char, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(unsigned short), &IntegralConversionHelper<unsigned short, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(unsigned int), &IntegralConversionHelper<unsigned int, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(unsigned long), &IntegralConversionHelper<unsigned long, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(unsigned long long), &IntegralConversionHelper<unsigned long long, ClassType>});
+    }
+
+    template<typename ClassType>
+    void RegisterFloatingPointConversions(SimpleRTTR::TypeFunctions& typeFunctions)
+    {
+        typeFunctions.ConversionFunctions.push_back({typeid(float), &FloatingPointConversionHelper<float, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(double), &FloatingPointConversionHelper<double, ClassType>});
+        typeFunctions.ConversionFunctions.push_back({typeid(long double), &FloatingPointConversionHelper<long double, ClassType>});
+    }
+
+    template<typename ClassType>
+    SimpleRTTR::TypeFunctions ExtractTypeFunctions()
+    {
+        SimpleRTTR::TypeFunctions functions;
+
+        if constexpr(std::is_fundamental_v<ClassType> || std::is_pointer_v<ClassType>)
+        {
+            functions.Constructor = &FundamentalConstructorHelper<ClassType>;
+            functions.Destructor = &FundamentalDestructorHelper<ClassType>;
+
+            if constexpr(std::is_copy_constructible_v<ClassType>)
+            {
+                functions.CopyConstructor = &FundamentalCopyHelper<ClassType>;
+            }
+
+            if constexpr(std::is_move_constructible_v<ClassType>)
+            {
+                functions.MoveConstructor = &FundamentalMoveHelper<ClassType>;
+            }
+        }
+        else if constexpr(std::is_reference_v<ClassType>)
+        {
+            // references can be copied, but not created
+            functions.CopyConstructor = &FundamentalCopyHelper<ClassType>;
+            functions.MoveConstructor = &FundamentalMoveHelper<ClassType>;
+        }
+        else
+        {
+            if constexpr( (std::is_default_constructible_v<ClassType> && std::is_default_constructible_v<ClassType>) ||
+                (std::is_trivially_constructible_v<ClassType> && std::is_trivially_destructible_v<ClassType>))
+            {
+                functions.Constructor = &DefaultConstructorHelper<ClassType>;
+                functions.Destructor = &DefaultDestructorHelper<ClassType>;
+            }
+
+            if constexpr(std::is_copy_constructible_v<ClassType>)
+            {
+                functions.CopyConstructor = &DefaultCopyConstructorHelper<ClassType>;
+            }
+
+            if constexpr(std::is_move_constructible_v<ClassType>)
+            {
+                functions.MoveConstructor = &DefaultMoveConstructorHelper<ClassType>;
+            }
+        }
+
+        if constexpr(has_equal_operator_v<ClassType>)
+        {
+            functions.EqualOperator = &DefaultEqualityOperator<ClassType, ClassType>;
+        }
+
+        // assignment operator
+        if constexpr(std::is_copy_assignable_v<ClassType>)
+        {
+            functions.AssignmentOperator = &DefaultAssignmentOperatorHelper<ClassType>;
+        }
+
+        // type conversions
+        if constexpr(std::is_integral_v<ClassType>)
+        {
+            RegisterIntegralConversions<ClassType>(functions);
+        }
+
+        if constexpr(std::is_enum_v<ClassType>)
+        {
+            RegisterEnumConversions<ClassType>(functions);
+        }
+
+        if constexpr(std::is_floating_point_v<ClassType>)
+        {
+            RegisterFloatingPointConversions<ClassType>(functions);
+        }
+
+        return functions;
+    }
+
     //used as a base class for the type information. The subsequent child classes are mainly template specializations and
     //  template metaprogramming to extract the type information we need.
     class TypeHelperBase
@@ -150,194 +332,20 @@ namespace SimpleRTTR
             }
 
 #       if defined(_MSC_VER)
-            //TODO: remove the space between the type and the "*" for MSVC compiler
+
+            // remove the space between the type and the "*" for MSVC compiler
+            if(name.end()[-1] == '*')
+            {
+                name = name.substr(0, name.length() - 2);
+                name += "*";
+            }
+
 #       endif
 
             _Name = trim(name);
         }
 
 
-        // Helper to check if a type is iterable
-        template <typename T>
-        class IsIterableHelper {
-        private:
-            template <typename U>
-            static auto test(int) -> decltype(std::begin(std::declval<U&>()) != std::end(std::declval<U&>()), std::true_type{});
-
-            template <typename U>
-            static std::false_type test(...);
-
-        public:
-            static constexpr bool value = decltype(test<T>(0))::value;
-        };
-
-        template <typename T>
-        constexpr uint64_t ExtractTypeFlags() {
-            uint64_t flags = (uint64_t)TypeFlag::None;
-
-            if (std::is_empty_v<T>) flags |= (uint64_t)TypeFlag::IsEmpty;
-            if (std::is_void_v<T>) flags |= (uint64_t)TypeFlag::IsVoid;
-            if (std::is_null_pointer_v<T>) flags |= (uint64_t)TypeFlag::IsNullPointer;
-            if (std::is_integral_v<T>) flags |= (uint64_t)TypeFlag::IsIntegral;
-            if (std::is_floating_point_v<T>) flags |= (uint64_t)TypeFlag::IsFloatingPoint;
-            if (std::is_array_v<T>) flags |= (uint64_t)TypeFlag::IsArray;
-            if (std::is_enum_v<T>) flags |= (uint64_t)TypeFlag::IsEnum;
-            if (std::is_union_v<T>) flags |= (uint64_t)TypeFlag::IsUnion;
-            if (std::is_class_v<T>) flags |= (uint64_t)TypeFlag::IsClass;
-            if (std::is_function_v<T>) flags |= (uint64_t)TypeFlag::IsFunction;
-            if (std::is_pointer_v<T>) flags |= (uint64_t)TypeFlag::IsPointer;
-            if (std::is_reference_v<T>) flags |= (uint64_t)TypeFlag::IsReference;
-            if (std::is_member_pointer_v<T>) flags |= (uint64_t)TypeFlag::IsMemberPointer;
-            if (std::is_member_object_pointer_v<T>) flags |= (uint64_t)TypeFlag::IsMemberObject;
-            if (std::is_member_function_pointer_v<T>) flags |= (uint64_t)TypeFlag::IsMemberFunction;
-            if (std::is_trivially_constructible_v<T>) flags |= (uint64_t)TypeFlag::IsTriviallyConstructible;
-            if (std::is_trivially_copyable_v<T>) flags |= (uint64_t)TypeFlag::IsTriviallyCopyable;
-//            if (std::is_trivially_assignable_v<T>) flags |= (uint64_t)TypeFlag::IsTriviallyAssignable;
-            if (std::is_nothrow_constructible_v<T>) flags |= (uint64_t)TypeFlag::IsNoThrowConstructible;
-//            if (std::is_nothrow_copyable_v<T>) flags |= (uint64_t)TypeFlag::IsNoThrowCopyable;
-//            if (std::is_nothrow_assignable_v<T>) flags |= (uint64_t)TypeFlag::IsNoThrowAssignable;
-            if (std::is_move_constructible_v<T>) flags |= (uint64_t)TypeFlag::IsMoveConstructible;
-            if (std::is_move_assignable_v<T>) flags |= (uint64_t)TypeFlag::IsMoveAssignable;
-            if (std::is_destructible_v<T>) flags |= (uint64_t)TypeFlag::IsDestructible;
-
-            // Check if the type is iterable (has begin() and end())
-            if (IsIterableHelper<T>::value) flags |= (uint64_t)TypeFlag::IsIterable;
-
-            if (std::is_const_v<T>) flags |= (uint64_t)TypeFlag::IsConst;
-            if (std::is_volatile_v<T>) flags |= (uint64_t)TypeFlag::IsVolatile;
-            if (std::is_trivial_v<T>) flags |= (uint64_t)TypeFlag::IsTrivial;
-            if (std::is_polymorphic_v<T>) flags |= (uint64_t)TypeFlag::IsPolymorphic;
-            if (std::is_standard_layout_v<T>) flags |= (uint64_t)TypeFlag::IsStandardLayout;
-//            if (std::is_pod_v<T>) flags |= (uint64_t)TypeFlag::IsPOD;
-            if (std::is_aggregate_v<T>) flags |= (uint64_t)TypeFlag::IsAggregate;
-//            if (std::is_literal_type_v<T>) flags |= (uint64_t)TypeFlag::IsLiteral;
-            if (std::is_signed_v<T>) flags |= (uint64_t)TypeFlag::IsSigned;
-            if (std::is_unsigned_v<T>) flags |= (uint64_t)TypeFlag::IsUnsigned;
-            if (std::is_arithmetic_v<T>) flags |= (uint64_t)TypeFlag::IsArithmetic;
-            if (std::is_fundamental_v<T>) flags |= (uint64_t)TypeFlag::IsFundamental;
-            if (std::is_object_v<T>) flags |= (uint64_t)TypeFlag::IsObject;
-            if (std::is_scalar_v<T>) flags |= (uint64_t)TypeFlag::IsScalar;
-            if (std::is_compound_v<T>) flags |= (uint64_t)TypeFlag::IsCompound;
-
-            if (std::is_abstract_v<T>) flags |= (uint64_t)TypeFlag::IsAbstract;
-            if (std::is_final_v<T>) flags |= (uint64_t)TypeFlag::IsFinal;
-
-            return flags;
-        }
-
-        template<typename ClassType>
-        void RegisterIntegralConversions(SimpleRTTR::TypeFunctions& typeFunctions)
-        {
-            typeFunctions.ConversionFunctions.push_back({typeid(char), &IntegralConversionHelper<char, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(short), &IntegralConversionHelper<short, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(int), &IntegralConversionHelper<int, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(long), &IntegralConversionHelper<long, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(long long), &IntegralConversionHelper<long long, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(unsigned char), &IntegralConversionHelper<unsigned char, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(unsigned short), &IntegralConversionHelper<unsigned short, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(unsigned int), &IntegralConversionHelper<unsigned int, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(unsigned long), &IntegralConversionHelper<unsigned long, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(unsigned long long), &IntegralConversionHelper<unsigned long long, ClassType>});
-        }
-
-        template<typename ClassType>
-        void RegisterEnumConversions(SimpleRTTR::TypeFunctions& typeFunctions)
-        {
-            typeFunctions.ConversionFunctions.push_back({typeid(char), &IntegralConversionHelper<char, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(short), &IntegralConversionHelper<short, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(int), &IntegralConversionHelper<int, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(long), &IntegralConversionHelper<long, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(long long), &IntegralConversionHelper<long long, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(unsigned char), &IntegralConversionHelper<unsigned char, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(unsigned short), &IntegralConversionHelper<unsigned short, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(unsigned int), &IntegralConversionHelper<unsigned int, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(unsigned long), &IntegralConversionHelper<unsigned long, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(unsigned long long), &IntegralConversionHelper<unsigned long long, ClassType>});
-        }
-
-        template<typename ClassType>
-        void RegisterFloatingPointConversions(SimpleRTTR::TypeFunctions& typeFunctions)
-        {
-            typeFunctions.ConversionFunctions.push_back({typeid(float), &FloatingPointConversionHelper<float, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(double), &FloatingPointConversionHelper<double, ClassType>});
-            typeFunctions.ConversionFunctions.push_back({typeid(long double), &FloatingPointConversionHelper<long double, ClassType>});
-        }
-
-        template<typename ClassType>
-        SimpleRTTR::TypeFunctions ExtractTypeFunctions()
-        {
-            SimpleRTTR::TypeFunctions functions;
-
-            if constexpr(std::is_fundamental_v<ClassType> || std::is_pointer_v<ClassType>)
-            {
-                functions.Constructor = &FundamentalConstructorHelper<ClassType>;
-                functions.Destructor = &FundamentalDestructorHelper<ClassType>;
-
-                if constexpr(std::is_copy_constructible_v<ClassType>)
-                {
-                    functions.CopyConstructor = &FundamentalCopyHelper<ClassType>;
-                }
-
-                if constexpr(std::is_move_constructible_v<ClassType>)
-                {
-                    functions.MoveConstructor = &FundamentalMoveHelper<ClassType>;
-                }
-            }
-            else if constexpr(std::is_reference_v<ClassType>)
-            {
-                // references can be copied, but not created
-                functions.CopyConstructor = &FundamentalCopyHelper<ClassType>;
-                functions.MoveConstructor = &FundamentalMoveHelper<ClassType>;
-            }
-            else
-            {
-                if constexpr( (std::is_default_constructible_v<ClassType> && std::is_default_constructible_v<ClassType>) ||
-                    (std::is_trivially_constructible_v<ClassType> && std::is_trivially_destructible_v<ClassType>))
-                {
-                    functions.Constructor = &DefaultConstructorHelper<ClassType>;
-                    functions.Destructor = &DefaultDestructorHelper<ClassType>;
-                }
-
-                if constexpr(std::is_copy_constructible_v<ClassType>)
-                {
-                    functions.CopyConstructor = &DefaultCopyConstructorHelper<ClassType>;
-                }
-
-                if constexpr(std::is_move_constructible_v<ClassType>)
-                {
-                    functions.MoveConstructor = &DefaultMoveConstructorHelper<ClassType>;
-                }
-            }
-
-            if constexpr(has_equal_operator_v<ClassType>)
-            {
-                functions.EqualOperator = &DefaultEqualityOperator<ClassType, ClassType>;
-            }
-
-            // assignment operator
-            if constexpr(std::is_copy_assignable_v<ClassType>)
-            {
-                functions.AssignmentOperator = &DefaultAssignmentOperatorHelper<ClassType>;
-            }
-
-            // type conversions
-            if constexpr(std::is_integral_v<ClassType>)
-            {
-                RegisterIntegralConversions<ClassType>(functions);
-            }
-
-            if constexpr(std::is_enum_v<ClassType>)
-            {
-                RegisterEnumConversions<ClassType>(functions);
-            }
-
-            if constexpr(std::is_floating_point_v<ClassType>)
-            {
-                RegisterFloatingPointConversions<ClassType>(functions);
-            }
-
-            return functions;
-        }
 
         std::string                 _Name;
         std::string                 _TypeID;

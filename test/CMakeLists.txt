@@ -24,5 +24,8 @@ target_link_libraries(SimpleRTTRTest
   SimpleRTTR
   GTest::gtest_main
 )
+
+target_include_directories(SimpleRTTRTest PRIVATE ../include/simplerttr)
+
 #target_link_options(SimpleRTTRTest PUBLIC /PROFILE)
 add_test(SimpleRTTRGTest SimpleRTTRTest)

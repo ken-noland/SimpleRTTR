@@ -79,5 +79,4 @@ TEST(RTTRType, TestTypeCreation)
     EXPECT_EQ(instance->SomeValue, 5);
     EXPECT_EQ(instance->SomeOtherValue, 2);
     EXPECT_EQ(instance->SomeDescription, "Some Text");
-
 }
