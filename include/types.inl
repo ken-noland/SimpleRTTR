@@ -394,11 +394,6 @@ namespace SimpleRTTR
         return get_storage().has_type_data(typeIndex);
     }
 
-    bool TypeManager::has_type(const std::string& name, std::size_t size) const
-    {
-        return get_storage().has_type_data(name, size);
-    }
-
     bool TypeManager::has_type(const TypeHelperBase& typeHelper) const
     {
         return get_storage().has_type_data(typeHelper.type_index());
@@ -418,11 +413,6 @@ namespace SimpleRTTR
     const Type TypeManager::get_type(const std::type_index& typeIndex) const
     {
         return get_storage().get_type_data(typeIndex);
-    }
-
-    const Type TypeManager::get_type(const std::string& name, std::size_t size) const
-    {
-        return get_storage().get_type_data(name, size);
     }
 
     const Type TypeManager::get_type(const TypeHelperBase& typeHelper) const

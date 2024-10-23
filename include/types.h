@@ -124,13 +124,11 @@ namespace SimpleRTTR
         inline bool has_type() const;
         inline bool has_type(const std::type_info& typeInfo) const;
         inline bool has_type(const std::type_index& typeInfo) const;
-        inline [[deprecated("Use std::find_if if you need to search for a type by name")]] bool has_type(const std::string& name, std::size_t size = TypeStorage::invalid_type_size()) const;
 
         template<class ClassType>
         inline const Type get_type() const;
         inline const Type get_type(const std::type_info& typeInfo) const;
         inline const Type get_type(const std::type_index& typeIndex) const;
-        inline [[deprecated("Use std::find_if if you need to search for a type by name")]] const Type get_type(const std::string& name, std::size_t size = TypeStorage::invalid_type_size()) const;
 
         template<class ClassType>
         inline const Type get_or_create_type();
