@@ -119,7 +119,7 @@ namespace SimpleRTTR
         else
         {
             // Ensure that the types are the same before comparing
-            if(!(_typeRef.type_index == typeid(ObjectType)))
+            if(!(_typeRef.type_index() == typeid(ObjectType)))
             {
                 return false;
             }
