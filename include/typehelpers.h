@@ -365,6 +365,12 @@ namespace SimpleRTTR
         static void ParseQualifiedName(char* name)
         {
 #       if defined(__clang__)
+            // For Clang compilers, after the name is demangled, the typeid looks
+            // like this
+            // "SimpleRTTR::TypeHelper<void>*"
+            // ^ leading              ^    ^^ trailing
+            const int leading = 23;
+            const int trailing = 2;
 #       elif defined(__GNUC__) || defined(__GNUG__)
             // For GCC compilers, after the name is demangled, the typeid looks
             // like this
