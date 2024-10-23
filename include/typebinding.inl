@@ -34,7 +34,7 @@ namespace SimpleRTTR
     template<typename ClassType>
     TypeBinding<ClassType>::TypeBinding()
         :
-        _TypeData(get_storage().get_or_create_type<ClassType>())
+        _TypeData(get_storage().template get_or_create_type<ClassType>())
     {
         register_type(_TypeData);
     }
