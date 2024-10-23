@@ -6,8 +6,8 @@ namespace SimpleRTTR
     class IteratorProxyBase
     {
     public:
-        using iterator = typename Iterator;
-        using const_iterator = typename Iterator;
+        using iterator = Iterator;
+        using const_iterator = Iterator;
 
         using iterator_category = std::forward_iterator_tag;
         using difference_type = std::ptrdiff_t;
