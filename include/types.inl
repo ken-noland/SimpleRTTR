@@ -434,7 +434,13 @@ namespace SimpleRTTR
             return type;
         }
     }
-        
+
+    void TypeManager::reset()
+    {
+        _TypeDataStorage.reset();
+        _UserTypeMetadata.clear();
+    }
+            
     TypeManager::iterator TypeManager::begin()
     {
         return get_storage().begin();

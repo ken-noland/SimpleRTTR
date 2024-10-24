@@ -97,6 +97,8 @@ namespace SimpleRTTR
         inline iterator end() { return _Data.end(); }
         inline const_iterator end() const { return _Data.end(); }
 
+        inline void reset() { _Data.clear(); }
+
     protected:
         friend class TypeManager;
 
@@ -132,6 +134,9 @@ namespace SimpleRTTR
 
         template<class ClassType>
         inline const Type get_or_create_type();
+
+        // clear all
+        inline void reset();
 
         // iterators
     public:
