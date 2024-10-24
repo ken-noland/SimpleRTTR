@@ -372,9 +372,9 @@ namespace SimpleRTTR
 
     }
 
-    TypeManager& TypeManager::instance()
+    std::unique_ptr<TypeManager>& TypeManager::instance()
     {
-        static TypeManager instance;
+        static std::unique_ptr<TypeManager> instance = std::make_unique<TypeManager>();
         return instance;
     }
 
@@ -433,12 +433,6 @@ namespace SimpleRTTR
             Type type(get_storage().get_or_create_type<ClassType>(false));
             return type;
         }
-    }
-
-    void TypeManager::reset()
-    {
-        _TypeDataStorage.reset();
-        _UserTypeMetadata.clear();
     }
             
     TypeManager::iterator TypeManager::begin()

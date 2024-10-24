@@ -23,7 +23,7 @@ namespace SimpleRTTR
     // Type Binding
     TypeStorage& TypeBindingBase::get_storage()
     {
-        return TypeManager::instance().get_storage();
+        return types().get_storage();
     }
 
     void TypeBindingBase::register_type(const TypeData& typeData)

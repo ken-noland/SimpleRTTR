@@ -97,8 +97,6 @@ namespace SimpleRTTR
         inline iterator end() { return _Data.end(); }
         inline const_iterator end() const { return _Data.end(); }
 
-        inline void reset() { _Data.clear(); }
-
     protected:
         friend class TypeManager;
 
@@ -120,7 +118,7 @@ namespace SimpleRTTR
         inline TypeManager();
         inline ~TypeManager();
 
-        static inline TypeManager& instance();
+        static inline std::unique_ptr<TypeManager>& instance();
 
         template<class ClassType>
         inline bool has_type() const;
@@ -134,9 +132,6 @@ namespace SimpleRTTR
 
         template<class ClassType>
         inline const Type get_or_create_type();
-
-        // clear all
-        inline void reset();
 
         // iterators
     public:
@@ -258,6 +253,12 @@ namespace SimpleRTTR
     //singleton accessor for all types
     inline TypeManager& types() 
     { 
-        return TypeManager::instance(); 
+        return *TypeManager::instance().get(); 
+    }
+
+    //shutdown and clear all memory
+    inline void shutdown()
+    {
+        TypeManager::instance().reset();
     }
 }
