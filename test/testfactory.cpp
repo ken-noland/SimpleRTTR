@@ -33,7 +33,7 @@ public:
         FactoryClass1* instance = new FactoryClass1();
 
         // read into the type properties and find any default values specified in the meta data
-        Type type = types().get_type<FactoryClass1>();
+        Type type = types().get_type<FactoryClass1>().value();
         for (const Property& prop : type.properties())
         {
             if (prop.meta().has("Default"))
@@ -64,7 +64,7 @@ TEST(RTTRType, TestTypeCreation)
 {
     GTEST_SKIP_("The ability to copy variants from one value type(const char*) to another (std::string) is not supported at this time, so skipping this test.");
 
-    Type type = types().get_type<FactoryClass1>();
+    Type type = types().get_type<FactoryClass1>().value();
 
     EXPECT_EQ(type.name(), "FactoryClass1");
     EXPECT_EQ(type.size(), sizeof(FactoryClass1));

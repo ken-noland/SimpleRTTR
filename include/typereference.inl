@@ -38,7 +38,7 @@ namespace SimpleRTTR
 
     class Type TypeReference::type() const
     {
-        return SimpleRTTR::types().get_type(_TypeIndex);
+        return types().get_type(_TypeIndex).value();
     }
 
     const std::type_index& TypeReference::type_index() const

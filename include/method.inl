@@ -37,7 +37,7 @@ namespace SimpleRTTR
         return _Name;
     }
 
-    SimpleRTTR::Type Parameter::type() const
+    Type Parameter::type() const
     {
         return _Type.type();
     }
@@ -48,14 +48,6 @@ namespace SimpleRTTR
         hash_combine(seed, _Name, _Type);
         return seed;
     }
-
-
-    const Method& Method::invalid_method()
-    {
-        static Method invalid_method("invalid", Type::invalid_type(), {});
-        return invalid_method;
-    }
-
 
     Method::Method(const std::string& name, const TypeReference& retType, const ParameterContainer& params)
         :
@@ -151,7 +143,7 @@ namespace SimpleRTTR
         return false;
     }
 
-    const Method& MethodContainer::get(const std::string& name) const
+    const std::optional<std::reference_wrapper<const Method>> MethodContainer::get(const std::string& name) const
     {
         for (const Method& method : _Data)
         {
@@ -160,7 +152,7 @@ namespace SimpleRTTR
                 return method;
             }
         }
-        return Method::invalid_method();
+        return std::nullopt;
     }
 
     inline MetaContainer& _InternalGetMetadata(Method& method)

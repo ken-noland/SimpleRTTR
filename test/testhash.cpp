@@ -41,13 +41,13 @@ SIMPLERTTR
 
 TEST(RTTRHash, TestHashEquality)
 {
-    Type testType1 = types().get_type<TestHash::SimpleTestHash1>();
-    EXPECT_NE(testType1, Type::invalid_type());
+    std::optional<Type> testType1 = types().get_type<TestHash::SimpleTestHash1>();
+    EXPECT_TRUE(testType1);
 
-    Type testType2 = types().get_type<TestHash::SimpleTestHash2>();
-    EXPECT_NE(testType2, Type::invalid_type());
+    std::optional<Type> testType2 = types().get_type<TestHash::SimpleTestHash2>();
+    EXPECT_TRUE(testType2);
 
-    EXPECT_NE(testType1.hash(), 0);
-    EXPECT_NE(testType2.hash(), 0);
-    EXPECT_NE(testType1.hash(), testType2.hash());
+    EXPECT_NE(testType1.value().hash(), 0);
+    EXPECT_NE(testType2.value().hash(), 0);
+    EXPECT_NE(testType1.value().hash(), testType2.value().hash());
 }

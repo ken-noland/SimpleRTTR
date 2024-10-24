@@ -67,7 +67,7 @@ TEST(RTTRTypeInstance, TestTypeCreateInstance)
     EXPECT_EQ(SimpleRTTRTestCreateInstanceSimple::constructorCalled, false);
     EXPECT_EQ(SimpleRTTRTestCreateInstanceSimple::destructorCalled, false);
 
-    Type type = types().get_type<SimpleRTTRTestCreateInstanceSimple>();
+    Type type = types().get_type<SimpleRTTRTestCreateInstanceSimple>().value();
     SimpleRTTRTestCreateInstanceSimple* instance = type.create_instance<SimpleRTTRTestCreateInstanceSimple>();
 
     ASSERT_NE(instance, nullptr);
@@ -82,7 +82,7 @@ TEST(RTTRTypeInstance, TestConstructorWithParameters)
     EXPECT_EQ(Point::constructorCalled, false);
     EXPECT_EQ(Point::destructorCalled, false);
 
-    Type type = types().get_type<Point>();
+    Type type = types().get_type<Point>().value();
     Point* instance = type.create_instance<Point>(1.f, 2.f);
 
     ASSERT_NE(instance, nullptr);

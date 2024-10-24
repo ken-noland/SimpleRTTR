@@ -54,18 +54,18 @@ SIMPLERTTR
 
 TEST(RTTRRegistration, TestBasicRegistration) 
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
     EXPECT_EQ(test.name(), "SimpleRTTRTestClass1");
 }
 TEST(RTTRRegistration, TestBasicProperties)
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
     EXPECT_EQ(test.properties().size(), 11);
 }
 
 TEST(RTTRRegistration, TestCharMember)
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
 
     Property charMember = test.properties()[0];
     EXPECT_EQ(charMember.name(), "charMember");
@@ -75,7 +75,7 @@ TEST(RTTRRegistration, TestCharMember)
 }
 TEST(RTTRRegistration, TestShortMember)
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
 
     Property shortMember = test.properties()[1];
     EXPECT_EQ(shortMember.name(), "shortMember");
@@ -86,7 +86,7 @@ TEST(RTTRRegistration, TestShortMember)
 
 TEST(RTTRRegistration, TestIntMember)
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
 
     Property intMember = test.properties()[2];
     EXPECT_EQ(intMember.name(), "intMember");
@@ -97,7 +97,7 @@ TEST(RTTRRegistration, TestIntMember)
 
 TEST(RTTRRegistration, TestLongMember)
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
 
     Property longMember = test.properties()[3];
     EXPECT_EQ(longMember.name(), "longMember");
@@ -108,7 +108,7 @@ TEST(RTTRRegistration, TestLongMember)
 
 TEST(RTTRRegistration, TestUCharMember)
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
 
     Property ucharMember = test.properties()[4];
     EXPECT_EQ(ucharMember.name(), "ucharMember");
@@ -119,7 +119,7 @@ TEST(RTTRRegistration, TestUCharMember)
 
 TEST(RTTRRegistration, TestUShortMember)
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
 
     Property ushortMember = test.properties()[5];
     EXPECT_EQ(ushortMember.name(), "ushortMember");
@@ -130,7 +130,7 @@ TEST(RTTRRegistration, TestUShortMember)
 
 TEST(RTTRRegistration, TestUIntMember)
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
 
     Property uintMember = test.properties()[6];
     EXPECT_EQ(uintMember.name(), "uintMember");
@@ -141,7 +141,7 @@ TEST(RTTRRegistration, TestUIntMember)
 
 TEST(RTTRRegistration, TestULongMember)
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
 
     Property ulongMember = test.properties()[7];
     EXPECT_EQ(ulongMember.name(), "ulongMember");
@@ -152,7 +152,7 @@ TEST(RTTRRegistration, TestULongMember)
 
 TEST(RTTRRegistration, TestVoidPointerMember)
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
 
     Property voidpointerMember = test.properties()[8];
     EXPECT_EQ(voidpointerMember.name(), "voidpointerMember");
@@ -163,7 +163,7 @@ TEST(RTTRRegistration, TestVoidPointerMember)
 
 TEST(RTTRRegistration, TestFloatMember)
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
 
     Property floatMember = test.properties()[9];
     EXPECT_EQ(floatMember.name(), "floatMember");
@@ -174,7 +174,7 @@ TEST(RTTRRegistration, TestFloatMember)
 
 TEST(RTTRRegistration, TestDoubleMember)
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
 
     Property doubleMember = test.properties()[10];
     EXPECT_EQ(doubleMember.name(), "doubleMember");
@@ -185,13 +185,13 @@ TEST(RTTRRegistration, TestDoubleMember)
 
 TEST(RTTRRegistration, TestBasicMethods)
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
     EXPECT_EQ(test.methods().size(), 3);
 }
 
 TEST(RTTRRegistration, TestAddTwoPlusTwoMethod)
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
 
     const Method& method = test.methods()[0];
     EXPECT_EQ(method.name(), "AddTwoPlusTwo");
@@ -201,7 +201,7 @@ TEST(RTTRRegistration, TestAddTwoPlusTwoMethod)
 
 TEST(RTTRRegistration, TestAddTwoPlusXMethod)
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
 
     const Method& method = test.methods()[1];
     EXPECT_EQ(method.name(), "AddTwoPlusX");
@@ -214,7 +214,7 @@ TEST(RTTRRegistration, TestAddTwoPlusXMethod)
 
 TEST(RTTRRegistration, TestAddXPlusYMethod)
 {
-    Type test = types().get_type<SimpleRTTRTestClass1>();
+    Type test = types().get_type<SimpleRTTRTestClass1>().value();
 
     const Method& method = test.methods()[2];
     EXPECT_EQ(method.name(), "AddXPlusY");

@@ -23,8 +23,6 @@ namespace SimpleRTTR
         inline bool operator!=(const std::type_info& info) const;
         inline bool equals(const std::type_info& typeData) const;
 
-        static inline const Type& invalid_type();
-
         inline const std::string& name() const;
         inline const std::string& fully_qualified_name() const;
         inline std::size_t size() const;
@@ -71,9 +69,6 @@ namespace SimpleRTTR
         using iterator = TypeList::iterator;
         using const_iterator = TypeList::const_iterator;
 
-        static inline const TypeData& invalid_type_data();
-        static inline constexpr std::size_t invalid_type_size();
-
         template<typename ClassType>
         inline bool has_type_data() const;
         inline bool has_type_data(const std::type_info& typeInfo) const;
@@ -82,14 +77,14 @@ namespace SimpleRTTR
         inline bool has_type_data(const TypeHelperBase& typeHelper) const;
 
         template<typename ClassType>
-        inline const TypeData& get_type_data() const;
-        inline const TypeData& get_type_data(const std::type_info& typeInfo) const;
-        inline const TypeData& get_type_data(const std::type_index& typeIndex) const;
-        inline const TypeData& get_type_data(const std::string& name, std::size_t size) const;
-        inline const TypeData& get_type_data(const TypeHelperBase& typeHelper) const;
+        inline const std::optional<std::reference_wrapper<const TypeData>> get_type_data() const;
+        inline const std::optional<std::reference_wrapper<const TypeData>> get_type_data(const std::type_info& typeInfo) const;
+        inline const std::optional<std::reference_wrapper<const TypeData>> get_type_data(const std::type_index& typeIndex) const;
+        inline const std::optional<std::reference_wrapper<const TypeData>> get_type_data(const std::string& name, std::size_t size) const;
+        inline const std::optional<std::reference_wrapper<const TypeData>> get_type_data(const TypeHelperBase& typeHelper) const;
 
         template<typename ClassType>
-        inline TypeData& get_or_create_type(bool _addedByUser);
+        inline std::optional<std::reference_wrapper<TypeData>> get_or_create_type(bool _addedByUser);
 
         inline iterator begin() { return _Data.begin(); }
         inline const_iterator begin() const { return _Data.begin(); }
@@ -126,12 +121,12 @@ namespace SimpleRTTR
         inline bool has_type(const std::type_index& typeInfo) const;
 
         template<class ClassType>
-        inline const Type get_type() const;
-        inline const Type get_type(const std::type_info& typeInfo) const;
-        inline const Type get_type(const std::type_index& typeIndex) const;
+        inline const std::optional<Type> get_type() const;
+        inline const std::optional<Type> get_type(const std::type_info& typeInfo) const;
+        inline const std::optional<Type> get_type(const std::type_index& typeIndex) const;
 
         template<class ClassType>
-        inline const Type get_or_create_type();
+        inline Type get_or_create_type();
 
         // iterators
     public:
@@ -237,7 +232,7 @@ namespace SimpleRTTR
         inline const TypeStorage& get_storage() const;  //only accessible from TypeBinding
 
         inline bool has_type(const TypeHelperBase& typeHelper) const;
-        inline const Type get_type(const TypeHelperBase& typeHelper) const;
+        inline const std::optional<Type> get_type(const TypeHelperBase& typeHelper) const;
 
         inline void register_type(const TypeData& data);
 

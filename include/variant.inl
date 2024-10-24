@@ -9,7 +9,6 @@ namespace SimpleRTTR
         static_assert(sizeof(_storage) >= sizeof(VariantType), "Storage is not large enough for VariantType");
 
         Type type = types().get_or_create_type<VariantType>();    //we must dynamically look up the Type since the underlying storage for all types can be invalidated
-        SIMPLERTTR_ASSERT_MSG(type != Type::invalid_type(), "Attempting to use Variant with unknown type");
         SIMPLERTTR_ASSERT(_typeRef == type);   //sanity check in case something with type storage goes awry
 
         _copyFunc = type.type_functions().CopyConstructor;   //store the copy function for later use

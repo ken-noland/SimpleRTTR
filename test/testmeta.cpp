@@ -38,13 +38,13 @@ SIMPLERTTR
 
 TEST(RTTRMeta, TestTypeHasMeta)
 {
-    Type type = types().get_type<SimpleRTTRTestMeta>();
+    Type type = types().get_type<SimpleRTTRTestMeta>().value();
     ASSERT_GE(type.meta().size(), 4);
 }
 
 TEST(RTTRMeta, TestInvalidMeta)
 {
-    Type type = types().get_type<SimpleRTTRTestMeta>();
+    Type type = types().get_type<SimpleRTTRTestMeta>().value();
     const Meta& meta = type.meta().get("This value doesn't exist");
     ASSERT_EQ(meta, Meta::invalid_meta());
 }
@@ -52,7 +52,7 @@ TEST(RTTRMeta, TestInvalidMeta)
 
 TEST(RTTRMeta, TestMetaStringKeyStringValue)
 {
-    Type type = types().get_type<SimpleRTTRTestMeta>();
+    Type type = types().get_type<SimpleRTTRTestMeta>().value();
 
     std::string stringKey;
     std::string stringValue;
@@ -74,7 +74,7 @@ TEST(RTTRMeta, TestMetaStringKeyStringValue)
 
 TEST(RTTRMeta, TestMetaIntKeyStringValue)
 {
-    Type type = types().get_type<SimpleRTTRTestMeta>();
+    Type type = types().get_type<SimpleRTTRTestMeta>().value();
 
     int intKey;
     std::string stringValue;
@@ -96,7 +96,7 @@ TEST(RTTRMeta, TestMetaIntKeyStringValue)
 
 TEST(RTTRMeta, TestMetaStringKeyIntValue)
 {
-    Type type = types().get_type<SimpleRTTRTestMeta>();
+    Type type = types().get_type<SimpleRTTRTestMeta>().value();
 
     std::string stringKey;
     int intValue;
@@ -118,7 +118,7 @@ TEST(RTTRMeta, TestMetaStringKeyIntValue)
 
 TEST(RTTRMeta, TestMetaStringKeyListValue)
 {
-    Type type = types().get_type<SimpleRTTRTestMeta>();
+    Type type = types().get_type<SimpleRTTRTestMeta>().value();
 
     std::string stringKey;
 
@@ -144,7 +144,7 @@ TEST(RTTRMeta, TestMetaStringKeyListValue)
 
 TEST(RTTRMeta, TestMetaStringKeyFuncPointerValue)
 {
-    Type type = types().get_type<SimpleRTTRTestMeta>();
+    Type type = types().get_type<SimpleRTTRTestMeta>().value();
     const Meta& meta = type.meta().get("and here's a function pointer");
     ASSERT_NE(meta, Meta::invalid_meta());
 
@@ -156,7 +156,7 @@ TEST(RTTRMeta, TestMetaOnFundamentalTypes)
 {
     {
         //verify that we haven't touched the meta on the "char" type
-        Type type = types().get_type<char>();
+        Type type = types().get_type<char>().value();
         EXPECT_EQ(type.meta().size(), 0);
     }
 
@@ -164,16 +164,15 @@ TEST(RTTRMeta, TestMetaOnFundamentalTypes)
     registration().type<char>()
         .meta("type", "fundamental");
 
-    Type type = types().get_type<char>();
+    Type type = types().get_type<char>().value();
     EXPECT_EQ(type.meta().size(), 1);
 }
 
 TEST(RTTRMeta, TestMetaOnClassMethod)
 {
     //check that the method has the correct metadata
-    Type type = types().get_type<SimpleRTTRTestMeta>();
-    const Method& method = type.methods().get("someFunc");
-    ASSERT_NE(method, Method::invalid_method());
+    Type type = types().get_type<SimpleRTTRTestMeta>().value();
+    const Method& method = type.methods().get("someFunc").value();
     const Meta& meta = method.meta().get("description");
     ASSERT_NE(meta, Meta::invalid_meta());
     EXPECT_STREQ(meta.value().get_as<const char*>(), "this function does something");

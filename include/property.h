@@ -23,7 +23,7 @@ namespace SimpleRTTR
         inline PropertyData(const PropertyData& data);
 
         inline const std::string& name() const;
-        inline SimpleRTTR::Type type() const;
+        inline Type type() const;
         inline const std::size_t offset() const;
         inline const MetaContainer& meta() const;
 
@@ -47,8 +47,6 @@ namespace SimpleRTTR
     class Property
     {
     public:
-        static inline const Property& invalid_property();
-
         inline Property(Property&& data)  noexcept;
         inline Property(const Property& data);
         inline Property(const PropertyData& data);
@@ -60,7 +58,7 @@ namespace SimpleRTTR
         inline bool equals(const Property& data) const;
 
         inline const std::string& name() const;
-        inline const SimpleRTTR::Type type() const;
+        inline const Type type() const;
         inline const std::size_t offset() const;
 
         inline const SimpleRTTR::MetaContainer& meta() const;

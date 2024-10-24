@@ -53,7 +53,7 @@ SIMPLERTTR
 
 TEST(RTTRConstructor, TestNoArguments)
 {
-    Type type = types().get_type<SimpleRTTRTestConstructor1>();
+    Type type = types().get_type<SimpleRTTRTestConstructor1>().value();
 
     const ConstructorContainer& constructors = type.constructors();
     ASSERT_EQ(constructors.size(), 1);
@@ -65,7 +65,7 @@ TEST(RTTRConstructor, TestNoArguments)
 
 TEST(RTTRConstructor, Test2Arguments)
 {
-    Type type = types().get_type<SimpleRTTRTestConstructor2>();
+    Type type = types().get_type<SimpleRTTRTestConstructor2>().value();
 
     const ConstructorContainer& constructors = type.constructors();
     ASSERT_EQ(constructors.size(), 1);

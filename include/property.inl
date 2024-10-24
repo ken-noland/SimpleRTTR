@@ -47,7 +47,7 @@ namespace SimpleRTTR
         return _Name;
     }
 
-    SimpleRTTR::Type PropertyData::type() const
+    Type PropertyData::type() const
     {
         return _Type.type();
     }
@@ -96,13 +96,6 @@ namespace SimpleRTTR
 
     }
 
-    const Property& Property::invalid_property()
-    {
-        static Property invalid_property(PropertyData("invalid", Type::invalid_type(), (std::size_t) - 1));
-        return invalid_property;
-    }
-
-
     Property::Property(const Property& prop)
         :
         _PropData(prop._PropData)
@@ -149,7 +142,7 @@ namespace SimpleRTTR
         return _PropData.offset();
     }
 
-    const SimpleRTTR::Type Property::type() const
+    const Type Property::type() const
     {
         return _PropData.type();
     }

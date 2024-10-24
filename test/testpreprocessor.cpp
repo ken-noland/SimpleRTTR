@@ -21,7 +21,7 @@ SIMPLERTTR
 
 TEST(RTTRPreprocessor, TestPreprocessorWorks)
 {
-    Type type = types().get_type<SimpleRTTRTestPreprocessor>();
+    Type type = types().get_type<SimpleRTTRTestPreprocessor>().value();
     const Meta& file = type.meta().get("source_filename");
     ASSERT_NE(file, Meta::invalid_meta());
 

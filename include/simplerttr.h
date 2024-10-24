@@ -14,6 +14,7 @@
 #include <sstream>
 #include <functional>
 #include <algorithm>
+#include <optional>
 
 #if defined(__GNUC__) || defined(__GNUG__)
 #include <cxxabi.h>

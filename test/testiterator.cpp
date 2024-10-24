@@ -74,11 +74,11 @@ TEST(RTTRIterator, TestAllTypes)
 
 TEST(RTTRIterator, TestTypeMeta)
 {
-    Type testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
-    EXPECT_NE(testIteratorType, Type::invalid_type());
+    std::optional<Type> testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
+    EXPECT_TRUE(testIteratorType);
 
     int count = 0;
-    for (const Meta& meta : testIteratorType.meta())
+    for (const Meta& meta : testIteratorType.value().meta())
     {
         count++;
     }
@@ -90,11 +90,11 @@ TEST(RTTRIterator, TestTypeMeta)
 
 TEST(RTTRIterator, TestTypeProperties)
 {
-    Type testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
-    EXPECT_NE(testIteratorType, Type::invalid_type());
+    std::optional<Type> testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
+    EXPECT_TRUE(testIteratorType);
 
     int count = 0;
-    for(const Property& property : testIteratorType.properties())
+    for(const Property& property : testIteratorType.value().properties())
     {
         count++;
     }
@@ -104,14 +104,14 @@ TEST(RTTRIterator, TestTypeProperties)
 
 TEST(RTTRIterator, TestPropertiesMeta)
 {
-    Type testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
-    EXPECT_NE(testIteratorType, Type::invalid_type());
+    std::optional<Type> testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
+    EXPECT_TRUE(testIteratorType);
 
-    Property prop = testIteratorType.properties().get("property1");
-    ASSERT_NE(prop, Property::invalid_property());
+    std::optional<Property> prop = testIteratorType.value().properties().get("property1");
+    EXPECT_TRUE(prop);
 
     int count = 0;
-    for (const Meta& meta : prop.meta())
+    for (const Meta& meta : prop.value().meta())
     {
         count++;
     }
@@ -121,11 +121,11 @@ TEST(RTTRIterator, TestPropertiesMeta)
 
 TEST(RTTRIterator, TestTypeMethods)
 {
-    Type testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
-    EXPECT_NE(testIteratorType, Type::invalid_type());
+    std::optional<Type> testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
+    EXPECT_TRUE(testIteratorType);
 
     int count = 0;
-    for (const Method& method : testIteratorType.methods())
+    for (const Method& method : testIteratorType.value().methods())
     {
         count++;
     }
@@ -135,14 +135,14 @@ TEST(RTTRIterator, TestTypeMethods)
 
 TEST(RTTRIterator, TestMethodsMeta)
 {
-    const Type& testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
-    EXPECT_NE(testIteratorType, Type::invalid_type());
+    std::optional<Type> testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
+    EXPECT_TRUE(testIteratorType);
 
-    const Method& method = testIteratorType.methods().get("someFunc1");
-    ASSERT_NE(method, Method::invalid_method());
+    std::optional<std::reference_wrapper<const Method>> method = testIteratorType.value().methods().get("someFunc1");
+    EXPECT_TRUE(method);
 
     int count = 0;
-    for (const Meta& meta : method.meta())
+    for (const Meta& meta : method.value().get().meta())
     {
         count++;
     }
@@ -152,14 +152,14 @@ TEST(RTTRIterator, TestMethodsMeta)
 
 TEST(RTTRIterator, TestMethodsParameters)
 {
-    const Type& testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
-    EXPECT_NE(testIteratorType, Type::invalid_type());
+    std::optional<Type> testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
+    EXPECT_TRUE(testIteratorType);
 
-    const Method& method = testIteratorType.methods().get("someFunc1");
-    ASSERT_NE(method, Method::invalid_method());
+    std::optional<std::reference_wrapper<const Method>> method = testIteratorType.value().methods().get("someFunc1");
+    EXPECT_TRUE(method);
 
     int count = 0;
-    for (const Parameter& param : method.parameters())
+    for (const Parameter& param : method.value().get().parameters())
     {
         count++;
     }
@@ -169,11 +169,11 @@ TEST(RTTRIterator, TestMethodsParameters)
 
 TEST(RTTRIterator, TestNamespaces)
 {
-    const Type& testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
-    EXPECT_NE(testIteratorType, Type::invalid_type());
+    std::optional<Type> testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
+    EXPECT_TRUE(testIteratorType);
 
     int count = 0;
-    for (const std::string& namesp : testIteratorType.namespaces())
+    for (const std::string& namesp : testIteratorType.value().namespaces())
     {
         count++;
         EXPECT_EQ(namesp, "TestIterator");
@@ -183,11 +183,11 @@ TEST(RTTRIterator, TestNamespaces)
 
 TEST(RTTRIterator, TestTemplateParameters)
 {
-    const Type& testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
-    EXPECT_NE(testIteratorType, Type::invalid_type());
+    std::optional<Type> testIteratorType = types().get_type<TestIterator::SimpleRTTRTestIterator<int>>();
+    EXPECT_TRUE(testIteratorType);
 
     int count = 0;
-    for(const TypeReference& typeRef : testIteratorType.template_params())
+    for(const TypeReference& typeRef : testIteratorType.value().template_params())
     {
         count++;
     }

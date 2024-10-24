@@ -13,7 +13,7 @@ namespace SimpleRTTR
         inline Parameter& operator=(const Parameter& param);
 
         inline const std::string& name() const;
-        inline SimpleRTTR::Type type() const;
+        inline Type type() const;
 
         inline std::size_t hash() const;
 
@@ -29,8 +29,6 @@ namespace SimpleRTTR
     class Method
     {
     public:
-        static inline const Method& invalid_method();
-
         inline Method(const std::string& name, const TypeReference& retType, const ParameterContainer& params);
         inline Method(Method&& method);
         inline Method(const Method& method);
@@ -49,7 +47,6 @@ namespace SimpleRTTR
 
         inline const MetaContainer& meta() const;
 
-
     protected:
 
         friend MetaContainer& _InternalGetMetadata(Method& method);
@@ -65,7 +62,7 @@ namespace SimpleRTTR
     {
     public:
         inline bool has(const std::string& key) const;
-        inline const Method& get(const std::string& key) const;
+        inline const std::optional<std::reference_wrapper<const Method>> get(const std::string& key) const;
     };
 
     class ConstructorContainer : public DefaultContainer<Method>

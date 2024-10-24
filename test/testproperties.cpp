@@ -57,8 +57,7 @@ SIMPLERTTR
 
 TEST(RTTRProperties, TestPropertiesList)
 {
-    Type type = types().get_type<SimpleRTTRTestProperties1>();
-    ASSERT_NE(type, Type::invalid_type());
+    Type type = types().get_type<SimpleRTTRTestProperties1>().value();
 
     const PropertyContainer& properties = type.properties();
     ASSERT_EQ(properties.size(), 8);
@@ -88,8 +87,7 @@ TEST(RTTRProperties, TestPropertiesList)
 
 TEST(RTTRProperties, TestPropertiesGet)
 {
-    Type type = types().get_type<SimpleRTTRTestProperties1>();
-    ASSERT_NE(type, Type::invalid_type());
+    Type type = types().get_type<SimpleRTTRTestProperties1>().value();
 
     SimpleRTTRTestProperties1 instance;
     instance.charMember = 5;
@@ -115,8 +113,7 @@ TEST(RTTRProperties, TestPropertiesGet)
 
 TEST(RTTRProperties, TestPropertiesSet)
 {
-    Type type = types().get_type<SimpleRTTRTestProperties1>();
-    ASSERT_NE(type, Type::invalid_type());
+    Type type = types().get_type<SimpleRTTRTestProperties1>().value();
 
     SimpleRTTRTestProperties1 instance;
     instance.charMember = 0;
@@ -148,8 +145,7 @@ TEST(RTTRProperties, TestPropertiesSet)
 
 TEST(RTTRProperties, TestPropertiesMeta)
 {
-    Type type = types().get_type<SimpleRTTRTestProperties1>();
-    ASSERT_NE(type, Type::invalid_type());
+    Type type = types().get_type<SimpleRTTRTestProperties1>().value();
 
     const PropertyContainer& properties = type.properties();
     ASSERT_EQ(properties.size(), 8);

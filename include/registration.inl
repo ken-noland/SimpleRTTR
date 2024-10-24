@@ -29,7 +29,7 @@ namespace SimpleRTTR
     template<typename ClassType>
     TypeBinding<ClassType> RegistrationManager::type()
     {
-        return TypeBinding<ClassType>(types().get_storage().get_or_create_type<ClassType>(true));
+        return TypeBinding<ClassType>(types().get_storage().get_or_create_type<ClassType>(true).value().get());
     }
 
     TypeBinding<SimpleRTTR::Type> RegistrationManager::type(const SimpleRTTR::Type& type)

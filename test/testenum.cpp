@@ -36,7 +36,7 @@ SIMPLERTTR
 
 TEST(RTTREnum, TestBasicEnum)
 {
-    Type enumType = types().get_type<Color>();
+    Type enumType = types().get_type<Color>().value();
 
     EXPECT_EQ(enumType.name(), "Color");
     EXPECT_TRUE(enumType.has_flag(TypeFlag::IsEnum));
@@ -70,7 +70,7 @@ TEST(RTTREnum, TestBasicEnum)
 
 TEST(RTTREnum, TestEnumValueDoesNotExist)
 {
-    Type enumType = types().get_type<Color>();
+    Type enumType = types().get_type<Color>().value();
 
     EXPECT_EQ(enumType.name(), "Color");
 
@@ -79,7 +79,7 @@ TEST(RTTREnum, TestEnumValueDoesNotExist)
 
 TEST(RTTREnum, TestEnumConvertedToInt)
 {
-    Type enumType = types().get_type<Color>();
+    Type enumType = types().get_type<Color>().value();
 
     EXPECT_EQ(enumType.name(), "Color");
 

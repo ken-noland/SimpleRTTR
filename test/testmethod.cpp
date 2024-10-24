@@ -35,7 +35,7 @@ TEST(RTTRMethod, TestNoArguments)
 {
     registration().type<SimpleRTTRTestMethod1>().method(&SimpleRTTRTestMethod1::AddTwoPlusTwo, "AddTwoPlusTwo");
 
-    Type type = types().get_type<SimpleRTTRTestMethod2>();
+    Type type = types().get_type<SimpleRTTRTestMethod2>().value();
     
 }
 
@@ -43,7 +43,7 @@ TEST(RTTRMethod, TestArgumentNames)
 {
     registration().type<SimpleRTTRTestMethod2>().method(&SimpleRTTRTestMethod2::AddXPlusY, "AddXPlusY", { "X", "Y" });
 
-    Type type = types().get_type<SimpleRTTRTestMethod2>();
+    Type type = types().get_type<SimpleRTTRTestMethod2>().value();
 
     MethodContainer::ConstIterator found = std::find_if(type.methods().begin(), type.methods().end(), 
         [](const Method& method) { return (method.name() == "AddXPlusY") && (method.parameters().size() == 2); });
