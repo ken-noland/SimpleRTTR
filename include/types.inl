@@ -334,7 +334,7 @@ namespace SimpleRTTR
     {
         _Data.push_back(std::make_unique<TypeData>(typeData));
 
-        TypeData& newTypeData = (*_Data.back().get());
+        TypeData& newTypeData = *_Data.back().get();
         if (_OnRegisterTypeCallback)
         {
             _OnRegisterTypeCallback(newTypeData);
@@ -384,7 +384,7 @@ namespace SimpleRTTR
     template<class ClassType>
     const std::optional<Type> TypeManager::get_type() const
     {
-        std::optional<const TypeData> typeData = get_storage().get_type_data<ClassType>();
+        std::optional<std::reference_wrapper<const TypeData>> typeData = get_storage().get_type_data<ClassType>();
         if(typeData.has_value())
         {
             Type type(*typeData);
@@ -395,7 +395,7 @@ namespace SimpleRTTR
 
     const std::optional<Type> TypeManager::get_type(const std::type_info& typeInfo) const
     {
-        std::optional<const TypeData> typeData = get_storage().get_type_data(typeInfo);
+        std::optional<std::reference_wrapper<const TypeData>> typeData = get_storage().get_type_data(typeInfo);
         if(typeData.has_value())
         {
             Type type(*typeData);
@@ -406,7 +406,7 @@ namespace SimpleRTTR
 
     const std::optional<Type> TypeManager::get_type(const std::type_index& typeIndex) const
     {
-        std::optional<const TypeData> typeData = get_storage().get_type_data(typeIndex);
+        std::optional<std::reference_wrapper<const TypeData>> typeData = get_storage().get_type_data(typeIndex);
         if(typeData.has_value())
         {
             Type type(*typeData);
@@ -417,10 +417,10 @@ namespace SimpleRTTR
 
     const std::optional<Type> TypeManager::get_type(const TypeHelperBase& typeHelper) const
     {
-        std::optional<const TypeData> typeData = get_storage().get_type_data(typeHelper);
+        std::optional<std::reference_wrapper<const TypeData>> typeData = get_storage().get_type_data(typeHelper);
         if(typeData.has_value())
         {
-            Type type(*typeData);
+            Type type(typeData.value());
             return type;
         }
         return std::nullopt;
@@ -437,8 +437,7 @@ namespace SimpleRTTR
         }
         else
         {
-            Type type(get_storage().get_or_create_type<ClassType>(false).value().get());
-            return type;
+            return Type(get_storage().get_or_create_type<ClassType>(false).value().get());
         }
     }
             
