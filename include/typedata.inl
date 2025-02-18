@@ -5,7 +5,7 @@ namespace SimpleRTTR
     TypeData::TypeData(const std::string& name,
         const std::string& fullyQualifiedName,
         std::size_t size,
-        std::uint64_t flags,
+        uint64_t flags,
         std::type_index typeIndex,
         bool registeredByUser,
         const NamespaceContainer& namespaces,
@@ -28,7 +28,7 @@ namespace SimpleRTTR
     TypeData::TypeData(const std::string& name,
         const std::string& fqn,
         std::size_t size, 
-        std::uint64_t flags, 
+        uint64_t flags, 
         std::type_index typeIndex)
         :
         _Name(name),
@@ -138,7 +138,7 @@ namespace SimpleRTTR
 
     bool TypeData::has_flag(TypeFlag flag) const
     {
-        return _Flags & static_cast<std::uint64_t>(flag);
+        return _Flags & static_cast<uint64_t>(flag);
     }
 
     const std::type_index& TypeData::type_index() const

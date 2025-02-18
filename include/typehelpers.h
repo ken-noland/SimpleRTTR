@@ -207,7 +207,7 @@ namespace SimpleRTTR
         using NamespaceContainer = TypeData::NamespaceContainer;
         using TemplateTypeContainer = std::vector<TypeReference>;
 
-        TypeHelperBase(const std::type_info& typeInfo, std::size_t size, std::uint64_t flags, std::type_index typeIndex,
+        TypeHelperBase(const std::type_info& typeInfo, std::size_t size, uint64_t flags, std::type_index typeIndex,
             TypeFunctions typeFunctions,
             QualifiedNameParseFunc parseQualifiedName = nullptr)
             :
@@ -226,7 +226,7 @@ namespace SimpleRTTR
 
         inline std::size_t size() const { return _Size; }
 
-        inline std::uint64_t flags() const { return _Flags; }
+        inline uint64_t flags() const { return _Flags; }
 
         inline std::type_index type_index() const { return _TypeIndex; }
 
@@ -355,7 +355,7 @@ namespace SimpleRTTR
         std::size_t                 _Size;
         std::type_index             _TypeIndex;
 
-        std::uint64_t               _Flags;
+        uint64_t               _Flags;
 
         SimpleRTTR::TypeFunctions   _TypeFunctions;
     };

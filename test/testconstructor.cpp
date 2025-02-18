@@ -5,7 +5,6 @@ using namespace SimpleRTTR;
 
 class SimpleRTTRTestConstructor1
 {
-    SIMPLE_RTTR_ALLOW_ACCESS
 public:
     SimpleRTTRTestConstructor1() {}
     ~SimpleRTTRTestConstructor1() {}
@@ -16,14 +15,12 @@ public:
     void SetY(int y) { _y = y; }
     int GetY() { return _y; }
 
-protected:
     int _x;
     int _y;
 };
 
 class SimpleRTTRTestConstructor2
 {
-    SIMPLE_RTTR_ALLOW_ACCESS
 public:
     SimpleRTTRTestConstructor2(int x, int y) : _x(x), _y(y) {}
 
@@ -33,7 +30,6 @@ public:
     void SetY(int y) { _y = y; }
     int GetY() { return _y; }
 
-protected:
     int _x;
     int _y;
 };

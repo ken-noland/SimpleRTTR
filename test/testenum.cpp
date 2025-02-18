@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <SimpleRTTR.h>
+#include "../include/simplerttr.h"
 
 using namespace SimpleRTTR;
 
