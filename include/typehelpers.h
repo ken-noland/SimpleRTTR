@@ -416,7 +416,7 @@ namespace SimpleRTTR
     class TypeHelper<void> : public TypeHelperBase, TypeHelper1
     {
     public:
-        TypeHelper<void>() : TypeHelperBase(typeid(this), 0, ExtractTypeFlags<void>(), typeid(void), TypeFunctions(), &ParseQualifiedName) {}
+        TypeHelper() : TypeHelperBase(typeid(this), 0, ExtractTypeFlags<void>(), typeid(void), TypeFunctions(), &ParseQualifiedName) {}
     };
 
     template <template <typename... > class Tmpl, typename ...Args>
