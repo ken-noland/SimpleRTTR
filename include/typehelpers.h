@@ -2,19 +2,6 @@
 
 namespace SimpleRTTR
 {
-
-    // Primary template for detecting the equality operator
-    template <typename, typename = std::void_t<>>
-    struct has_equal_operator : std::false_type {};
-
-    // Specialization that will be enabled if the type has `==` operator
-    template <typename T>
-    struct has_equal_operator<T, std::void_t<decltype(std::declval<T>() == std::declval<T>())>> : std::true_type {};
-
-    // Convenience variable template (C++17)
-    template <typename T>
-    inline constexpr bool has_equal_operator_v = has_equal_operator<T>::value;
-
     // Helper to check if a type is iterable
     template <typename T>
     class IsIterableHelper {
