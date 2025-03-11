@@ -100,7 +100,7 @@ namespace SimpleRTTR
         std::size_t _Size;
         std::type_index _TypeIndex;
 
-        std::uint64_t _Flags;
+        uint64_t _Flags;
 
         bool _RegisteredByUser;
 
@@ -126,7 +126,7 @@ namespace SimpleRTTR
         inline TypeData(const std::string& name,
             const std::string& fullyQualifiedName,
             std::size_t size,
-            std::uint64_t flags,
+            uint64_t flags,
             std::type_index typeIndex,
             bool registeredByUser,
             const NamespaceContainer& namespaces,
@@ -137,7 +137,7 @@ namespace SimpleRTTR
         inline TypeData(const std::string& name,
             const std::string& fqn,
             std::size_t size, 
-            std::uint64_t flags, 
+            uint64_t flags, 
             std::type_index typeIndex);
     };
 }

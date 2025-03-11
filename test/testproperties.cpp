@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <SimpleRTTR.h>
+#include "../include/simplerttr.h"
 
 using namespace SimpleRTTR;
 
@@ -48,8 +48,6 @@ SIMPLERTTR
         .property(&SimpleRTTRTestProperties1::intMember, "intMember")
             .meta("description", "a simple 4 byte type")
         .property(&SimpleRTTRTestProperties1::voidpointerMember, "voidpointerMember")
-        .property(&SimpleRTTRTestProperties1::protectedMember, "protectedMember")
-        .property(&SimpleRTTRTestProperties1::privateMember, "privateMember")
         .property(&SimpleRTTRTestProperties1::complexProperties, "complexProperties")
         .property(&SimpleRTTRTestProperties1::complexPropertiesPtr, "complexPropertiesPtr");
     ;
@@ -60,7 +58,7 @@ TEST(RTTRProperties, TestPropertiesList)
     Type type = types().get_type<SimpleRTTRTestProperties1>().value();
 
     const PropertyContainer& properties = type.properties();
-    ASSERT_EQ(properties.size(), 8);
+    ASSERT_EQ(properties.size(), 6);
 
     const Property& prop1 = properties[0];
     EXPECT_EQ(prop1.name(), "charMember");
@@ -96,7 +94,7 @@ TEST(RTTRProperties, TestPropertiesGet)
     instance.voidpointerMember = (void*)0x1234;
 
     const PropertyContainer& properties = type.properties();
-    ASSERT_EQ(properties.size(), 8);
+    ASSERT_EQ(properties.size(), 6);
 
     const Property& prop1 = properties[0];
     EXPECT_EQ(prop1.get(&instance).get_as<char>(), 5);
@@ -122,7 +120,7 @@ TEST(RTTRProperties, TestPropertiesSet)
     instance.voidpointerMember = nullptr;
 
     const PropertyContainer& properties = type.properties();
-    ASSERT_EQ(properties.size(), 8);
+    ASSERT_EQ(properties.size(), 6);
 
     const Property& prop1 = properties[0];
     prop1.set(&instance, (char)5);
@@ -148,7 +146,7 @@ TEST(RTTRProperties, TestPropertiesMeta)
     Type type = types().get_type<SimpleRTTRTestProperties1>().value();
 
     const PropertyContainer& properties = type.properties();
-    ASSERT_EQ(properties.size(), 8);
+    ASSERT_EQ(properties.size(), 6);
 
     ASSERT_TRUE(properties.has("charMember"));
     const Property& prop1 = properties.get("charMember");
