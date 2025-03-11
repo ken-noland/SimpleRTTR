@@ -110,7 +110,6 @@ namespace SimpleRTTR
             }
             else
             {
-                SIMPLERTTR_ASSERT_MSG(false, "Equality operator for underlying type not found. In order to use the equality function, you must define the == operator on the underlying type for std::vector");
                 return false;
             }
         }
