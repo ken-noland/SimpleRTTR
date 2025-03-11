@@ -69,42 +69,51 @@ namespace SimpleRTTR
         return dest;
     }
 
+    // Primary template: default implementation
     template<typename LHSClassType, typename RHSClassType = LHSClassType>
-    inline bool DefaultEqualityOperator(const void* lhs, const void* rhs)
-    {
-        // Check if LHS and RHS are references, and compare the values they refer to
-        if constexpr (std::is_reference_v<LHSClassType> || std::is_reference_v<RHSClassType>)
-        {
-            using LHSValueType = std::remove_reference_t<LHSClassType>;
-            using RHSValueType = std::remove_reference_t<RHSClassType>;
-
-            const LHSValueType* lhsValuePtr = reinterpret_cast<const LHSValueType*>(lhs);
-            const RHSValueType* rhsValuePtr = reinterpret_cast<const RHSValueType*>(rhs);
-
-            return *lhsValuePtr == *rhsValuePtr;
+    struct DefaultEqualityOperatorHelper {
+        static bool function(const void* lhs, const void* rhs) noexcept {
+            if constexpr (std::is_reference_v<LHSClassType> || std::is_reference_v<RHSClassType>) {
+                using LHSValueType = std::remove_reference_t<LHSClassType>;
+                using RHSValueType = std::remove_reference_t<RHSClassType>;
+                const LHSValueType* lhsValuePtr = reinterpret_cast<const LHSValueType*>(lhs);
+                const RHSValueType* rhsValuePtr = reinterpret_cast<const RHSValueType*>(rhs);
+                return *lhsValuePtr == *rhsValuePtr;
+            } else {
+                const LHSClassType* lhsTypePtr = reinterpret_cast<const LHSClassType*>(lhs);
+                const RHSClassType* rhsTypePtr = reinterpret_cast<const RHSClassType*>(rhs);
+                return *lhsTypePtr == *rhsTypePtr;
+            }
         }
-        else
-        {
-            // Compare non-reference types
-            const LHSClassType* lhsTypePtr = reinterpret_cast<const LHSClassType*>(lhs);
-            const RHSClassType* rhsTypePtr = reinterpret_cast<const RHSClassType*>(rhs);
+    };
 
-            return *lhsTypePtr == *rhsTypePtr;
-        }
-    }
-
-    //specialization for const char*, const char*
+    // Full specialization for const char* (both parameters)
     template<>
-    inline bool DefaultEqualityOperator<const char*, const char*>(const void* lhs, const void* rhs)
-    {
-        // Dereference void* to get the actual const char* pointers
-        const char* const* lhsPtr = reinterpret_cast<const char* const*>(lhs);
-        const char* const* rhsPtr = reinterpret_cast<const char* const*>(rhs);
+    struct DefaultEqualityOperatorHelper<const char*, const char*> {
+        static bool function(const void* lhs, const void* rhs) noexcept {
+            // Cast lhs and rhs to pointers to const char*
+            const char* const* lhsPtr = reinterpret_cast<const char* const*>(lhs);
+            const char* const* rhsPtr = reinterpret_cast<const char* const*>(rhs);
+            return std::strcmp(*lhsPtr, *rhsPtr) == 0;
+        }
+    };
 
-        // Compare the contents of the strings
-        return std::strcmp(*lhsPtr, *rhsPtr) == 0;
-    }
-
+    // Partial specialization for std::vector<T>
+    template<typename ClassType>
+    struct DefaultEqualityOperatorHelper<std::vector<ClassType>, std::vector<ClassType>> {
+        static bool function(const void* lhs, const void* rhs) noexcept {
+            const std::vector<ClassType>* lhsVectorPtr = reinterpret_cast<const std::vector<ClassType>*>(lhs);
+            const std::vector<ClassType>* rhsVectorPtr = reinterpret_cast<const std::vector<ClassType>*>(rhs);
+            if constexpr(has_equal_operator_v<ClassType>)
+            {
+                return *lhsVectorPtr == *rhsVectorPtr;
+            }
+            else
+            {
+                return std::equal(lhsVectorPtr->begin(), lhsVectorPtr->end(), rhsVectorPtr->begin(), rhsVectorPtr->end());
+            }
+        }
+    };
 
     template<typename ClassType>
     inline void* FundamentalConstructorHelper(void* mem)

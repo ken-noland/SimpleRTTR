@@ -169,7 +169,7 @@ namespace SimpleRTTR
 
         if constexpr(has_equal_operator_v<ClassType>)
         {
-            functions.EqualOperator = &DefaultEqualityOperator<ClassType, ClassType>;
+            functions.EqualOperator = &DefaultEqualityOperatorHelper<ClassType, ClassType>::function;
         }
 
         // assignment operator
