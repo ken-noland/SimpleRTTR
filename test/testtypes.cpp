@@ -91,14 +91,14 @@ TEST(RTTRType, TestSTLVector)
     EXPECT_EQ(validType.name(), "vector");
     ASSERT_EQ(validType.template_params().size(), 2);
 
-    Type param1 = validType.template_params()[0].type();
-    Type param2 = validType.template_params()[1].type();
+    Type param1 = validType.template_params()[0].type().type();
+    Type param2 = validType.template_params()[1].type().type();
 
     EXPECT_EQ(param1.name(), "int");
     EXPECT_EQ(param2.name(), "allocator");
 
     ASSERT_EQ(param2.template_params().size(), 1);
-    Type allocParam = param2.template_params()[0].type();
+    Type allocParam = param2.template_params()[0].type().type();
     EXPECT_EQ(allocParam.name(), "int");
 }
 

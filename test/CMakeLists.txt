@@ -11,6 +11,7 @@ set(SIMPLERTTR_TEST_SRC
 							testpreprocessor.cpp
 							testproperties.cpp
 							testsimplerttr.cpp
+							testtemplate.cpp
 							testtypehelper.cpp
 							testtypeinstance.cpp
 							testtypes.cpp

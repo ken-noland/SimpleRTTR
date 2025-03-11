@@ -41,4 +41,18 @@ namespace SimpleRTTR
     template <typename T>
     inline constexpr bool has_equal_operator_v = has_equal_operator<T>::value;
 
+
+    // Helper to check if a type is iterable
+    template <typename T>
+    class IsIterableHelper {
+    private:
+        template <typename U>
+        static auto test(int) -> decltype(std::begin(std::declval<U&>()) != std::end(std::declval<U&>()), std::true_type{});
+
+        template <typename U>
+        static std::false_type test(...);
+
+    public:
+        static constexpr bool value = decltype(test<T>(0))::value;
+    };
 }

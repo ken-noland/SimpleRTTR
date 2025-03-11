@@ -187,7 +187,7 @@ TEST(RTTRIterator, TestTemplateParameters)
     EXPECT_TRUE(testIteratorType);
 
     int count = 0;
-    for(const TypeReference& typeRef : testIteratorType.value().template_params())
+    for(const TemplateParameter& templateParam : testIteratorType.value().template_params())
     {
         count++;
     }

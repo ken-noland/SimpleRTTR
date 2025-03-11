@@ -111,10 +111,10 @@ namespace std {
     struct hash<SimpleRTTR::TypeData::TemplateTypeContainer> {
         inline std::size_t operator()(const SimpleRTTR::TypeData::TemplateTypeContainer& templateParams) const {
             std::size_t seed = 0;
-            for (const SimpleRTTR::TypeReference& typeRef : templateParams)
-            {
-                seed ^= typeRef.hash() + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-            }
+            //for (const SimpleRTTR::TypeReference& typeRef : templateParams)
+            //{
+            //    seed ^= typeRef.hash() + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+            //}
             return seed;
         }
     };

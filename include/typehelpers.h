@@ -2,20 +2,6 @@
 
 namespace SimpleRTTR
 {
-    // Helper to check if a type is iterable
-    template <typename T>
-    class IsIterableHelper {
-    private:
-        template <typename U>
-        static auto test(int) -> decltype(std::begin(std::declval<U&>()) != std::end(std::declval<U&>()), std::true_type{});
-
-        template <typename U>
-        static std::false_type test(...);
-
-    public:
-        static constexpr bool value = decltype(test<T>(0))::value;
-    };
-
     template <typename T>
     constexpr uint64_t ExtractTypeFlags() {
         uint64_t flags = (uint64_t)TypeFlag::None;
@@ -192,7 +178,7 @@ namespace SimpleRTTR
         typedef void(*QualifiedNameParseFunc)(char* name);
 
         using NamespaceContainer = TypeData::NamespaceContainer;
-        using TemplateTypeContainer = std::vector<TypeReference>;
+        using TemplateTypeContainer = std::vector<TemplateParameter>;
 
         TypeHelperBase(const std::type_info& typeInfo, std::size_t size, uint64_t flags, std::type_index typeIndex,
             TypeFunctions typeFunctions,
@@ -347,12 +333,21 @@ namespace SimpleRTTR
         SimpleRTTR::TypeFunctions   _TypeFunctions;
     };
 
+    //forward declarations for the template parameter helper
     template<typename ClassType>
     inline void TemplateParameterHelper(TypeHelperBase::TemplateTypeContainer& outParams);
 
     template<typename ClassType, typename... TemplateArgs >
     inline typename std::enable_if<sizeof...(TemplateArgs) != 0, void>::type
         TemplateParameterHelper(TypeHelperBase::TemplateTypeContainer& outParams);
+
+    template<auto Value>
+    inline void TemplateParameterHelper(TypeHelperBase::TemplateTypeContainer& outParams);
+
+    template<auto Value, auto... TemplateArgs >
+    inline typename std::enable_if<sizeof...(TemplateArgs) != 0, void>::type
+        TemplateParameterHelper(TypeHelperBase::TemplateTypeContainer& outParams);
+
 
     class TypeHelper1
     {
@@ -420,14 +415,34 @@ namespace SimpleRTTR
         }
     };
 
+    template <template <auto...> class Tmpl, auto... Values>
+    class TypeHelper<Tmpl<Values...>> : public TypeHelperBase, TypeHelper1
+    {
+    public:
+        using ClassType = Tmpl<Values...>;
+        TypeHelper()
+            : TypeHelperBase(typeid(this), sizeof(ClassType), ExtractTypeFlags<ClassType>(), typeid(ClassType),
+                             ExtractTypeFunctions<ClassType>(), (TypeHelperBase::QualifiedNameParseFunc)&ParseQualifiedName)
+        {
+            TemplateParameterHelper<Values...>(_TemplateParams);
+        }
+    };
+
+    //---
+    // Template Parameter Helper
+
+    // case with a single type parameter
     template<typename ClassType>
     inline void TemplateParameterHelper(TypeHelperBase::TemplateTypeContainer& outParams)
     {
-        //it's worth noting that this creates a pointer from a reference to a unique_ptr buried in 
-        //  the TypeStorage vector... not something that should EVER be done under normal circumstances
-        outParams.push_back(TypeReference(types().get_or_create_type<ClassType>()));
+        // verify the type is registered
+        types().get_or_create_type<ClassType>();
+
+        TemplateParameter param(TypeReference(typeid(ClassType)));
+        outParams.push_back(param);
     };
 
+    // case for multiple type parameters
     template<typename ClassType, typename... TemplateArgs >
     inline typename std::enable_if<sizeof...(TemplateArgs) != 0, void>::type
         TemplateParameterHelper(TypeHelperBase::TemplateTypeContainer& outParams)
@@ -436,6 +451,37 @@ namespace SimpleRTTR
         TemplateParameterHelper<TemplateArgs...>(outParams);
     };
 
+    // case for single value parameter
+    template<auto Value>
+    inline void TemplateParameterHelper(TypeHelperBase::TemplateTypeContainer& outParams)
+    {
+        Variant var(Value);
+        TemplateParameter param(std::move(var));
+        outParams.push_back(std::move(param));
+    }
+
+    // case for multiple value parameters
+    template<auto Value, auto... TemplateArgs >
+    inline typename std::enable_if<sizeof...(TemplateArgs) != 0, void>::type
+        TemplateParameterHelper(TypeHelperBase::TemplateTypeContainer& outParams)
+    {
+        TemplateParameterHelper<Value>(outParams);
+        TemplateParameterHelper<TemplateArgs...>(outParams);
+    }
+
+    // case for single value followed by multiple type parameters
+    template<auto Value, typename... TemplateArgs >
+    inline typename std::enable_if<sizeof...(TemplateArgs) != 0, void>::type 
+        TemplateParameterHelper(TypeHelperBase::TemplateTypeContainer& outParams)
+    {
+        TemplateParameterHelper<Value>(outParams);
+        TemplateParameterHelper<TemplateArgs...>(outParams);
+    }
+
+    // user may need to expand these template parameter helpers in order to accommodate more complex template types
+
+    //---
+    // Parameter Helper
     template<typename ParameterType>
     inline void ParameterHelper(ParameterContainer& outTypes, std::initializer_list<std::string>::const_iterator nameIter, std::initializer_list<std::string>::const_iterator endIter)
     {

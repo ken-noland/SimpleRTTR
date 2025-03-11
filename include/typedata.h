@@ -58,12 +58,11 @@ namespace SimpleRTTR
         IsCompound                  = 1ULL << 41,
     };
 
-
     class TypeData
     {
     public:
         using NamespaceContainer = std::vector<std::string>;
-        using TemplateTypeContainer = std::vector<TypeReference>;
+        using TemplateTypeContainer = std::vector<TemplateParameter>;
 
         inline TypeData(const TypeData& typeData);
         inline TypeData(TypeData&& typeData);
